@@ -75,9 +75,9 @@
     },
     "launchUrlSchemes": [
     ],
-    "mainFile": "MyApp.qml",
+    "mainFile": "DFOBase.qml",
     "multipleInstances": true,
-    "projectFile": "MyApp.qmlproject",
+    "projectFile": "DFO.qmlproject",
     "properties": {
     },
     "resources": {

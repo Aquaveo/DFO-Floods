@@ -3,7 +3,7 @@
 import QmlProject 1.1
 
 Project {
-    mainFile: "MyApp.qml"
+    mainFile: "DFOBase.qml"
 
     QmlFiles {
         directory: "."
