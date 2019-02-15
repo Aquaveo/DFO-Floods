@@ -52,7 +52,7 @@ Drawer {
                 height: 30 * scaleFactor
             }
 
-            model: ["Topographic","Streets","Imagery","Oceans"]
+            model: ["Topographic","Streets","Imagery","Terrain"]
             onCurrentTextChanged: {
                 if (sceneView.scene.loadStatus === Enums.LoadStatusLoaded)
                     changeBasemap();
@@ -67,10 +67,10 @@ Drawer {
                     sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapStreets");
                     break;
                 case "Imagery":
-                    sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapImagery");
+                    sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapImageryWithLabels");
                     break;
-                case "Oceans":
-                    sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapOceans");
+                case "Terrain":
+                    sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTerrainWithLabels");
                     break;
                 default:
                     sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");

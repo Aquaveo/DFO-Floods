@@ -7,6 +7,8 @@ import ArcGIS.AppFramework 1.0
 import ArcGIS.AppFramework.Controls 1.0
 import Esri.ArcGISRuntime 100.4
 
+import QtPositioning 5.3
+
 import "../controls" as Controls
 
 Page {
@@ -16,6 +18,7 @@ Page {
     property WmsService service;
     property WmsLayerInfo layerNA;
     property WmsLayer wmsLayer;
+//    property alias sceneView: sceneView;
     property Scene scene;
 
     header: ToolBar {
@@ -55,6 +58,8 @@ Page {
     // Create SceneView
     SceneView {
         id:sceneView
+//        property alias compass: compass
+
         anchors.fill: parent
 
         //Busy Indicator
@@ -65,6 +70,18 @@ Page {
             running: true
             Material.accent:"#00693e"
             visible: (sceneView.drawStatus === Enums.DrawStatusInProgress)
+        }
+
+        PositionSource {
+            id: positionSource
+            active: true
+            property bool isInitial: true
+            onPositionChanged: {
+                if(sceneView.scene.loadStatus === Enums.LoadStatusLoaded && isInitial) {
+                    isInitial = false;
+                    locationBtn.zoomToCurrentLocation();
+                }
+            }
         }
 
         Component.onCompleted: createWmsLayer();
@@ -123,5 +140,9 @@ Page {
 
     Controls.MenuDrawer {
         id:menu
+    }
+
+    Controls.CurrentPositionBtn {
+        id:locationBtn
     }
 }
