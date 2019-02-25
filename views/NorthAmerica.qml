@@ -14,11 +14,27 @@ import "../controls" as Controls
 Page {
     id: testItem
     property real scaleFactor: AppFramework.displayScaleFactor
-    property url wmsServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_2wk_current_NA/wms?service=wms&request=getCapabilities"
-    property WmsService service;
-    property WmsLayerInfo layerNA;
-    property WmsLayer wmsLayer;
-//    property alias sceneView: sceneView;
+    property url wms2wkServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_2wk_current_NA/wms?service=wms&request=getCapabilities";
+    property url wms3dayServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_3day_current_NA/wms?service=wms&request=getCapabilities";
+    property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_NA/wms?service=wms&request=getCapabilities";
+    property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-na/wms?service=wms&request=getCapabilities";
+
+    property WmsService service2wk;
+    property WmsLayerInfo layerNA2wk;
+    property WmsLayer wmsLayer2wk;
+
+    property WmsService service3day;
+    property WmsLayerInfo layerNA3day;
+    property WmsLayer wmsLayer3day;
+
+    property WmsService serviceJan;
+    property WmsLayerInfo layerNAJan;
+    property WmsLayer wmsLayerJan;
+
+    property WmsService serviceRegW;
+    property WmsLayerInfo layerNARegW;
+    property WmsLayer wmsLayerRegW;
+
     property Scene scene;
 
     header: ToolBar {
@@ -87,54 +103,100 @@ Page {
         Component.onCompleted: createWmsLayer();
 
         function createWmsLayer() {
-            // create the service
-            service = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsServiceUrl });
+            var basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
+
+            // create a scene
+            scene = ArcGISRuntimeEnvironment.createObject("Scene", {
+                                                              basemap: basemap,
+                                                              initialViewpoint: initView,
+                                                          });
+
+            // create the services
+            service2wk = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms2wkServiceUrl });
+            service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
+            serviceJan = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsJanServiceUrl });
+            serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
 
             // connect to loadStatusChanged signal of the service
-            service.loadStatusChanged.connect(function() {
-                console.log(service.loadStatus);
-                if (service.loadStatus === Enums.LoadStatusLoaded) {
+            service2wk.loadStatusChanged.connect(function() {
+                if (service2wk.loadStatus === Enums.LoadStatusLoaded) {
                     // get the layer info list
-                    var serviceInfo = service.serviceInfo;
-                    var layerInfos = serviceInfo.layerInfos;
-
-//                            listProperty(layerInfos[0].sublayerInfos[7]);
+                    var service2wkInfo = service2wk.serviceInfo;
+                    var layerInfos = service2wkInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerNA = layerInfos[0].sublayerInfos[0]
-                    console.log('***', layerNA.name)
-//                            listProperty(layerNA);
-                    // create WMS layer
-                    wmsLayer = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                         layerInfos: [layerNA]
-                                                                     });
+                    layerNA2wk = layerInfos[0].sublayerInfos[0]
 
-                    // create a basemap from the layer
-//                            var basemap = ArcGISRuntimeEnvironment.createObject("Basemap");
-//                            basemap.baseLayers.append(wmsLayer);
-                    var basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
+                    wmsLayer2wk = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                            layerInfos: [layerNA2wk]
+                                                                        });
 
-                    // create a scene
-                    scene = ArcGISRuntimeEnvironment.createObject("Scene", {
-                                                                      basemap: basemap,
-                                                                      initialViewpoint: initView,
-                                                                  });
-
-                    scene.operationalLayers.append(wmsLayer);
-
-//                            listProperty(scene.operationalLayers.get(0).layerInfo);
-                    console.log("layers in map = " + scene.operationalLayers.count);
-
-                    // set the scene on the sceneview
-                    sceneView.scene = scene;
-
-//                            scene.basemap = basemap;
-//                            scene.initialViewpoint = initView;
+                    scene.operationalLayers.append(wmsLayer2wk);
                 }
             });
 
-            // load the service
-            service.load();
+            service3day.loadStatusChanged.connect(function() {
+                if (service3day.loadStatus === Enums.LoadStatusLoaded) {
+                    // get the layer info list
+                    var service3dayInfo = service3day.serviceInfo;
+                    var layerInfos = service3dayInfo.layerInfos;
+
+                    // get the desired layer from the list
+                    layerNA3day = layerInfos[0].sublayerInfos[0]
+
+                    wmsLayer3day = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                             layerInfos: [layerNA3day]
+                                                                         });
+
+                    scene.operationalLayers.append(wmsLayer3day);
+                }
+            });
+
+            serviceJan.loadStatusChanged.connect(function() {
+                if (serviceJan.loadStatus === Enums.LoadStatusLoaded) {
+                    // get the layer info list
+                    var serviceJanInfo = serviceJan.serviceInfo;
+                    var layerInfos = serviceJanInfo.layerInfos;
+
+                    // get the desired layer from the list
+                    layerNAJan = layerInfos[0].sublayerInfos[0]
+
+                    wmsLayerJan = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                            layerInfos: [layerNAJan],
+                                                                            visible: false
+                                                                        });
+
+                    scene.operationalLayers.append(wmsLayerJan);
+                    scene.operationalLayers.setProperty(2, "description", layerNAJan.description);
+                }
+            });
+
+            serviceRegW.loadStatusChanged.connect(function() {
+                if (serviceRegW.loadStatus === Enums.LoadStatusLoaded) {
+                    // get the layer info list
+                    var serviceRegWInfo = serviceRegW.serviceInfo;
+                    var layerInfos = serviceRegWInfo.layerInfos;
+
+                    // get the desired layer from the list
+                    layerNARegW = layerInfos[0].sublayerInfos[0]
+
+                    wmsLayerRegW = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                             layerInfos: [layerNARegW],
+                                                                             visible: false
+                                                                         });
+
+                    scene.operationalLayers.append(wmsLayerRegW);
+                }
+            });
+
+            // load the services
+            service2wk.load();
+            service3day.load();
+            serviceJan.load();
+            serviceRegW.load();
+
+            // set the scene on the sceneview
+            sceneView.scene = scene;
         }
     }
 
