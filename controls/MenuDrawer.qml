@@ -111,14 +111,14 @@ Drawer {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 0.75 * menu.width
+                        width: 0.65 * layerVisibilityListView.width
                         text: name
                         wrapMode: Text.WordWrap
                         font.pixelSize: 12 * scaleFactor
                     }
 
                     Switch {
-                        width: 0.25 * menu.width
+                        width: 0.25 * layerVisibilityListView.width
 
                         Material.accent: "#00693e"
 
@@ -130,6 +130,27 @@ Drawer {
                             checked = layerVisible;
                         }
 
+                    }
+
+                    Button {
+                        id:infoLayer
+
+                        width: 0.10 * layerVisibilityListView.width
+
+                        Material.background: "transparent"
+
+                        onClicked: {
+                            pageItem.descriptionLyr = description
+                            menu.close();
+                            descLyrPage.visible = 1
+                        }
+
+                        Image {
+                            source: "../assets/layerInfo.png"
+                            height: 24 * scaleFactor
+                            width: 24 * scaleFactor
+                            anchors.centerIn: parent
+                        }
                     }
                 }
             }

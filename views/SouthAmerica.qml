@@ -14,25 +14,25 @@ import "../controls" as Controls
 Page {
     id: pageItem
     property real scaleFactor: AppFramework.displayScaleFactor
-    property url wms2wkServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_2wk_current_NA/wms?service=wms&request=getCapabilities";
-    property url wms3dayServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_3day_current_NA/wms?service=wms&request=getCapabilities";
-    property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_NA/wms?service=wms&request=getCapabilities";
-    property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-na/wms?service=wms&request=getCapabilities";
+    property url wms2wkServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_2wk_current_SA/wms?service=wms&request=getCapabilities";
+    property url wms3dayServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_3day_current_SA/wms?service=wms&request=getCapabilities";
+    property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_SA/wms?service=wms&request=getCapabilities";
+    property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-sa/wms?service=wms&request=getCapabilities";
 
     property WmsService service2wk;
-    property WmsLayerInfo layerNA2wk;
+    property WmsLayerInfo layerSA2wk;
     property WmsLayer wmsLayer2wk;
 
     property WmsService service3day;
-    property WmsLayerInfo layerNA3day;
+    property WmsLayerInfo layerSA3day;
     property WmsLayer wmsLayer3day;
 
     property WmsService serviceJan;
-    property WmsLayerInfo layerNAJan;
+    property WmsLayerInfo layerSAJan;
     property WmsLayer wmsLayerJan;
 
     property WmsService serviceRegW;
-    property WmsLayerInfo layerNARegW;
+    property WmsLayerInfo layerSARegW;
     property WmsLayer wmsLayerRegW;
 
     property Scene scene;
@@ -126,14 +126,14 @@ Page {
                     var layerInfos = service2wkInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerNA2wk = layerInfos[0].sublayerInfos[0]
+                    layerSA2wk = layerInfos[0].sublayerInfos[0]
 
                     wmsLayer2wk = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                            layerInfos: [layerNA2wk]
+                                                                            layerInfos: [layerSA2wk]
                                                                         });
 
                     scene.operationalLayers.insert(0, wmsLayer2wk);
-                    scene.operationalLayers.setProperty(0, "description", layerNA2wk.description);
+                    scene.operationalLayers.setProperty(0, "description", layerSA2wk.description);
                 }
             });
 
@@ -144,14 +144,14 @@ Page {
                     var layerInfos = service3dayInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerNA3day = layerInfos[0].sublayerInfos[0]
+                    layerSA3day = layerInfos[0].sublayerInfos[0]
 
                     wmsLayer3day = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                             layerInfos: [layerNA3day]
+                                                                             layerInfos: [layerSA3day]
                                                                          });
 
                     scene.operationalLayers.insert(1, wmsLayer3day);
-                    scene.operationalLayers.setProperty(1, "description", layerNA3day.description);
+                    scene.operationalLayers.setProperty(1, "description", layerSA3day.description);
 
                 }
             });
@@ -163,15 +163,15 @@ Page {
                     var layerInfos = serviceJanInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerNAJan = layerInfos[0].sublayerInfos[0]
+                    layerSAJan = layerInfos[0].sublayerInfos[0]
 
                     wmsLayerJan = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                            layerInfos: [layerNAJan],
+                                                                            layerInfos: [layerSAJan],
                                                                             visible: false
                                                                         });
 
                     scene.operationalLayers.insert(2, wmsLayerJan);
-                    scene.operationalLayers.setProperty(2, "description", layerNAJan.description);
+                    scene.operationalLayers.setProperty(2, "description", layerSAJan.description);
                 }
             });
 
@@ -182,15 +182,15 @@ Page {
                     var layerInfos = serviceRegWInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerNARegW = layerInfos[0].sublayerInfos[0]
+                    layerSARegW = layerInfos[0].sublayerInfos[0]
 
                     wmsLayerRegW = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                             layerInfos: [layerNARegW],
+                                                                             layerInfos: [layerSARegW],
                                                                              visible: false
                                                                          });
 
                     scene.operationalLayers.append(wmsLayerRegW);
-                    scene.operationalLayers.setProperty(3, "description", layerNARegW.description);
+                    scene.operationalLayers.setProperty(3, "description", layerSARegW.description);
                 }
             });
 

@@ -13,7 +13,7 @@ RoundButton {
         right: parent.right
         top: parent.top
         rightMargin: 20 * scaleFactor
-        topMargin: 60 * scaleFactor
+        topMargin: 10 * scaleFactor
     }
     onClicked:{
         popUp.visible = 1

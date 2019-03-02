@@ -7,7 +7,7 @@ import ArcGIS.AppFramework 1.0
 import ArcGIS.AppFramework.Controls 1.0
 
 Rectangle{
-    id: descPage
+    id: descLyrPage
     width: parent.width
     height: parent.height
     anchors.fill:parent
@@ -18,7 +18,7 @@ Rectangle{
         clip:true
 
         Rectangle{
-            id:descPageheader
+            id:descLyrheader
             Layout.alignment: Qt.AlignTop
             color:"#00693e"
             Layout.preferredWidth: parent.width
@@ -38,13 +38,14 @@ Rectangle{
                     verticalCenter: parent.verticalCenter
                 }
                 onClicked: {
-                    descPage.visible = 0
+                    descLyrPage.visible = 0;
+                    menu.open()
                 }
             }
 
             Text {
                 id: aboutApp
-                text:qsTr("About")
+                text:qsTr("About this Layer")
                 color:"white"
                 font.pixelSize: app.baseFontSize * 1.1
                 font.bold: true
@@ -58,15 +59,15 @@ Rectangle{
             color:"black"
             Layout.fillWidth: true
             Layout.fillHeight: true
-            
+
             Flickable {
                 anchors.fill:parent
-                contentHeight: descText.height
+                contentHeight: descLyrText.height
                 clip:true
-                
+
                 Text{
-                    id: descText
-                    text:descriptionText
+                    id: descLyrText
+                    text:pageItem.descriptionLyr
                     y: 30 * scaleFactor
                     textFormat: Text.StyledText
                     anchors.horizontalCenterOffset: 0

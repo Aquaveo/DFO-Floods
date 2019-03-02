@@ -48,11 +48,7 @@ Rectangle {
 
                 ListElement { name:"North America"; url:"../views/NorthAmerica.qml";description:"<p> This layer group contains different flood products for North America.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
-                ListElement { name:"Display a Map"; url:"../views/DisplayaMap.qml";description:"<p>This is the most basic sample for displaying a map. It can be considered the Hello World map app for the ArcGIS Runtime SDK for Qt. It shows how to create a map view, and add in a map that contains the imagery with labels basemap. By default, this map supports basic zooming and panning operations. \  <br><p></p><a href='http://geonet.esri.com/groups/appstudio/blog/2016/12/06/how-to-describe-our-resources-in-terms-of-difficulty-complexity-and-time-to-digest'><span style=' text-decoration: underline; color:#0000ff;'>Resource Level:</span></a>🍌 </p>" }
-
-                ListElement { name:"Map Loaded"; url:"../views/MapLoaded.qml"; description:"<p>The load status is obtained from the loadStatus property. The map is considered loaded when any of the following are true: the map has a valid spatial reference, the map has an initial viewpoint, or one of the map's predefined layers has been created. A signal handler is set up on the map to handle the loadStatusChanged signal by updating the text at the bottom of the display with the new load status. <br><p></p><a href='http://geonet.esri.com/groups/appstudio/blog/2016/12/06/how-to-describe-our-resources-in-terms-of-difficulty-complexity-and-time-to-digest'><span style=' text-decoration: underline; color:#0000ff;'>Resource Level:</span></a>🍌 </p>"  }
-
-                ListElement { name:"Set Map Spatial Ref"; url:"../views/SetMapSpatialReference.qml";description:"<p>This sample demonstrates how to set the initial spatial reference of a map so that all layers that support reprojection are projected into the map’s spatial reference.  <br><p></p><a href='http://geonet.esri.com/groups/appstudio/blog/2016/12/06/how-to-describe-our-resources-in-terms-of-difficulty-complexity-and-time-to-digest'><span style=' text-decoration: underline; color:#0000ff;'>Resource Level:</span></a>🍌 </p>" }
+                ListElement { name:"South America"; url:"../views/SouthAmerica.qml";description:"<p> This layer group contains different flood products for South America.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
             }
 
             onCurrentIndexChanged: {
@@ -81,7 +77,7 @@ Rectangle {
                         popUpListView.currentIndex = index
                         qmlfile = viewItems.get(index).url
                         viewName = viewItems.get(index).name
-                        descriptionText =viewItems.get(index).description
+                        descriptionText = viewItems.get(index).description
                     }
                 }
             }

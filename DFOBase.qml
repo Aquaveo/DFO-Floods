@@ -43,10 +43,6 @@ App{
         }
     }
 
-    Controls.FloatActionButton {
-        id:switchBtn
-    }
-
     Controls.PopUpPage {
         id:popUp
         visible:false
