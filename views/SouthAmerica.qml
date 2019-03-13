@@ -58,7 +58,10 @@ Page {
                 anchors.fill: parent
             }
 
-            onClicked: menu.open()
+            onClicked: if (sceneView.scene.operationalLayers.count >= 4) {
+                           layerList = sceneView.scene.operationalLayers;
+                           menu.open();
+                       }
         }
     }
 
@@ -96,7 +99,16 @@ Page {
             onPositionChanged: {
                 if(sceneView.scene.loadStatus === Enums.LoadStatusLoaded && isInitial) {
                     isInitial = false;
-                    locationBtn.zoomToCurrentLocation();
+                    zoomToRegionLocation();
+
+                    function zoomToRegionLocation(){
+                        positionSource.update();
+                        var currentPositionPoint = ArcGISRuntimeEnvironment.createObject("Point", {x: -62.963135, y: -11.065338, spatialReference: SpatialReference.createWgs84()});
+                        var centerPoint = GeometryEngine.project(currentPositionPoint, sceneView.spatialReference);
+
+                        var viewPointCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter",{center: centerPoint});
+                        sceneView.setViewpoint(viewPointCenter);
+                    }
                 }
             }
         }

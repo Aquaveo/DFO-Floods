@@ -25,6 +25,7 @@ App{
     property url qmlfile
     property string viewName
     property string descriptionText
+    property LayerListModel layerList
 
     property url wmsServiceUrl
 

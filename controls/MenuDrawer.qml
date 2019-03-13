@@ -98,7 +98,8 @@ Drawer {
             clip: true
 
             // Assign the model to the list model of sublayers
-            model: sceneView.scene.operationalLayers
+//            model: sceneView.scene.operationalLayers
+            model: layerList
 
             // Assign the delegate to the delegate created above
             delegate: Item {

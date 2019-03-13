@@ -42,6 +42,7 @@ Rectangle {
         ListView{
             id:popUpListView
             anchors.topMargin: 64 * scaleFactor
+            anchors.bottomMargin: 40 * scaleFactor
             anchors.fill: parent
             model:ListModel {
                 id:viewItems
@@ -49,7 +50,19 @@ Rectangle {
                 ListElement { name:"North America"; url:"../views/NorthAmerica.qml";description:"<p> This layer group contains different flood products for North America.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
                 ListElement { name:"South America"; url:"../views/SouthAmerica.qml";description:"<p> This layer group contains different flood products for South America.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+
+                ListElement { name:"Africa"; url:"../views/Africa.qml";description:"<p> This layer group contains different flood products for Africa.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+
+                ListElement { name:"Asia"; url:"../views/Asia.qml";description:"<p> This layer group contains different flood products for Asia.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+
+                ListElement { name:"Australia"; url:"../views/Australia.qml";description:"<p> This layer group contains different flood products for Australia.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+
+                ListElement { name:"Europe"; url:"../views/Europe.qml";description:"<p> This layer group contains different flood products for Europe.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+
             }
+
+            clip: true
+            ScrollBar.vertical: ScrollBar {active: true}
 
             onCurrentIndexChanged: {
                 qmlfile = viewItems.get(currentIndex).url
@@ -81,25 +94,25 @@ Rectangle {
                     }
                 }
             }
+        }
 
-            Text{
-                id:cancelText
-                anchors.bottom: parent.bottom
-                anchors.right:parent.right
-                anchors.bottomMargin: 13 * scaleFactor
-                anchors.rightMargin: 16 * scaleFactor
-                text:qsTr("CANCEL")
-                color:"#00693e"
-                font{
-                    pixelSize: baseFontSize * 0.9
-                    bold:true
-                }
+        Text {
+            id:cancelText
+            anchors.bottom: parent.bottom
+            anchors.right:parent.right
+            anchors.bottomMargin: 13 * scaleFactor
+            anchors.rightMargin: 16 * scaleFactor
+            text:qsTr("CANCEL")
+            color:"#00693e"
+            font{
+                pixelSize: baseFontSize * 0.9
+                bold:true
+            }
 
-                MouseArea{
-                    anchors.fill: parent
-                    onClicked :{
-                        popUp.visible = 0
-                    }
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    popUp.visible = 0
                 }
             }
         }
