@@ -19,6 +19,8 @@ Page {
     property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_NA/wms?service=wms&request=getCapabilities";
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-na/wms?service=wms&request=getCapabilities";
 
+    property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
+
     property WmsService service2wk;
     property WmsLayerInfo layerNA2wk;
     property WmsLayer wmsLayer2wk;
@@ -35,8 +37,16 @@ Page {
     property WmsLayerInfo layerNARegW;
     property WmsLayer wmsLayerRegW;
 
+    property WmsService serviceEv
+    property WmsLayerInfo layerNAEv;
+    property WmsLayer wmsLayerEv;
+
     property Scene scene;
     property string descriptionLyr;
+
+    property bool drawPin: false;
+    property Point pinLocation;
+    property SimpleMarkerSceneSymbol symbolMarker;
 
     header: ToolBar {
         id: header
@@ -104,6 +114,104 @@ Page {
             }
         }
 
+        // add a graphics overlay
+        GraphicsOverlay {
+            id: graphicsOverlay
+        }
+
+        onMouseClicked: {
+            if (drawPin === true) {
+                function toRad(Value) {
+                    /** Converts numeric degrees to radians */
+                    return Value * Math.PI / 180;
+                }
+
+                function haversine(lat1,lat2,lng1,lng2) {
+                    var rad = 6372.8; // for km Use 3961 for miles
+                    var deltaLat = toRad(lat2-lat1);
+                    var deltaLng = toRad(lng2-lng1);
+                    lat1 = toRad(lat1);
+                    lat2 = toRad(lat2);
+                    var a = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) + Math.sin(deltaLng/2) * Math.sin(deltaLng/2) * Math.cos(lat1) * Math.cos(lat2);
+                    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    return  rad * c;
+                }
+
+                pinLocation = mouse.mapPoint;
+                var xCoor = mouse.mapPoint.x.toFixed(2);
+                var yCoor = mouse.mapPoint.y.toFixed(2);
+
+                symbolMarker = ArcGISRuntimeEnvironment.createObject("SimpleMarkerSceneSymbol", {
+                                                                         style: Enums.SimpleMarkerSceneSymbolStyleSphere,
+                                                                         color: "#00693e",
+                                                                         width: 75,
+                                                                         height: 75,
+                                                                         depth: 75,
+                                                                     });
+
+                // create a graphic using the point and the symbol
+                var graphic = ArcGISRuntimeEnvironment.createObject("Graphic", {
+                                                                        geometry: pinLocation,
+                                                                        symbol: symbolMarker
+                                                                    });
+
+                // clear previous and add new  graphic to the graphics overlay
+                graphicsOverlay.graphics.clear();
+                graphicsOverlay.graphics.append(graphic);
+
+                serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsEventServiceUrl });
+
+                serviceEv.loadStatusChanged.connect(function() {
+                    if (serviceEv.loadStatus === Enums.LoadStatusLoaded) {
+                        // get the layer info list
+                        var serviceEvInfo = serviceEv.serviceInfo;
+                        var layerInfos = serviceEvInfo.layerInfos;
+
+                        // get the all layers
+                        var layerNAEvTiles = layerInfos[0].sublayerInfos;
+
+                        var nearestTile = [999999999, 1];
+
+                        for (var i=2; i<layerNAEvTiles.length; i++) {
+                            var ans = haversine(yCoor, layerInfos[0].sublayerInfos[i].extent.center.y,
+                                                xCoor, layerInfos[0].sublayerInfos[i].extent.center.x
+                                                );
+                            if (ans < nearestTile[0]) {
+
+                                nearestTile = [ans, i];
+                            }
+                        }
+
+                        layerNAEv = layerInfos[0].sublayerInfos[nearestTile[1]]
+
+
+                        wmsLayerEv = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                               layerInfos: [layerNAEv],
+                                                                               visible: true
+                                                                           });
+
+                        sceneView.scene.operationalLayers.remove(4,1);
+                        sceneView.scene.operationalLayers.append(wmsLayerEv);
+                        sceneView.scene.operationalLayers.setProperty(4, "name", "Nearest Event");
+                        sceneView.scene.operationalLayers.setProperty(4, "description", layerNAEv.description);
+
+                        graphicsOverlay.graphics.clear();
+
+                        var newViewPointCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter", {
+                                                                                           center: layerInfos[0].sublayerInfos[nearestTile[1]].extent.center,
+                                                                                           targetScale: 1000000 * layerInfos[0].sublayerInfos[nearestTile[1]].extent.width * scaleFactor
+                                                                                       });
+                        sceneView.setViewpoint(newViewPointCenter);
+
+
+                    }
+                });
+
+                serviceEv.load();
+
+            }
+        }
+
         Component.onCompleted: createWmsLayer();
 
         function createWmsLayer() {
@@ -120,6 +228,8 @@ Page {
             service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
             serviceJan = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsJanServiceUrl });
             serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
+
+//            serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsEventServiceUrl });
 
             // connect to loadStatusChanged signal of the service
             service2wk.loadStatusChanged.connect(function() {
@@ -197,11 +307,31 @@ Page {
                 }
             });
 
+//            serviceEv.loadStatusChanged.connect(function() {
+//                if (serviceEv.loadStatus === Enums.LoadStatusLoaded) {
+//                    // get the layer info list
+//                    var serviceEvInfo = serviceEv.serviceInfo;
+//                    var layerInfos = serviceEvInfo.layerInfos;
+
+//                    // get the desired layer from the list
+//                    layerNAEv = layerInfos[0].sublayerInfos[0]
+
+//                    wmsLayerEv = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+//                                                                           layerInfos: [layerNAEv],
+//                                                                           visible: false
+//                                                                       });
+
+//                    scene.operationalLayers.append(wmsLayerEv);
+//                    scene.operationalLayers.setProperty(4, "description", layerNAEv.description);
+//                }
+//            });
+
             // load the services
             service2wk.load();
             service3day.load();
             serviceJan.load();
             serviceRegW.load();
+//            serviceEv.load();
 
 
             // set the scene on the sceneview

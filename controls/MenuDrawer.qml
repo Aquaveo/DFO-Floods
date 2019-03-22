@@ -91,10 +91,9 @@ Drawer {
         // Create a list view to display the layer items
         ListView {
             id: layerVisibilityListView
-//            anchors.margins: 10 * scaleFactor
             anchors.horizontalCenter: parent.horizontalCenter
             width: 0.95 * parent.width
-            height: parent.height
+            height: childrenRect.height
             clip: true
 
             // Assign the model to the list model of sublayers
@@ -127,7 +126,6 @@ Drawer {
                             layerVisible = checked;
                         }
                         Component.onCompleted: {
-                            console.log(description, "%%%%%%");
                             checked = layerVisible;
                         }
 
@@ -153,6 +151,135 @@ Drawer {
                             anchors.centerIn: parent
                         }
                     }
+                }
+            }
+        }
+
+        Text {
+            id: eventLayersTitle
+            text: qsTr("Extreme Events: ")
+            color: "black"
+            font.pointSize: 12
+            anchors.left: parent.left
+            padding: 8
+        }
+
+        Rectangle {
+            id: allExtremeEvRect
+            width: 0.95 * parent.width
+            height: 35 * scaleFactor
+            anchors.left: parent.left
+
+            Row {
+                id: allExtremeEvRow
+                width: parent.width
+                spacing: 0
+                anchors.verticalCenter: parent.verticalCenter
+
+                CheckBox {
+                    id: allEventLayersCheck
+                    property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
+
+                    property WmsService serviceEv
+                    property WmsLayerInfo layerNAEv;
+                    property WmsLayer wmsLayerEv;
+
+                    Material.accent: "#00693e"
+
+                    onCheckedChanged: {
+                        if (checked == true) {
+                            selectEventLayersCheck.checked = false;
+                            serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsEventServiceUrl });
+
+                            serviceEv.loadStatusChanged.connect(function() {
+                                if (serviceEv.loadStatus === Enums.LoadStatusLoaded) {
+                                    // get the layer info list
+                                    var serviceEvInfo = serviceEv.serviceInfo;
+                                    var layerInfos = serviceEvInfo.layerInfos;
+
+                                    // get the desired layer from the list
+                                    layerNAEv = layerInfos[0].sublayerInfos[0]
+                                    var layerNAEvTiles = layerInfos[0].sublayerInfos
+//                                    console.log(typeof layerNAEvTiles, layerNAEvTiles[1].extent.center.x, layerNAEvTiles[1].extent.center.y,'#################')
+
+                                    wmsLayerEv = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                           layerInfos: [layerNAEv],
+                                                                                           visible: true
+                                                                                       });
+
+                                    sceneView.scene.operationalLayers.append(wmsLayerEv);
+                                    sceneView.scene.operationalLayers.setProperty(4, "name", "All Events");
+                                    sceneView.scene.operationalLayers.setProperty(4, "description", layerNAEv.description);
+                                }
+                            });
+
+                            serviceEv.load();
+                        } else {
+                            sceneView.scene.operationalLayers.remove(4,1);
+                        }
+                    }
+
+                    Component.onCompleted: {
+                        checked = false;
+                    }
+                }
+
+                Text {
+                    width: 0.45 * allExtremeEvRow.width
+                    text: qsTr("View all")
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: 12 * scaleFactor
+                    anchors.verticalCenter: parent.verticalCenter
+                    padding: 8
+                }
+            }
+        }
+
+        Rectangle {
+            id: selectExtremeEvRect
+            width: 0.95 * parent.width
+            height: 35 * scaleFactor
+            anchors.left: parent.left
+
+            Row {
+                id: selectExtremeEvRow
+                width: parent.width
+                spacing: 0
+                anchors.verticalCenter: parent.verticalCenter
+
+                CheckBox {
+                    id: selectEventLayersCheck
+                    property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
+
+                    property WmsService serviceEv
+                    property WmsLayerInfo layerNAEvTiles;
+                    property WmsLayer wmsLayerEv;
+
+                    Material.accent: "#00693e"
+
+                    onCheckedChanged: {
+                        if (checked == true) {
+                            allEventLayersCheck.checked = false;
+                            drawPin = true;
+                            menu.close();
+                        } else {
+                            drawPin = false;
+                            sceneView.scene.operationalLayers.remove(4,1);
+                        }
+                    }
+
+                    Component.onCompleted: {
+                        checked = false;
+                    }
+                }
+
+                Text {
+                    width: 0.45 * selectExtremeEvRow.width
+                    text: qsTr("Select nearest event")
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: 12 * scaleFactor
+                    anchors.verticalCenter: parent.verticalCenter
+                    padding: 8
                 }
             }
         }
