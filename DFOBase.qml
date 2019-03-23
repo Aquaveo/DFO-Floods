@@ -22,7 +22,7 @@ App{
     property int  baseFontSize : app.info.propertyValue("baseFontSize", 15 * scaleFactor) + (isSmallScreen ? 0 : 3)
     property bool isSmallScreen: (width || height) < units(400)
 
-    property url qmlfile
+    property url qmlfile: "./views/StartPage.qml"
     property string viewName
     property string descriptionText
     property LayerListModel layerList

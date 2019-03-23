@@ -47,32 +47,31 @@ Rectangle {
             model:ListModel {
                 id:viewItems
 
-                ListElement { name:"North America"; url:"../views/NorthAmerica.qml";description:"<p> This layer group contains different flood products for North America.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"North America"; url:"../views/NorthAmerica.qml"; description:"<p> This layer group contains different flood products for North America.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
-                ListElement { name:"South America"; url:"../views/SouthAmerica.qml";description:"<p> This layer group contains different flood products for South America.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"South America"; url:"../views/SouthAmerica.qml"; description:"<p> This layer group contains different flood products for South America.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
-                ListElement { name:"Africa"; url:"../views/Africa.qml";description:"<p> This layer group contains different flood products for Africa.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"Africa"; url:"../views/Africa.qml"; description:"<p> This layer group contains different flood products for Africa.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
-                ListElement { name:"Asia"; url:"../views/Asia.qml";description:"<p> This layer group contains different flood products for Asia.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"Asia"; url:"../views/Asia.qml"; description:"<p> This layer group contains different flood products for Asia.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
-                ListElement { name:"Australia"; url:"../views/Australia.qml";description:"<p> This layer group contains different flood products for Australia.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"Australia"; url:"../views/Australia.qml"; description:"<p> This layer group contains different flood products for Australia.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
-                ListElement { name:"Europe"; url:"../views/Europe.qml";description:"<p> This layer group contains different flood products for Europe.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"Europe"; url:"../views/Europe.qml"; description:"<p> This layer group contains different flood products for Europe.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
             }
 
             clip: true
             ScrollBar.vertical: ScrollBar {active: true}
 
-            onCurrentIndexChanged: {
-                qmlfile = viewItems.get(currentIndex).url
-                viewName = viewItems.get(currentIndex).name
-                descriptionText =viewItems.get(currentIndex).description
-            }
             delegate: Rectangle{
                 width:280 * scaleFactor
                 height: 40 * scaleFactor
-                color: index===popUpListView.currentIndex? "#249567":"transparent"
+                color: qmlfile.toString().match(viewItems.get(index).url.toString().replace('..', ''))
+                       ? index===popUpListView.currentIndex
+                         ? "#249567"
+                         :"transparent"
+                       :"transparent"
 
                 Label{
                     anchors.verticalCenter: parent.verticalCenter

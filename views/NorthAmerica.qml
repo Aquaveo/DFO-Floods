@@ -109,7 +109,17 @@ Page {
             onPositionChanged: {
                 if(sceneView.scene.loadStatus === Enums.LoadStatusLoaded && isInitial) {
                     isInitial = false;
-                    locationBtn.zoomToCurrentLocation();
+//                    locationBtn.zoomToCurrentLocation();
+                    zoomToRegionLocation();
+
+                    function zoomToRegionLocation(){
+                        positionSource.update();
+                        var currentPositionPoint = ArcGISRuntimeEnvironment.createObject("Point", {x: -100.005218, y: 38.411692, spatialReference: SpatialReference.createWgs84()});
+                        var centerPoint = GeometryEngine.project(currentPositionPoint, sceneView.spatialReference);
+
+                        var viewPointCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter",{center: centerPoint});
+                        sceneView.setViewpoint(viewPointCenter);
+                    }
                 }
             }
         }
@@ -229,8 +239,6 @@ Page {
             serviceJan = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsJanServiceUrl });
             serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
 
-//            serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsEventServiceUrl });
-
             // connect to loadStatusChanged signal of the service
             service2wk.loadStatusChanged.connect(function() {
                 if (service2wk.loadStatus === Enums.LoadStatusLoaded) {
@@ -307,32 +315,11 @@ Page {
                 }
             });
 
-//            serviceEv.loadStatusChanged.connect(function() {
-//                if (serviceEv.loadStatus === Enums.LoadStatusLoaded) {
-//                    // get the layer info list
-//                    var serviceEvInfo = serviceEv.serviceInfo;
-//                    var layerInfos = serviceEvInfo.layerInfos;
-
-//                    // get the desired layer from the list
-//                    layerNAEv = layerInfos[0].sublayerInfos[0]
-
-//                    wmsLayerEv = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-//                                                                           layerInfos: [layerNAEv],
-//                                                                           visible: false
-//                                                                       });
-
-//                    scene.operationalLayers.append(wmsLayerEv);
-//                    scene.operationalLayers.setProperty(4, "description", layerNAEv.description);
-//                }
-//            });
-
             // load the services
             service2wk.load();
             service3day.load();
             serviceJan.load();
             serviceRegW.load();
-//            serviceEv.load();
-
 
             // set the scene on the sceneview
             sceneView.scene = scene;

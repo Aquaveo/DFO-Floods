@@ -178,12 +178,6 @@ Drawer {
 
                 CheckBox {
                     id: allEventLayersCheck
-                    property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
-
-                    property WmsService serviceEv
-                    property WmsLayerInfo layerNAEv;
-                    property WmsLayer wmsLayerEv;
-
                     Material.accent: "#00693e"
 
                     onCheckedChanged: {
