@@ -130,6 +130,7 @@ Page {
         }
 
         onMouseClicked: {
+            pinMessage.visible = 0;
             if (drawPin === true) {
                 function toRad(Value) {
                     /** Converts numeric degrees to radians */
@@ -340,6 +341,11 @@ Page {
 
     Controls.DescriptionLayer {
         id:descLyrPage
+        visible: false
+    }
+
+    Controls.PinMessage {
+        id:pinMessage
         visible: false
     }
 }

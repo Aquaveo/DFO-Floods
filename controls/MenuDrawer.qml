@@ -182,6 +182,7 @@ Drawer {
 
                     onCheckedChanged: {
                         if (checked == true) {
+                            menu.close()
                             selectEventLayersCheck.checked = false;
                             serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsEventServiceUrl });
 
@@ -256,6 +257,7 @@ Drawer {
                             allEventLayersCheck.checked = false;
                             drawPin = true;
                             menu.close();
+                            pinMessage.visible = 1;
                         } else {
                             drawPin = false;
                             sceneView.scene.operationalLayers.remove(4,1);
@@ -274,6 +276,50 @@ Drawer {
                     font.pixelSize: 12 * scaleFactor
                     anchors.verticalCenter: parent.verticalCenter
                     padding: 8
+                }
+            }
+        }
+
+        Text {
+            id: customServiceTitle
+            text: qsTr("Add Public Service: ")
+            color: "black"
+            font.pointSize: 12
+            anchors.left: parent.left
+            padding: 8
+        }
+
+        Rectangle {
+            id: customServiceRect
+            width: 0.95 * parent.width
+            height: 35 * scaleFactor
+            anchors.horizontalCenter: parent.horizontalCenter
+            radius: 6 * scaleFactor
+            border.color: "darkgrey"
+
+            TextInput {
+                id: textInput
+                validator: RegExpValidator { regExp: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w-:/?&=.]+$/ }
+                color: "black"
+                width: parent.width
+                height: 28
+                font.pointSize: 10
+                anchors.fill: parent
+                anchors.margins: 10 * scaleFactor
+                selectByMouse: true
+                selectedTextColor: "white"
+                selectionColor: "#249567"
+                clip: true
+                wrapMode: TextInput.WrapAnywhere
+
+                onAccepted: {
+                    focus = false;
+                    if (!/(?=\?.*service=wms?)(?=\?.*request=getCapabilities?).*/.test(textInput.text)) {
+                        textInput.text = textInput.text.split("?")[0].concat("?service=wms&request=getCapabilities");
+                        console.log(textInput.text, '%%%%%%%%%%%%%%%')
+                    } else {
+                        console.log(textInput.text, '22222%%%%%%%%%%%%%%%')
+                    }
                 }
             }
         }
