@@ -20,6 +20,7 @@ Page {
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-na/wms?service=wms&request=getCapabilities";
 
     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
+    property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
 
     property WmsService service2wk;
     property WmsLayerInfo layerNA2wk;
@@ -40,6 +41,11 @@ Page {
     property WmsService serviceEv
     property WmsLayerInfo layerNAEv;
     property WmsLayer wmsLayerEv;
+
+    property WmsService serviceGlo
+    property WmsLayerInfo layerGlo;
+    property WmsLayer wmsLayerGlo;
+    property var layerGloSL;
 
     property Scene scene;
     property string descriptionLyr;
@@ -70,6 +76,7 @@ Page {
 
             onClicked: if (sceneView.scene.operationalLayers.count >= 4) {
                            layerList = sceneView.scene.operationalLayers;
+
                            menu.open();
                        }
         }
@@ -201,10 +208,9 @@ Page {
                                                                                visible: true
                                                                            });
 
-                        sceneView.scene.operationalLayers.remove(4,1);
-                        sceneView.scene.operationalLayers.append(wmsLayerEv);
-                        sceneView.scene.operationalLayers.setProperty(4, "name", "Nearest Event");
-                        sceneView.scene.operationalLayers.setProperty(4, "description", layerNAEv.description);
+                        sceneView.scene.operationalLayers.insert(0, wmsLayerEv);
+                        sceneView.scene.operationalLayers.setProperty(0, "name", "Nearest Event");
+                        sceneView.scene.operationalLayers.setProperty(0, "description", layerNAEv.description);
 
                         graphicsOverlay.graphics.clear();
 
@@ -239,6 +245,17 @@ Page {
             service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
             serviceJan = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsJanServiceUrl });
             serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
+            serviceGlo = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsGlofasServiceUrl });
+
+            serviceGlo.loadStatusChanged.connect(function() {
+                if (serviceGlo.loadStatus === Enums.LoadStatusLoaded) {
+                    var serviceGloInfo = serviceGlo.serviceInfo;
+                    var layerInfos = serviceGloInfo.layerInfos;
+
+                    // get the all layers
+                    layerGloSL = layerInfos[0].sublayerInfos[3].sublayerInfos;
+                }
+            });
 
             // connect to loadStatusChanged signal of the service
             service2wk.loadStatusChanged.connect(function() {
@@ -321,6 +338,7 @@ Page {
             service3day.load();
             serviceJan.load();
             serviceRegW.load();
+            serviceGlo.load();
 
             // set the scene on the sceneview
             sceneView.scene = scene;

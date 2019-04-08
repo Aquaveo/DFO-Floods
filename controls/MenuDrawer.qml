@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
+import QtQuick.Layouts 1.3
 
 import ArcGIS.AppFramework 1.0
 import ArcGIS.AppFramework.Controls 1.0
@@ -13,6 +14,7 @@ Drawer {
 
     Column {
         id: mainColum
+        height: parent.height
         anchors.fill: parent
 
         Rectangle {
@@ -36,12 +38,14 @@ Drawer {
             color: "black"
             font.pointSize: 12
             anchors.left: parent.left
+            anchors.top: menuHeader.bottom
             padding: 8
         }
 
         ComboBox {
             id: comboBoxBasemap
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: basemapTitle.bottom
             width: 0.98 * parent.width
             height: 30 * scaleFactor
             Material.accent:"#00693e"
@@ -85,6 +89,7 @@ Drawer {
             color: "black"
             font.pointSize: 12
             anchors.left: parent.left
+            anchors.top: comboBoxBasemap.bottom
             padding: 8
         }
 
@@ -92,8 +97,9 @@ Drawer {
         ListView {
             id: layerVisibilityListView
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: layerContentTitle.bottom
             width: 0.95 * parent.width
-            height: childrenRect.height
+            height: childrenRect.height <= 0.3 * menu.height ? childrenRect.height : 0.3 * menu.height
             clip: true
 
             // Assign the model to the list model of sublayers
@@ -161,6 +167,7 @@ Drawer {
             color: "black"
             font.pointSize: 12
             anchors.left: parent.left
+            anchors.top: layerVisibilityListView.bottom
             padding: 8
         }
 
@@ -169,6 +176,7 @@ Drawer {
             width: 0.95 * parent.width
             height: 35 * scaleFactor
             anchors.left: parent.left
+            anchors.top: eventLayersTitle.bottom
 
             Row {
                 id: allExtremeEvRow
@@ -202,15 +210,17 @@ Drawer {
                                                                                            visible: true
                                                                                        });
 
-                                    sceneView.scene.operationalLayers.append(wmsLayerEv);
-                                    sceneView.scene.operationalLayers.setProperty(4, "name", "All Events");
-                                    sceneView.scene.operationalLayers.setProperty(4, "description", layerNAEv.description);
+                                    sceneView.scene.operationalLayers.insert(0, wmsLayerEv);
+                                    sceneView.scene.operationalLayers.setProperty(0, "name", "All Events");
+                                    sceneView.scene.operationalLayers.setProperty(0, "description", layerNAEv.description);
                                 }
                             });
 
                             serviceEv.load();
                         } else {
-                            sceneView.scene.operationalLayers.remove(4,1);
+                            if (sceneView.scene.operationalLayers.get(0).name === "All Events") {
+                                sceneView.scene.operationalLayers.remove(0,1);
+                            };
                         }
                     }
 
@@ -235,6 +245,7 @@ Drawer {
             width: 0.95 * parent.width
             height: 35 * scaleFactor
             anchors.left: parent.left
+            anchors.top: allExtremeEvRect.bottom
 
             Row {
                 id: selectExtremeEvRow
@@ -260,7 +271,9 @@ Drawer {
                             pinMessage.visible = 1;
                         } else {
                             drawPin = false;
-                            sceneView.scene.operationalLayers.remove(4,1);
+                            if (sceneView.scene.operationalLayers.get(0).name === "Nearest Event") {
+                                sceneView.scene.operationalLayers.remove(0,1);
+                            };
                         }
                     }
 
@@ -286,19 +299,22 @@ Drawer {
             color: "black"
             font.pointSize: 12
             anchors.left: parent.left
+            anchors.top: selectExtremeEvRect.bottom
             padding: 8
         }
 
         Rectangle {
-            id: customServiceRect
-            width: 0.95 * parent.width
+            id: textInputRect
+            width: 0.98 * parent.width
             height: 35 * scaleFactor
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: customServiceTitle.bottom
             radius: 6 * scaleFactor
             border.color: "darkgrey"
 
             TextInput {
                 id: textInput
+                text: qsTr("Enter public service host url...")
                 validator: RegExpValidator { regExp: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w-:/?&=.]+$/ }
                 color: "black"
                 width: parent.width
@@ -312,14 +328,110 @@ Drawer {
                 clip: true
                 wrapMode: TextInput.WrapAnywhere
 
+                onFocusChanged: {
+                    if (textInput.text === "Enter public service host url...") {
+                        textInput.text = ""
+                    }
+                }
+
                 onAccepted: {
                     focus = false;
                     if (!/(?=\?.*service=wms?)(?=\?.*request=getCapabilities?).*/.test(textInput.text)) {
                         textInput.text = textInput.text.split("?")[0].concat("?service=wms&request=getCapabilities");
-                        console.log(textInput.text, '%%%%%%%%%%%%%%%')
-                    } else {
-                        console.log(textInput.text, '22222%%%%%%%%%%%%%%%')
                     }
+                }
+            }
+        }
+
+        TabBar {
+            id: tabBar
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: textInputRect.bottom
+            width: 0.95 * parent.width
+            Material.accent:"#00693e"
+            background:  Rectangle {
+                color: "#249567"
+            }
+
+            TabButton {
+                contentItem: Text {
+                    text: qsTr("Suggested")
+                    color: tabBar.currentIndex == 0 ? "#00693e" : "black"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                background:  Rectangle {
+                    color: "white"
+                }
+            }
+            TabButton {
+                contentItem: Text {
+                    text: qsTr("Results")
+                    color: tabBar.currentIndex == 1 ? "#00693e" : "black"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+
+                background:  Rectangle {
+                    color: "white"
+                }
+            }
+        }
+
+        StackLayout {
+            id: stackLayout
+            width: 0.95 * parent.width
+            anchors.top: tabBar.bottom
+            height: parent.height - stackLayout.y - (20 * scaleFactor)
+            anchors.horizontalCenter: parent.horizontalCenter
+            currentIndex: tabBar.currentIndex
+            ListView {
+                id: suggestedList
+                height: parent.height
+                clip: true
+
+                model: layerGloSL
+
+                ScrollBar.vertical: ScrollBar {active: true}
+
+                delegate: Rectangle {
+                    id: stackListRect
+                    width: parent.width
+                    height: 40 * scaleFactor
+                    color: "transparent"
+                    anchors.fill: parent.fill
+
+                    Label{
+                        anchors.verticalCenter: parent.verticalCenter
+                        padding: 24 * scaleFactor
+                        text:title
+                    }
+
+                    MouseArea{
+                        anchors.fill:parent
+                        onClicked: {
+                            suggestedList.currentIndex = index;
+                            stackListRect.color = index===suggestedList.currentIndex ? "#249567":"transparent";
+
+                            var wmsGlofasLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                         layerInfos: [layerGloSL[index]]
+                                                                                     })
+
+                            sceneView.scene.operationalLayers.append(wmsGlofasLyr);
+                        }
+                    }
+                }
+            }
+
+            Item {
+                id: resultsTab
+            }
+
+            Connections {
+                target: layerVisibilityListView
+                onHeightChanged: {
+                    stackLayout.height = parent.height - stackLayout.y - (20 * scaleFactor)
                 }
             }
         }
