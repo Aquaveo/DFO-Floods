@@ -97,7 +97,7 @@ Page {
             active: true
             property bool isInitial: true
             onPositionChanged: {
-                if(sceneView.scene.loadStatus === Enums.LoadStatusLoaded && isInitial) {
+                if(sceneView.scene !== null && sceneView.scene.loadStatus === Enums.LoadStatusLoaded && isInitial) {
                     isInitial = false;
                     zoomToRegionLocation();
 

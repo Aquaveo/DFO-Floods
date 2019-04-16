@@ -19,6 +19,9 @@ Page {
     property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_SA/wms?service=wms&request=getCapabilities";
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-sa/wms?service=wms&request=getCapabilities";
 
+    property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
+    property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
+
     property WmsService service2wk;
     property WmsLayerInfo layerSA2wk;
     property WmsLayer wmsLayer2wk;
@@ -35,8 +38,26 @@ Page {
     property WmsLayerInfo layerSARegW;
     property WmsLayer wmsLayerRegW;
 
+    property WmsService serviceEv
+    property WmsLayerInfo layerNAEv;
+    property WmsLayer wmsLayerEv;
+
+    property WmsService serviceGlo
+    property WmsLayerInfo layerGlo;
+    property WmsLayer wmsLayerGlo;
+    property var layerGloSL;
+
+    property WmsService serviceCu
+    property WmsLayerInfo layerCu;
+    property WmsLayer wmsLayerCu;
+    property var layerCuSL;
+
     property Scene scene;
     property string descriptionLyr;
+
+    property bool drawPin: false;
+    property Point pinLocation;
+    property SimpleMarkerSceneSymbol symbolMarker;
 
     header: ToolBar {
         id: header
@@ -60,6 +81,7 @@ Page {
 
             onClicked: if (sceneView.scene.operationalLayers.count >= 4) {
                            layerList = sceneView.scene.operationalLayers;
+
                            menu.open();
                        }
         }
@@ -97,7 +119,7 @@ Page {
             active: true
             property bool isInitial: true
             onPositionChanged: {
-                if(sceneView.scene.loadStatus === Enums.LoadStatusLoaded && isInitial) {
+                if(sceneView.scene !== null && sceneView.scene.loadStatus === Enums.LoadStatusLoaded && isInitial) {
                     isInitial = false;
                     zoomToRegionLocation();
 

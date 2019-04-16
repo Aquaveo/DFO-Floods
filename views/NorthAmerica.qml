@@ -47,6 +47,11 @@ Page {
     property WmsLayer wmsLayerGlo;
     property var layerGloSL;
 
+    property WmsService serviceCu
+    property WmsLayerInfo layerCu;
+    property WmsLayer wmsLayerCu;
+    property var layerCuSL;
+
     property Scene scene;
     property string descriptionLyr;
 
@@ -114,9 +119,8 @@ Page {
             active: true
             property bool isInitial: true
             onPositionChanged: {
-                if(sceneView.scene.loadStatus === Enums.LoadStatusLoaded && isInitial) {
+                if(sceneView.scene !== null && sceneView.scene.loadStatus === Enums.LoadStatusLoaded && isInitial) {
                     isInitial = false;
-//                    locationBtn.zoomToCurrentLocation();
                     zoomToRegionLocation();
 
                     function zoomToRegionLocation(){
@@ -257,7 +261,6 @@ Page {
                 }
             });
 
-            // connect to loadStatusChanged signal of the service
             service2wk.loadStatusChanged.connect(function() {
                 if (service2wk.loadStatus === Enums.LoadStatusLoaded) {
                     // get the layer info list

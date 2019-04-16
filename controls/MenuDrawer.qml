@@ -12,7 +12,7 @@ Drawer {
     width: 0.75 * parent.width
     height: parent.height
 
-    Column {
+    Item {
         id: mainColum
         height: parent.height
         anchors.fill: parent
@@ -58,7 +58,7 @@ Drawer {
 
             model: ["Topographic","Streets","Imagery","Terrain"]
             onCurrentTextChanged: {
-                if (sceneView.scene.loadStatus === Enums.LoadStatusLoaded)
+                if (sceneView.scene !== null && sceneView.scene.loadStatus === Enums.LoadStatusLoaded)
                     changeBasemap();
             }
 
@@ -103,7 +103,6 @@ Drawer {
             clip: true
 
             // Assign the model to the list model of sublayers
-//            model: sceneView.scene.operationalLayers
             model: layerList
 
             // Assign the delegate to the delegate created above
@@ -339,6 +338,21 @@ Drawer {
                     if (!/(?=\?.*service=wms?)(?=\?.*request=getCapabilities?).*/.test(textInput.text)) {
                         textInput.text = textInput.text.split("?")[0].concat("?service=wms&request=getCapabilities");
                     }
+
+                    serviceCu = ArcGISRuntimeEnvironment.createObject("WmsService", { url: textInput.text });
+
+                    serviceCu.loadStatusChanged.connect(function() {
+                        if (serviceCu.loadStatus === Enums.LoadStatusLoaded) {
+                            var serviceCuInfo = serviceCu.serviceInfo;
+                            var layerInfos = serviceCuInfo.layerInfos;
+
+                            // get the all layers
+                            layerCuSL = layerInfos[0].sublayerInfos;
+                        }
+                    });
+
+                    serviceCu.load();
+                    tabBar.currentIndex = 1;
                 }
             }
         }
@@ -399,33 +413,97 @@ Drawer {
                     id: stackListRect
                     width: parent.width
                     height: 40 * scaleFactor
-                    color: "transparent"
+                    color: "lightgray"
                     anchors.fill: parent.fill
 
-                    Label{
+                    Label {
+                        anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         padding: 24 * scaleFactor
                         text:title
                     }
 
-                    MouseArea{
+                    MouseArea {
                         anchors.fill:parent
                         onClicked: {
-                            suggestedList.currentIndex = index;
-                            stackListRect.color = index===suggestedList.currentIndex ? "#249567":"transparent";
-
                             var wmsGlofasLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                          layerInfos: [layerGloSL[index]]
                                                                                      })
 
-                            sceneView.scene.operationalLayers.append(wmsGlofasLyr);
+                            var inContent = 0;
+                            var inContentIx = -1;
+
+                            sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
+                                if (lyr.name === layerGloSL[index].title) {
+                                    inContent = 1;
+                                    inContentIx = ix;
+                                }
+                            })
+
+                            if (inContent === 0) {
+                                stackListRect.color = "#249567";
+                                sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsGlofasLyr);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", layerGloSL[index].title);
+                            } else if (inContent === 1) {
+                                stackListRect.color = "lightgray";
+                                sceneView.scene.operationalLayers.remove(inContentIx, 1);
+                            }
                         }
                     }
                 }
             }
 
-            Item {
-                id: resultsTab
+            ListView {
+                id: resultsList
+                height: parent.height
+                clip: true
+
+                model: layerCuSL
+
+                ScrollBar.vertical: ScrollBar {active: true}
+
+                delegate: Rectangle {
+                    id: stackCuListRect
+                    width: parent.width
+                    height: 40 * scaleFactor
+                    color: "lightgray"
+                    anchors.fill: parent.fill
+
+                    Label {
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        padding: 24 * scaleFactor
+                        text:title
+                    }
+
+                    MouseArea {
+                        anchors.fill:parent
+                        onClicked: {
+                            var wmsCustomLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                         layerInfos: [layerCuSL[index]]
+                                                                                     })
+
+                            var inContent = 0;
+                            var inContentIx = -1;
+
+                            sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
+                                if (lyr.name === layerCuSL[index].title) {
+                                    inContent = 1;
+                                    inContentIx = ix;
+                                }
+                            })
+
+                            if (inContent === 0) {
+                                stackCuListRect.color = "#249567";
+                                sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsCustomLyr);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", layerCuSL[index].title);
+                            } else if (inContent === 1) {
+                                stackCuListRect.color = "lightgray";
+                                sceneView.scene.operationalLayers.remove(inContentIx, 1);
+                            }
+                        }
+                    }
+                }
             }
 
             Connections {
