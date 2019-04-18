@@ -71,9 +71,11 @@ Drawer {
                 bottomPadding: 13 * scaleFactor
             }
 
-            indicator {
+            indicator: Image {
                 width: 40 * scaleFactor
                 height: 40 * scaleFactor
+                source: "../assets/dropdown_arrow.png"
+                anchors.right: parent.right
             }
 
             onCurrentTextChanged: {
@@ -149,12 +151,31 @@ Drawer {
                     }
 
                     Switch {
+                        id: layerSwitch
                         width: 0.25 * layerVisibilityDelegate.width
                         height: layerVisibilityDelegate.height
 
                         indicator {
                             width: 35 * scaleFactor
                             height: 35 * scaleFactor
+                        }
+
+                        Binding {
+                            target: (layerSwitch.indicator ? layerSwitch.indicator.children[0] : null)
+                            property: 'height'
+                            value: 14 * scaleFactor
+                        }
+
+                        Binding {
+                            target: (layerSwitch.indicator ? layerSwitch.indicator.children[1] : null)
+                            property: 'width'
+                            value: 20 * scaleFactor
+                        }
+
+                        Binding {
+                            target: (layerSwitch.indicator ? layerSwitch.indicator.children[1] : null)
+                            property: 'height'
+                            value: 20 * scaleFactor
                         }
 
                         Material.accent: "#00693e"
@@ -224,9 +245,31 @@ Drawer {
                     height: allExtremeEvRect.height
                     Material.accent: "#00693e"
 
-                    indicator {
+                    indicator: Rectangle {
                         width: 30 * scaleFactor
                         height: 30 * scaleFactor
+                        radius: 2 * scaleFactor
+                        anchors.leftMargin: 8 * scaleFactor
+                        anchors.verticalCenter: parent.verticalCenter
+                        border {
+                            color: "darkgrey"
+                            width: 2 * scaleFactor
+                        }
+
+                        Rectangle {
+                            width: parent.width
+                            height: parent.height
+                            radius: 2 * scaleFactor
+                            color: "#00693e"
+                            visible: allEventLayersCheck.checked
+
+                            Image {
+                                width: parent.width * 0.8
+                                height: parent.height * 0.8
+                                anchors.centerIn: parent
+                                source: "../assets/checkmark.png"
+                            }
+                        }
                     }
 
                     onCheckedChanged: {
@@ -300,9 +343,31 @@ Drawer {
                     width: selectExtremeEvRect.height
                     height: selectExtremeEvRect.height
 
-                    indicator {
+                    indicator: Rectangle {
                         width: 30 * scaleFactor
                         height: 30 * scaleFactor
+                        radius: 2 * scaleFactor
+                        anchors.leftMargin: 8 * scaleFactor
+                        anchors.verticalCenter: parent.verticalCenter
+                        border {
+                            color: "darkgrey"
+                            width: 2 * scaleFactor
+                        }
+
+                        Rectangle {
+                            width: parent.width
+                            height: parent.height
+                            radius: 2 * scaleFactor
+                            color: "#00693e"
+                            visible: selectEventLayersCheck.checked
+
+                            Image {
+                                width: parent.width * 0.8
+                                height: parent.height * 0.8
+                                anchors.centerIn: parent
+                                source: "../assets/checkmark.png"
+                            }
+                        }
                     }
 
                     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
@@ -366,7 +431,7 @@ Drawer {
             TextInput {
                 id: textInput
                 text: qsTr("Enter public service host url...")
-                validator: RegExpValidator { regExp: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w-:/?&=.]+$/ }
+                validator: RegExpValidator { regExp: /^(?:http(s)?\:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w-:/?&=.]+$/ }
                 color: "black"
                 width: parent.width
                 height: 40 * scaleFactor

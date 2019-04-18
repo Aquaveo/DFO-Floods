@@ -65,7 +65,7 @@ Rectangle{
                 contentHeight: descLyrText.height
                 clip:true
 
-                Text{
+                Text {
                     id: descLyrText
                     text: pageItem.descriptionLyr
                     y: 30 * scaleFactor
