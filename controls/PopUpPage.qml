@@ -62,9 +62,12 @@ Rectangle {
             }
 
             clip: true
-            ScrollBar.vertical: ScrollBar {active: true}
+            ScrollBar.vertical: ScrollBar {
+                active: true
+                width: 20 * scaleFactor
+            }
 
-            delegate: Rectangle{
+            delegate: Rectangle {
                 width:280 * scaleFactor
                 height: 40 * scaleFactor
                 color: qmlfile.toString().match(viewItems.get(index).url.toString().replace('..', ''))
@@ -73,12 +76,10 @@ Rectangle {
                          :"transparent"
                        :"transparent"
 
-                Label{
+                Label {
                     anchors.verticalCenter: parent.verticalCenter
                     padding: 24 * scaleFactor
-                    font {
-                        pixelSize: 12 * scaleFactor
-                    }
+                    font.pixelSize: 14 * scaleFactor
                     text:name
                 }
 
@@ -98,17 +99,17 @@ Rectangle {
         Text {
             id:cancelText
             anchors.bottom: parent.bottom
-            anchors.right:parent.right
+            anchors.right: parent.right
             anchors.bottomMargin: 13 * scaleFactor
             anchors.rightMargin: 16 * scaleFactor
-            text:qsTr("CANCEL")
-            color:"#00693e"
-            font{
+            text: qsTr("CANCEL")
+            color: "#00693e"
+            font {
                 pixelSize: 14 * scaleFactor
                 bold:true
             }
 
-            MouseArea{
+            MouseArea {
                 anchors.fill: parent
                 onClicked: {
                     popUp.visible = 0
@@ -124,7 +125,7 @@ Rectangle {
         width: source.width
         height: source.height
         cached: true
-        radius: 8.0
+        radius: 8 * scaleFactor
         samples: 17
         color: "#80000000"
         smooth: true

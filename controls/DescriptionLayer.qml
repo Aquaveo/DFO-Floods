@@ -20,7 +20,7 @@ Rectangle{
         Rectangle{
             id:descLyrheader
             Layout.alignment: Qt.AlignTop
-            color:"#00693e"
+            color: "#00693e"
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 50 * scaleFactor
 
@@ -28,9 +28,9 @@ Rectangle{
                 source: "../assets/clear.png"
                 height: 30 * scaleFactor
                 width: 30 * scaleFactor
-                checkedColor : "transparent"
-                pressedColor : "transparent"
-                hoverColor : "transparent"
+                checkedColor: "transparent"
+                pressedColor: "transparent"
+                hoverColor: "transparent"
                 glowColor : "transparent"
                 anchors {
                     right: parent.right
@@ -55,7 +55,7 @@ Rectangle{
             }
         }
 
-        Rectangle{
+        Rectangle {
             color:"black"
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -67,7 +67,7 @@ Rectangle{
 
                 Text{
                     id: descLyrText
-                    text:pageItem.descriptionLyr
+                    text: pageItem.descriptionLyr
                     y: 30 * scaleFactor
                     textFormat: Text.StyledText
                     anchors.horizontalCenterOffset: 0
@@ -78,9 +78,7 @@ Rectangle{
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
                     anchors.horizontalCenter: parent.horizontalCenter
-                    font {
-                        pixelSize: app.baseFontSize
-                    }
+                    font.pixelSize: app.baseFontSize
                     onLinkActivated: Qt.openUrlExternally(link)
                 }
             }

@@ -12,8 +12,9 @@ Drawer {
     width: 0.75 * parent.width
     height: parent.height
 
-    Flickable {
+    Item {
         id: mainColum
+        width: parent.width
         height: parent.height
         anchors.fill: parent
 
@@ -38,9 +39,10 @@ Drawer {
             text: qsTr("Basemap: ")
             color: "black"
             font.pixelSize: 14 * scaleFactor
+            font.bold: true
             anchors.left: parent.left
             anchors.top: menuHeader.bottom
-            padding: 8
+            padding: 8 * scaleFactor
         }
 
         ComboBox {
@@ -48,23 +50,30 @@ Drawer {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: basemapTitle.bottom
             width: 0.98 * parent.width
-            height: 30 * scaleFactor
+            height: 40 * scaleFactor
             Material.accent:"#00693e"
             background: Rectangle {
                 radius: 6 * scaleFactor
                 border.color: "darkgrey"
                 width: parent.width
-                height: 30 * scaleFactor
+                height: 40 * scaleFactor
             }
 
-            font.pixelSize: 12 * scaleFactor
+            font.pixelSize: 14 * scaleFactor
             model: ["Topographic","Streets","Imagery","Terrain"]
 
             delegate: ItemDelegate {
                 Material.accent:"#00693e"
                 width: parent.width
                 text: comboBoxBasemap.model[index]
-                font.pixelSize: 12 * scaleFactor
+                font.pixelSize: 14 * scaleFactor
+                topPadding: 13 * scaleFactor
+                bottomPadding: 13 * scaleFactor
+            }
+
+            indicator {
+                width: 40 * scaleFactor
+                height: 40 * scaleFactor
             }
 
             onCurrentTextChanged: {
@@ -104,9 +113,10 @@ Drawer {
             text: qsTr("Layers List: ")
             color: "black"
             font.pixelSize: 14 * scaleFactor
+            font.bold: true
             anchors.left: parent.left
             anchors.top: comboBoxBasemap.bottom
-            padding: 8
+            padding: 8 * scaleFactor
         }
 
         // Create a list view to display the layer items
@@ -135,12 +145,17 @@ Drawer {
                         width: 0.65 * layerVisibilityDelegate.width
                         text: name
                         wrapMode: Text.WordWrap
-                        font.pixelSize: 12 * scaleFactor
+                        font.pixelSize: 14 * scaleFactor
                     }
 
                     Switch {
                         width: 0.25 * layerVisibilityDelegate.width
                         height: layerVisibilityDelegate.height
+
+                        indicator {
+                            width: 35 * scaleFactor
+                            height: 35 * scaleFactor
+                        }
 
                         Material.accent: "#00693e"
 
@@ -183,17 +198,19 @@ Drawer {
             text: qsTr("Extreme Events: ")
             color: "black"
             font.pixelSize: 14 * scaleFactor
+            font.bold: true
             anchors.left: parent.left
             anchors.top: layerVisibilityListView.bottom
-            padding: 8
+            padding: 8 * scaleFactor
         }
 
         Rectangle {
             id: allExtremeEvRect
             width: 0.95 * parent.width
-            height: 35 * scaleFactor
+            height: 40 * scaleFactor
             anchors.left: parent.left
             anchors.top: eventLayersTitle.bottom
+            anchors.leftMargin: 8 * scaleFactor
 
             Row {
                 id: allExtremeEvRow
@@ -206,6 +223,11 @@ Drawer {
                     width: allExtremeEvRect.height
                     height: allExtremeEvRect.height
                     Material.accent: "#00693e"
+
+                    indicator {
+                        width: 30 * scaleFactor
+                        height: 30 * scaleFactor
+                    }
 
                     onCheckedChanged: {
                         if (checked == true) {
@@ -250,11 +272,11 @@ Drawer {
 
                 Text {
                     width: 0.45 * allExtremeEvRow.width
-                    text: qsTr("View all")
+                    text: qsTr("All Events")
                     wrapMode: Text.WordWrap
-                    font.pixelSize: 12 * scaleFactor
+                    font.pixelSize: 14 * scaleFactor
                     anchors.verticalCenter: parent.verticalCenter
-                    padding: 8
+                    padding: 8 * scaleFactor
                 }
             }
         }
@@ -262,9 +284,10 @@ Drawer {
         Rectangle {
             id: selectExtremeEvRect
             width: 0.95 * parent.width
-            height: 35 * scaleFactor
+            height: 40 * scaleFactor
             anchors.left: parent.left
             anchors.top: allExtremeEvRect.bottom
+            anchors.leftMargin: 8 * scaleFactor
 
             Row {
                 id: selectExtremeEvRow
@@ -276,6 +299,12 @@ Drawer {
                     id: selectEventLayersCheck
                     width: selectExtremeEvRect.height
                     height: selectExtremeEvRect.height
+
+                    indicator {
+                        width: 30 * scaleFactor
+                        height: 30 * scaleFactor
+                    }
+
                     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
 
                     property WmsService serviceEv
@@ -292,7 +321,7 @@ Drawer {
                             pinMessage.visible = 1;
                         } else {
                             drawPin = false;
-                            if (sceneView.scene.operationalLayers.get(0).name === "Nearest Event") {
+                            if (sceneView.scene.operationalLayers.get(0).name === "Nearest Events") {
                                 sceneView.scene.operationalLayers.remove(0,1);
                             };
                         }
@@ -305,11 +334,11 @@ Drawer {
 
                 Text {
                     width: 0.45 * selectExtremeEvRow.width
-                    text: qsTr("Select nearest event")
+                    text: qsTr("Nearest events")
                     wrapMode: Text.WordWrap
-                    font.pixelSize: 12 * scaleFactor
+                    font.pixelSize: 14 * scaleFactor
                     anchors.verticalCenter: parent.verticalCenter
-                    padding: 8
+                    padding: 8 * scaleFactor
                 }
             }
         }
@@ -318,16 +347,17 @@ Drawer {
             id: customServiceTitle
             text: qsTr("Add Public Service: ")
             color: "black"
-            font.pixelSize: 12 * scaleFactor
+            font.pixelSize: 14 * scaleFactor
+            font.bold: true
             anchors.left: parent.left
             anchors.top: selectExtremeEvRect.bottom
-            padding: 8
+            padding: 8 * scaleFactor
         }
 
         Rectangle {
             id: textInputRect
             width: 0.98 * parent.width
-            height: 35 * scaleFactor
+            height: 40 * scaleFactor
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: customServiceTitle.bottom
             radius: 6 * scaleFactor
@@ -339,8 +369,8 @@ Drawer {
                 validator: RegExpValidator { regExp: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w-:/?&=.]+$/ }
                 color: "black"
                 width: parent.width
-                height: 28
-                font.pixelSize: 12 * scaleFactor
+                height: 40 * scaleFactor
+                font.pixelSize: 14 * scaleFactor
                 anchors.fill: parent
                 anchors.margins: 10 * scaleFactor
                 selectByMouse: true
@@ -384,6 +414,7 @@ Drawer {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: textInputRect.bottom
             width: 0.95 * parent.width
+            height: 40 * scaleFactor
             Material.accent:"#00693e"
             background:  Rectangle {
                 color: "#249567"
@@ -392,11 +423,14 @@ Drawer {
             TabButton {
                 contentItem: Text {
                     text: qsTr("Suggested")
-                    font.pixelSize: 12 * scaleFactor
+                    font.pixelSize: 14 * scaleFactor
                     color: tabBar.currentIndex == 0 ? "#00693e" : "black"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+
+                topPadding: 12 * scaleFactor
+                bottomPadding: 12 * scaleFactor
 
                 background:  Rectangle {
                     color: "white"
@@ -405,11 +439,14 @@ Drawer {
             TabButton {
                 contentItem: Text {
                     text: qsTr("Results")
-                    font.pixelSize: 12 * scaleFactor
+                    font.pixelSize: 14 * scaleFactor
                     color: tabBar.currentIndex == 1 ? "#00693e" : "black"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
+
+                topPadding: 12 * scaleFactor
+                bottomPadding: 12 * scaleFactor
 
                 background:  Rectangle {
                     color: "white"
@@ -431,7 +468,10 @@ Drawer {
 
                 model: layerGloSL
 
-                ScrollBar.vertical: ScrollBar {active: true}
+                ScrollBar.vertical: ScrollBar {
+                    active: true
+                    width: 20 * scaleFactor
+                }
 
                 delegate: Rectangle {
                     id: stackListRect
@@ -445,7 +485,7 @@ Drawer {
                         anchors.verticalCenter: parent.verticalCenter
                         padding: 24 * scaleFactor
                         text:title
-                        font.pixelSize: 12 * scaleFactor
+                        font.pixelSize: 14 * scaleFactor
                     }
 
                     MouseArea {
@@ -499,7 +539,7 @@ Drawer {
                         anchors.verticalCenter: parent.verticalCenter
                         padding: 24 * scaleFactor
                         text:title
-                        font.pixelSize: 12 * scaleFactor
+                        font.pixelSize: 14 * scaleFactor
                     }
 
                     MouseArea {

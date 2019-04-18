@@ -28,10 +28,10 @@ Rectangle{
                 source: "../assets/clear.png"
                 height: 30 * scaleFactor
                 width: 30 * scaleFactor
-                checkedColor : "transparent"
-                pressedColor : "transparent"
-                hoverColor : "transparent"
-                glowColor : "transparent"
+                checkedColor: "transparent"
+                pressedColor: "transparent"
+                hoverColor: "transparent"
+                glowColor: "transparent"
                 anchors {
                     right: parent.right
                     rightMargin: 10 * scaleFactor
@@ -54,7 +54,7 @@ Rectangle{
             }
         }
 
-        Rectangle{
+        Rectangle {
             color:"black"
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -64,9 +64,9 @@ Rectangle{
                 contentHeight: descText.height
                 clip:true
                 
-                Text{
+                Text {
                     id: descText
-                    text:descriptionText
+                    text: descriptionText
                     y: 30 * scaleFactor
                     textFormat: Text.StyledText
                     anchors.horizontalCenterOffset: 0
@@ -77,9 +77,7 @@ Rectangle{
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
                     anchors.horizontalCenter: parent.horizontalCenter
-                    font {
-                        pixelSize: app.baseFontSize
-                    }
+                    font.pixelSize: app.baseFontSize
                     onLinkActivated: Qt.openUrlExternally(link)
                 }
             }

@@ -215,7 +215,7 @@ Page {
                                                                            });
 
                         sceneView.scene.operationalLayers.insert(0, wmsLayerEv);
-                        sceneView.scene.operationalLayers.setProperty(0, "name", "Nearest Event");
+                        sceneView.scene.operationalLayers.setProperty(0, "name", "Nearest Events");
                         sceneView.scene.operationalLayers.setProperty(0, "description", layerNAEv.description);
 
                         graphicsOverlay.graphics.clear();
