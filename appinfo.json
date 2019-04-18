@@ -1,4 +1,5 @@
 {
+    "arcgisRuntime": 1004,
     "capabilities": {
         "audio": false,
         "backgroundBluetoothCentral": false,
@@ -23,10 +24,10 @@
     },
     "deployment": {
         "android": {
-            "packageName": ""
+            "packageName": "edu.colorado.floodobservatory"
         },
         "arcgisRuntimeExtensionsLicense": "",
-        "arcgisRuntimeLicense": "runtimelite,1000,rud5670424291,none,MJJC7XLS1MHD8YAJM211",
+        "arcgisRuntimeLicense": "runtimelite,1000,rud2249368337,none,TRB3LNBHPDJ0J9HSX224",
         "clientId": "",
         "ios": {
             "bundleId": "",
@@ -90,6 +91,6 @@
     "urlScheme": "",
     "version": {
         "major": 1,
-        "micro": 1
+        "micro": 2
     }
 }

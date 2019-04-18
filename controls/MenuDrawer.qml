@@ -12,7 +12,7 @@ Drawer {
     width: 0.75 * parent.width
     height: parent.height
 
-    Item {
+    Flickable {
         id: mainColum
         height: parent.height
         anchors.fill: parent
@@ -27,7 +27,8 @@ Drawer {
                 id: menuTitle
                 text: qsTr("Menu")
                 color: "white"
-                font.pointSize: 18
+                font.pixelSize: app.baseFontSize * 1.1
+                font.bold: true
                 anchors.centerIn: parent
             }
         }
@@ -36,7 +37,7 @@ Drawer {
             id: basemapTitle
             text: qsTr("Basemap: ")
             color: "black"
-            font.pointSize: 12
+            font.pixelSize: 14 * scaleFactor
             anchors.left: parent.left
             anchors.top: menuHeader.bottom
             padding: 8
@@ -56,28 +57,43 @@ Drawer {
                 height: 30 * scaleFactor
             }
 
+            font.pixelSize: 12 * scaleFactor
             model: ["Topographic","Streets","Imagery","Terrain"]
+
+            delegate: ItemDelegate {
+                Material.accent:"#00693e"
+                width: parent.width
+                text: comboBoxBasemap.model[index]
+                font.pixelSize: 12 * scaleFactor
+            }
+
             onCurrentTextChanged: {
-                if (sceneView.scene !== null && sceneView.scene.loadStatus === Enums.LoadStatusLoaded)
+                if (sceneView.scene !== null && sceneView.scene.loadStatus === Enums.LoadStatusLoaded) {
                     changeBasemap();
+                }
             }
 
             function changeBasemap() {
                 switch (comboBoxBasemap.currentText) {
                 case "Topographic":
                     sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
+                    menu.close();
                     break;
                 case "Streets":
                     sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapStreets");
+                    menu.close();
                     break;
                 case "Imagery":
                     sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapImageryWithLabels");
+                    menu.close();
                     break;
                 case "Terrain":
                     sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTerrainWithLabels");
+                    menu.close();
                     break;
                 default:
                     sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
+                    menu.close();
                     break;
                 }
             }
@@ -87,7 +103,7 @@ Drawer {
             id: layerContentTitle
             text: qsTr("Layers List: ")
             color: "black"
-            font.pointSize: 12
+            font.pixelSize: 14 * scaleFactor
             anchors.left: parent.left
             anchors.top: comboBoxBasemap.bottom
             padding: 8
@@ -116,14 +132,15 @@ Drawer {
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 0.65 * layerVisibilityListView.width
+                        width: 0.65 * layerVisibilityDelegate.width
                         text: name
                         wrapMode: Text.WordWrap
                         font.pixelSize: 12 * scaleFactor
                     }
 
                     Switch {
-                        width: 0.25 * layerVisibilityListView.width
+                        width: 0.25 * layerVisibilityDelegate.width
+                        height: layerVisibilityDelegate.height
 
                         Material.accent: "#00693e"
 
@@ -139,7 +156,8 @@ Drawer {
                     Button {
                         id:infoLayer
 
-                        width: 0.10 * layerVisibilityListView.width
+                        width: 0.10 * layerVisibilityDelegate.width
+                        height: layerVisibilityDelegate.height
 
                         Material.background: "transparent"
 
@@ -164,7 +182,7 @@ Drawer {
             id: eventLayersTitle
             text: qsTr("Extreme Events: ")
             color: "black"
-            font.pointSize: 12
+            font.pixelSize: 14 * scaleFactor
             anchors.left: parent.left
             anchors.top: layerVisibilityListView.bottom
             padding: 8
@@ -185,6 +203,8 @@ Drawer {
 
                 CheckBox {
                     id: allEventLayersCheck
+                    width: allExtremeEvRect.height
+                    height: allExtremeEvRect.height
                     Material.accent: "#00693e"
 
                     onCheckedChanged: {
@@ -254,6 +274,8 @@ Drawer {
 
                 CheckBox {
                     id: selectEventLayersCheck
+                    width: selectExtremeEvRect.height
+                    height: selectExtremeEvRect.height
                     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
 
                     property WmsService serviceEv
@@ -296,7 +318,7 @@ Drawer {
             id: customServiceTitle
             text: qsTr("Add Public Service: ")
             color: "black"
-            font.pointSize: 12
+            font.pixelSize: 12 * scaleFactor
             anchors.left: parent.left
             anchors.top: selectExtremeEvRect.bottom
             padding: 8
@@ -318,7 +340,7 @@ Drawer {
                 color: "black"
                 width: parent.width
                 height: 28
-                font.pointSize: 10
+                font.pixelSize: 12 * scaleFactor
                 anchors.fill: parent
                 anchors.margins: 10 * scaleFactor
                 selectByMouse: true
@@ -370,6 +392,7 @@ Drawer {
             TabButton {
                 contentItem: Text {
                     text: qsTr("Suggested")
+                    font.pixelSize: 12 * scaleFactor
                     color: tabBar.currentIndex == 0 ? "#00693e" : "black"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -382,6 +405,7 @@ Drawer {
             TabButton {
                 contentItem: Text {
                     text: qsTr("Results")
+                    font.pixelSize: 12 * scaleFactor
                     color: tabBar.currentIndex == 1 ? "#00693e" : "black"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -421,6 +445,7 @@ Drawer {
                         anchors.verticalCenter: parent.verticalCenter
                         padding: 24 * scaleFactor
                         text:title
+                        font.pixelSize: 12 * scaleFactor
                     }
 
                     MouseArea {
@@ -474,6 +499,7 @@ Drawer {
                         anchors.verticalCenter: parent.verticalCenter
                         padding: 24 * scaleFactor
                         text:title
+                        font.pixelSize: 12 * scaleFactor
                     }
 
                     MouseArea {
@@ -514,4 +540,10 @@ Drawer {
             }
         }
     }
+
+//    onHeightChanged: {
+//        if (menu.height <= menu.width * 1.25) {
+//            mainColum.clip = true;
+//        }
+//    }
 }

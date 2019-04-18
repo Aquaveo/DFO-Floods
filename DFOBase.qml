@@ -53,6 +53,11 @@ App{
         id:descPage
         visible: false
     }
+
+    Controls.PinMessage {
+        id:pinMessage
+        visible: false
+    }
 }
 
 

@@ -6,3 +6,9 @@ signApp=false
 
 [Windows]
 signApp=false
+
+[CloudMake]
+notifications=normal
+targetAndroid=true
+targetAndroidx86=false
+targetiOS=false

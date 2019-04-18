@@ -10,7 +10,7 @@ RoundButton{
     id: locationBtn
     radius: 30 * scaleFactor
     width: 60 * scaleFactor
-    height: width
+    height: 60 * scaleFactor
     Material.elevation: 6
     Material.background: "#00693e"
 
@@ -18,7 +18,7 @@ RoundButton{
         right: parent.right
         top: parent.top
         rightMargin: 20 * scaleFactor
-        topMargin: 65 * scaleFactor
+        topMargin: 75 * scaleFactor
     }
 
     Image{

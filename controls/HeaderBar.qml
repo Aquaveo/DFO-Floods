@@ -12,11 +12,11 @@ RowLayout{
     clip:true
 
     Rectangle{
-        Layout.preferredWidth: 50*scaleFactor
+        Layout.preferredWidth: 50 * scaleFactor
     }
 
     Text {
-        text: qsTr("DFO - ") + viewName
+        text: "DFO - " + qsTr(viewName)
         color:"white"
         font.pixelSize: app.baseFontSize * 1.1
         font.bold: true
@@ -26,10 +26,10 @@ RowLayout{
         Layout.alignment: Qt.AlignCenter
     }
 
-    Rectangle{
+    Rectangle {
         id:infoImageRect
         Layout.alignment: Qt.AlignRight
-        Layout.preferredWidth: 50*scaleFactor
+        Layout.preferredWidth: 50 * scaleFactor
 
         ImageButton {
             id:infoImage

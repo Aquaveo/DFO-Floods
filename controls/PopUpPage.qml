@@ -77,7 +77,7 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     padding: 24 * scaleFactor
                     font {
-                        pixelSize: app.baseFontSize * 0.8
+                        pixelSize: 12 * scaleFactor
                     }
                     text:name
                 }
@@ -104,7 +104,7 @@ Rectangle {
             text:qsTr("CANCEL")
             color:"#00693e"
             font{
-                pixelSize: baseFontSize * 0.9
+                pixelSize: 14 * scaleFactor
                 bold:true
             }
 

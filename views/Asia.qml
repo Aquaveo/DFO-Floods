@@ -47,6 +47,8 @@ Page {
 
         ToolButton {
             id: menuButton
+            width: 45 * scaleFactor
+            height: 45 * scaleFactor
             anchors {
                 left: parent.left
                 verticalCenter: parent.verticalCenter

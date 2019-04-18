@@ -6,7 +6,7 @@ RoundButton {
     id:switchBtn
     radius: 30 * scaleFactor
     width: 60 * scaleFactor
-    height: width
+    height: 60 * scaleFactor
     Material.elevation: 6
     Material.background: "#00693e"
     anchors {
