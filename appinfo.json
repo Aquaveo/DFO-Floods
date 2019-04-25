@@ -30,7 +30,7 @@
         "arcgisRuntimeLicense": "runtimelite,1000,rud2249368337,none,TRB3LNBHPDJ0J9HSX224",
         "clientId": "",
         "ios": {
-            "bundleId": "",
+            "bundleId": "edu.colorado.floodobservatory",
             "codeSignIdentity": ""
         },
         "macos": {
@@ -91,6 +91,6 @@
     "urlScheme": "",
     "version": {
         "major": 1,
-        "micro": 3
+        "micro": 8
     }
 }

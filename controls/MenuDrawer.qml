@@ -12,7 +12,7 @@ Drawer {
     width: 0.75 * parent.width
     height: parent.height
 
-    Item {
+    Flickable {
         id: mainColum
         width: parent.width
         height: parent.height
@@ -127,7 +127,7 @@ Drawer {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: layerContentTitle.bottom
             width: 0.95 * parent.width
-            height: childrenRect.height <= 0.3 * menu.height ? childrenRect.height : 0.3 * menu.height
+            height: childrenRect.height <= 0.25 * menu.height ? childrenRect.height : 0.25 * menu.height
             clip: true
 
             // Assign the model to the list model of sublayers
@@ -137,9 +137,10 @@ Drawer {
             delegate: Item {
                 id: layerVisibilityDelegate
                 width: parent.width
-                height: 35 * scaleFactor
+                height: layerRow.height < 35 * scaleFactor ? 35 * scaleFactor : layerRow.height
 
                 Row {
+                    id: layerRow
                     spacing: 0
                     anchors.verticalCenter: parent.verticalCenter
                     Text {
@@ -431,11 +432,12 @@ Drawer {
             TextInput {
                 id: textInput
                 text: qsTr("Enter public service host url...")
-                validator: RegExpValidator { regExp: /^(?:http(s)?\:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w-:/?&=.]+$/ }
+                validator: RegExpValidator { regExp: /^(?:[H|h]ttp(s)?\:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w-:/?&=.]+$/ }
                 color: "black"
                 width: parent.width
                 height: 40 * scaleFactor
                 font.pixelSize: 14 * scaleFactor
+                font.capitalization: Font.AllLowercase
                 anchors.fill: parent
                 anchors.margins: 10 * scaleFactor
                 selectByMouse: true
@@ -452,6 +454,11 @@ Drawer {
 
                 onAccepted: {
                     focus = false;
+                    var searchPattern = new RegExp('^(?:[H|h]ttp(s)?\:\/\/){1}')
+                    if (!searchPattern.test(textInput.text)) {
+                        textInput.text = "http://" + textInput.text;
+                    }
+
                     if (!/(?=\?.*service=wms?)(?=\?.*request=getCapabilities?).*/.test(textInput.text)) {
                         textInput.text = textInput.text.split("?")[0].concat("?service=wms&request=getCapabilities");
                     }
@@ -523,7 +530,7 @@ Drawer {
             id: stackLayout
             width: 0.95 * parent.width
             anchors.top: tabBar.bottom
-            height: parent.height - stackLayout.y - (20 * scaleFactor)
+            height: menu.height > menu.width * 1.25 ? menu.height - stackLayout.y - (20 * scaleFactor) : 0.25 * menu.width
             anchors.horizontalCenter: parent.horizontalCenter
             currentIndex: tabBar.currentIndex
             ListView {
@@ -574,6 +581,7 @@ Drawer {
                                 stackListRect.color = "#249567";
                                 sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsGlofasLyr);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", layerGloSL[index].title);
+                                menu.close();
                             } else if (inContent === 1) {
                                 stackListRect.color = "lightgray";
                                 sceneView.scene.operationalLayers.remove(inContentIx, 1);
@@ -628,6 +636,7 @@ Drawer {
                                 stackCuListRect.color = "#249567";
                                 sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsCustomLyr);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", layerCuSL[index].title);
+                                menu.close();
                             } else if (inContent === 1) {
                                 stackCuListRect.color = "lightgray";
                                 sceneView.scene.operationalLayers.remove(inContentIx, 1);
@@ -640,15 +649,23 @@ Drawer {
             Connections {
                 target: layerVisibilityListView
                 onHeightChanged: {
-                    stackLayout.height = parent.height - stackLayout.y - (20 * scaleFactor)
+                    if (menu.height > menu.width * 1.25) {
+                        stackLayout.height = parent.height - stackLayout.y - (20 * scaleFactor);
+                    } else {
+                        stackLayout.height = 0.25 * menu.width;
+                    }
                 }
             }
         }
     }
 
-//    onHeightChanged: {
-//        if (menu.height <= menu.width * 1.25) {
-//            mainColum.clip = true;
-//        }
-//    }
+    onHeightChanged: {
+        if (menu.height <= menu.width * 1.25) {
+            mainColum.contentHeight = (menuHeader.height + comboBoxBasemap.height + layerVisibilityListView.height +
+                    allExtremeEvRect.height + selectExtremeEvRect.height + textInputRect.height + tabBar.height +
+                    stackLayout.height + (160 * scaleFactor));
+        } else {
+            mainColum.contentHeight = menu.height;
+        }
+    }
 }

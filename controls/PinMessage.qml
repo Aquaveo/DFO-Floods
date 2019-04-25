@@ -16,8 +16,8 @@ Rectangle {
         id: pinMessage
         text: qsTr("Zoom in and tap on a location")
         anchors.centerIn: parent
+        font.pixelSize: 12 * scaleFactor
         font.bold: true
-        font.pointSize: 10
         color: "white"
     }
 }

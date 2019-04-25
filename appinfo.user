@@ -1,5 +1,7 @@
 [IOS]
 distributionMethod=development
+certificate=C:/OpenSSL-Win64/bin/ios_development.p12
+provisioningProfile=C:/Users/msouffront/Downloads/DFO_App_Test_Sixy.mobileprovision
 
 [MacOS]
 signApp=false
@@ -8,7 +10,8 @@ signApp=false
 signApp=false
 
 [CloudMake]
-notifications=normal
+notifications=none
 targetAndroid=true
 targetAndroidx86=false
-targetiOS=false
+targetiOS=true
+targetMacOS=false
