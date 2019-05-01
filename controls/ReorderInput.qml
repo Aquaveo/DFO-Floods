@@ -53,8 +53,6 @@ Rectangle {
                         }
                     })
 
-                    console.log(reoIx, model.index, 'yessssss');
-
                     sceneView.scene.operationalLayers.remove(reoIx, 1);
                     sceneView.scene.operationalLayers.insert(model.index, reoLyr);
                     sceneView.scene.operationalLayers.setProperty(model.index, "name", reoLyr.title);

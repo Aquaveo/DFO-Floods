@@ -136,7 +136,7 @@ Page {
             id: graphicsOverlay
         }
 
-        attributionTextVisible: false
+//        attributionTextVisible: false
 
         Scene {
             id: scene
@@ -230,8 +230,6 @@ Page {
                                                                                            targetScale: 1000000 * layerInfos[0].sublayerInfos[nearestTile[1]].extent.width * scaleFactor
                                                                                        });
                         sceneView.setViewpoint(newViewPointCenter);
-
-
                     }
                 });
 

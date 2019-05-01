@@ -32,6 +32,16 @@ RoundButton {
             }
         })
 
+        if (menu.contentItem.children[0].contentItem.children[6].children[0].children[1] &&
+                menu.contentItem.children[0].contentItem.children[6].children[0].children[1].text === remLyr.name) {
+            menu.contentItem.children[0].contentItem.children[6].children[0].children[0].checked = false;
+        }
+
+        if (menu.contentItem.children[0].contentItem.children[7].children[0].children[1] &&
+                menu.contentItem.children[0].contentItem.children[7].children[0].children[1].text === remLyr.name) {
+            menu.contentItem.children[0].contentItem.children[7].children[0].children[0].checked = false;
+        }
+
         for (var suggested in menu.contentItem.children[0].contentItem.children[11].children[0].contentItem.children) {
             if (menu.contentItem.children[0].contentItem.children[11].children[0].contentItem.children[suggested].children[0] &&
                     menu.contentItem.children[0].contentItem.children[11].children[0].contentItem.children[suggested].children[0].text === remLyr.name) {
@@ -46,7 +56,9 @@ RoundButton {
             }
         }
 
-        sceneView.scene.operationalLayers.remove(remIx, 1);
+        if (remLyr.name !== "All Events" && remLyr.name !== "Nearest Events") {
+            sceneView.scene.operationalLayers.remove(remIx, 1);
+        }
         descLyrPage.visible = 0;
         menu.open();
     }

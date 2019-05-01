@@ -133,8 +133,6 @@ Page {
             }
         }
 
-        attributionTextVisible: false
-
         Scene {
             id: scene
             initialViewpoint: initView

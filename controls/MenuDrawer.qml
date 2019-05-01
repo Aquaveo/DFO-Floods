@@ -302,9 +302,11 @@ Drawer {
 
                             serviceEv.load();
                         } else {
-                            if (sceneView.scene.operationalLayers.get(0).name === "All Events") {
-                                sceneView.scene.operationalLayers.remove(0,1);
-                            };
+                            sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
+                                if (lyr.name === "All Events") {
+                                    sceneView.scene.operationalLayers.remove(ix, 1);
+                                }
+                            })
                         }
                     }
 
@@ -386,9 +388,11 @@ Drawer {
                             pinMessage.visible = 1;
                         } else {
                             drawPin = false;
-                            if (sceneView.scene.operationalLayers.get(0).name === "Nearest Events") {
-                                sceneView.scene.operationalLayers.remove(0,1);
-                            };
+                            sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
+                                if (lyr.name === "Nearest Events") {
+                                    sceneView.scene.operationalLayers.remove(ix, 1);
+                                }
+                            })
                         }
                     }
 
@@ -399,7 +403,7 @@ Drawer {
 
                 Text {
                     width: 0.45 * selectExtremeEvRow.width
-                    text: qsTr("Nearest events")
+                    text: qsTr("Nearest Events")
                     wrapMode: Text.WordWrap
                     font.pixelSize: 14 * scaleFactor
                     anchors.verticalCenter: parent.verticalCenter
