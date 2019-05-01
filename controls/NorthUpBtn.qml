@@ -2,36 +2,38 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
 
-RoundButton {
-    id:switchBtn
+import ArcGIS.AppFramework 1.0
+import ArcGIS.AppFramework.Controls 1.0
+import Esri.ArcGISRuntime 100.4
+
+RoundButton{
+    id: northUpBtn
     radius: 30 * scaleFactor
     width: 60 * scaleFactor
     height: 60 * scaleFactor
     Material.elevation: 6
     Material.background: "#00693e"
+
     anchors {
         right: parent.right
         top: parent.top
         rightMargin: 20 * scaleFactor
-        topMargin: 10 * scaleFactor
+        topMargin: 75 * scaleFactor
     }
-    onClicked: {
-        popUp.visible = 1
-    }
-    
+
     Image{
-        source: "../assets/switcher.png"
+        source: "../assets/northup.png"
         height: 24 * scaleFactor
         width: 24 * scaleFactor
         anchors.centerIn: parent
     }
+
+    onClicked: {
+        setNorthUp();
+    }
+
+    function setNorthUp(){
+        var northUpCam = sceneView.currentViewpointCamera.rotateTo(0,0,0);
+        sceneView.setViewpointCamera(northUpCam);
+    }
 }
-
-
-
-
-
-
-
-
-

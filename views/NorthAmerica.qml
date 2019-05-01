@@ -18,8 +18,8 @@ Page {
     property url wms3dayServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_3day_current_NA/wms?service=wms&request=getCapabilities";
     property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_NA/wms?service=wms&request=getCapabilities";
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-na/wms?service=wms&request=getCapabilities";
-
     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
+
     property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
 
     property WmsService service2wk;
@@ -52,7 +52,6 @@ Page {
     property WmsLayer wmsLayerCu;
     property var layerCuSL;
 
-    property Scene scene;
     property string descriptionLyr;
 
     property bool drawPin: false;
@@ -81,11 +80,7 @@ Page {
                 anchors.fill: parent
             }
 
-            onClicked: if (sceneView.scene.operationalLayers.count >= 4) {
-                           layerList = sceneView.scene.operationalLayers;
-
-                           menu.open();
-                       }
+            onClicked: menu.open();
         }
     }
 
@@ -102,7 +97,6 @@ Page {
     // Create SceneView
     SceneView {
         id:sceneView
-//        property alias compass: compass
 
         anchors.fill: parent
 
@@ -140,6 +134,17 @@ Page {
         // add a graphics overlay
         GraphicsOverlay {
             id: graphicsOverlay
+        }
+
+        attributionTextVisible: false
+
+        Scene {
+            id: scene
+            initialViewpoint: initView
+
+            onOperationalLayersChanged: {
+                layerList = sceneView.scene.operationalLayers;
+            }
         }
 
         onMouseClicked: {
@@ -238,14 +243,6 @@ Page {
         Component.onCompleted: createWmsLayer();
 
         function createWmsLayer() {
-            var basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
-
-            // create a scene
-            scene = ArcGISRuntimeEnvironment.createObject("Scene", {
-                                                              basemap: basemap,
-                                                              initialViewpoint: initView,
-                                                          });
-
             // create the services
             service2wk = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms2wkServiceUrl });
             service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
@@ -277,6 +274,7 @@ Page {
                                                                         });
 
                     scene.operationalLayers.insert(0, wmsLayer2wk);
+                    scene.operationalLayers.setProperty(0, "name", layerNA2wk.title);
                     scene.operationalLayers.setProperty(0, "description", layerNA2wk.description);
                 }
             });
@@ -291,10 +289,12 @@ Page {
                     layerNA3day = layerInfos[0].sublayerInfos[0]
 
                     wmsLayer3day = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                             layerInfos: [layerNA3day]
+                                                                             layerInfos: [layerNA3day],
+                                                                             visible: false
                                                                          });
 
                     scene.operationalLayers.insert(1, wmsLayer3day);
+                    scene.operationalLayers.setProperty(1, "name", layerNA3day.title);
                     scene.operationalLayers.setProperty(1, "description", layerNA3day.description);
 
                 }
@@ -315,6 +315,7 @@ Page {
                                                                         });
 
                     scene.operationalLayers.insert(2, wmsLayerJan);
+                    scene.operationalLayers.setProperty(2, "name", layerNAJan.title);
                     scene.operationalLayers.setProperty(2, "description", layerNAJan.description);
                 }
             });
@@ -334,6 +335,7 @@ Page {
                                                                          });
 
                     scene.operationalLayers.append(wmsLayerRegW);
+                    scene.operationalLayers.setProperty(3, "name", layerNARegW.title);
                     scene.operationalLayers.setProperty(3, "description", layerNARegW.description);
                 }
             });
@@ -345,8 +347,8 @@ Page {
             serviceRegW.load();
             serviceGlo.load();
 
-            // set the scene on the sceneview
-            sceneView.scene = scene;
+            // set the default basemap
+            scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
         }
     }
 
@@ -356,6 +358,10 @@ Page {
 
     Controls.FloatActionButton {
         id:switchBtn
+    }
+
+    Controls.NorthUpBtn {
+        id:northUpBtn
     }
 
     Controls.CurrentPositionBtn {

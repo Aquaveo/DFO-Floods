@@ -288,7 +288,6 @@ Drawer {
                                     // get the desired layer from the list
                                     layerNAEv = layerInfos[0].sublayerInfos[0]
                                     var layerNAEvTiles = layerInfos[0].sublayerInfos
-//                                    console.log(typeof layerNAEvTiles, layerNAEvTiles[1].extent.center.x, layerNAEvTiles[1].extent.center.y,'#################')
 
                                     wmsLayerEv = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                            layerInfos: [layerNAEv],
@@ -508,6 +507,7 @@ Drawer {
                     color: "white"
                 }
             }
+
             TabButton {
                 contentItem: Text {
                     text: qsTr("Results")
@@ -581,6 +581,7 @@ Drawer {
                                 stackListRect.color = "#249567";
                                 sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsGlofasLyr);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", layerGloSL[index].title);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "description", layerGloSL[index].description);
                                 menu.close();
                             } else if (inContent === 1) {
                                 stackListRect.color = "lightgray";
@@ -636,6 +637,7 @@ Drawer {
                                 stackCuListRect.color = "#249567";
                                 sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsCustomLyr);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", layerCuSL[index].title);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "description", layerCuSL[index].description);
                                 menu.close();
                             } else if (inContent === 1) {
                                 stackCuListRect.color = "lightgray";
@@ -667,5 +669,9 @@ Drawer {
         } else {
             mainColum.contentHeight = menu.height;
         }
+    }
+
+    onAboutToShow: {
+        layerList = sceneView.scene.operationalLayers;
     }
 }

@@ -60,10 +60,7 @@ Page {
                 anchors.fill: parent
             }
 
-            onClicked: if (sceneView.scene.operationalLayers.count >= 4) {
-                           layerList = sceneView.scene.operationalLayers;
-                           menu.open();
-                       }
+            onClicked:  menu.open();
         }
     }
 
@@ -115,17 +112,20 @@ Page {
             }
         }
 
+        attributionTextVisible: false
+
+        Scene {
+            id: scene
+            initialViewpoint: initView
+
+            onOperationalLayersChanged: {
+                layerList = sceneView.scene.operationalLayers;
+            }
+        }
+
         Component.onCompleted: createWmsLayer();
 
         function createWmsLayer() {
-            var basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
-
-            // create a scene
-            scene = ArcGISRuntimeEnvironment.createObject("Scene", {
-                                                              basemap: basemap,
-                                                              initialViewpoint: initView,
-                                                          });
-
             // create the services
             service2wk = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms2wkServiceUrl });
             service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
@@ -147,6 +147,7 @@ Page {
                                                                         });
 
                     scene.operationalLayers.insert(0, wmsLayer2wk);
+                    scene.operationalLayers.setProperty(0, "name", layerAF2wk.title);
                     scene.operationalLayers.setProperty(0, "description", layerAF2wk.description);
                 }
             });
@@ -161,12 +162,13 @@ Page {
                     layerAF3day = layerInfos[0].sublayerInfos[0]
 
                     wmsLayer3day = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                             layerInfos: [layerAF3day]
+                                                                             layerInfos: [layerAF3day],
+                                                                             visible: false
                                                                          });
 
                     scene.operationalLayers.insert(1, wmsLayer3day);
-                    scene.operationalLayers.setProperty(1, "description", layerAF3day.description);
-
+                    scene.operationalLayers.setProperty(1, "name", layerAF3day.title);
+                    scene.operationalLayers.setProperty(0, "description", layerAF2wk.description);
                 }
             });
 
@@ -185,7 +187,8 @@ Page {
                                                                         });
 
                     scene.operationalLayers.insert(2, wmsLayerJan);
-                    scene.operationalLayers.setProperty(2, "description", layerAFJan.description);
+                    scene.operationalLayers.setProperty(2, "name", layerAFJan.title);
+                    scene.operationalLayers.setProperty(0, "description", layerAF2wk.description);
                 }
             });
 
@@ -204,7 +207,8 @@ Page {
                                                                          });
 
                     scene.operationalLayers.append(wmsLayerRegW);
-                    scene.operationalLayers.setProperty(3, "description", layerAFRegW.description);
+                    scene.operationalLayers.setProperty(3, "name", layerAFRegW.title);
+                    scene.operationalLayers.setProperty(0, "description", layerAF2wk.description);
                 }
             });
 
@@ -215,8 +219,8 @@ Page {
             serviceRegW.load();
 
 
-            // set the scene on the sceneview
-            sceneView.scene = scene;
+            // set the default basemap
+            scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
         }
     }
 
@@ -226,6 +230,10 @@ Page {
 
     Controls.FloatActionButton {
         id:switchBtn
+    }
+
+    Controls.NorthUpBtn {
+        id:northUpBtn
     }
 
     Controls.CurrentPositionBtn {

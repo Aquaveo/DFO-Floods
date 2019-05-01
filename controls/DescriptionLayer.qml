@@ -2,22 +2,30 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.1
 
-
 import ArcGIS.AppFramework 1.0
 import ArcGIS.AppFramework.Controls 1.0
 
-Rectangle{
+import "../controls" as Controls
+
+Rectangle {
     id: descLyrPage
     width: parent.width
     height: parent.height
     anchors.fill:parent
 
-    ColumnLayout{
-        anchors.fill:parent
+    onVisibleChanged: {
+        if (descLyrPage.visible === false) {
+            popUpReorder.visible = false;
+        }
+    }
+
+    property string desc: pageItem.descriptionLyr;
+    ColumnLayout {
+        anchors.fill: parent
         spacing: 0
         clip:true
 
-        Rectangle{
+        Rectangle {
             id:descLyrheader
             Layout.alignment: Qt.AlignTop
             color: "#00693e"
@@ -61,14 +69,24 @@ Rectangle{
             Layout.fillHeight: true
 
             Flickable {
-                anchors.fill:parent
-                contentHeight: descLyrText.height
+                anchors.fill: parent
+                contentHeight: parent.height > descLyrText.height ? parent.height : descLyrText.height
                 clip:true
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        if (popUpReorder.visible === true) {
+                            popUpReorder.visible = false;
+                        }
+                    }
+                }
 
                 Text {
                     id: descLyrText
-                    text: pageItem.descriptionLyr
+                    text: desc
                     y: 30 * scaleFactor
+                    bottomPadding: 60 * scaleFactor
                     textFormat: Text.StyledText
                     anchors.horizontalCenterOffset: 0
                     color:"white"
@@ -83,5 +101,17 @@ Rectangle{
                 }
             }
         }
+    }
+
+    Controls.RemoveLyrBtn {
+        id: removeLyrBtn
+    }
+
+    Controls.ReorderLyrBtn {
+        id: reorderLyrBtn
+    }
+
+    Controls.ReorderInput{
+        id: popUpReorder
     }
 }

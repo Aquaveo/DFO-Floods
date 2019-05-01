@@ -1,7 +1,7 @@
 [IOS]
 distributionMethod=development
 certificate=C:/OpenSSL-Win64/bin/ios_development.p12
-provisioningProfile=C:/Users/msouffront/Downloads/DFO_App_Test_Sixy.mobileprovision
+provisioningProfile=C:/Users/msouffront/Downloads/DFO_App_Test_RSS.mobileprovision
 
 [MacOS]
 signApp=false

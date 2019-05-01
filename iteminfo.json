@@ -10,7 +10,7 @@
     "commentsEnabled": true,
     "created": 1555524348000,
     "culture": "en-au",
-    "description": "\n<p style=' margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;'>This application display hydrologic data from the Dartmouth Flood Observatory (DFO)</p>",
+    "description": "<html><head><meta name=\"qrichtext\" content=\"1\" /></head><body style=\" font-family:'AvenirNext LT Pro Regular'; font-size:11pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This application display hydrologic data from the Dartmouth Flood Observatory (DFO)</p></body></html>",
     "documentation": null,
     "extent": [
     ],
@@ -26,11 +26,11 @@
     "largeThumbnail": null,
     "licenseInfo": null,
     "listed": false,
-    "modified": 1555712784000,
+    "modified": 1556151459000,
     "name": "f2b6d190ebb84eeebbbb254e73deeec3.zip",
-    "numComments": 8,
+    "numComments": 9,
     "numRatings": 0,
-    "numViews": 7,
+    "numViews": 8,
     "owner": "Aquaveo",
     "ownerFolder": null,
     "properties": null,
@@ -39,7 +39,7 @@
     "scoreCompleteness": 60,
     "screenshots": [
     ],
-    "size": 73230,
+    "size": 73403,
     "snippet": "This application display hydrologic data from the Dartmouth Flood Observatory (DFO)",
     "spatialReference": null,
     "tags": [

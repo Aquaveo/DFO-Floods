@@ -11,7 +11,7 @@ import Esri.ArcGISRuntime 100.4
 
 import "controls" as Controls
 
-App{
+App {
     id: app
     width: 414
     height: 736
