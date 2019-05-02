@@ -18,7 +18,7 @@ RoundButton{
         right: parent.right
         top: parent.top
         rightMargin: 20 * scaleFactor
-        topMargin: 140 * scaleFactor
+        topMargin: 205 * scaleFactor
     }
 
     Image{

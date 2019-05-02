@@ -18,6 +18,9 @@ Page {
     property url wms3dayServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_3day_current_AF/wms?service=wms&request=getCapabilities";
     property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_AF/wms?service=wms&request=getCapabilities";
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-af/wms?service=wms&request=getCapabilities";
+    property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
+
+    property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
 
     property WmsService service2wk;
     property WmsLayerInfo layerAF2wk;
@@ -35,8 +38,25 @@ Page {
     property WmsLayerInfo layerAFRegW;
     property WmsLayer wmsLayerRegW;
 
-    property Scene scene;
+    property WmsService serviceEv
+    property WmsLayerInfo layerAFEv;
+    property WmsLayer wmsLayerEv;
+
+    property WmsService serviceGlo
+    property WmsLayerInfo layerGlo;
+    property WmsLayer wmsLayerGlo;
+    property var layerGloSL;
+
+    property WmsService serviceCu
+    property WmsLayerInfo layerCu;
+    property WmsLayer wmsLayerCu;
+    property var layerCuSL;
+
     property string descriptionLyr;
+
+    property bool drawPin: false;
+    property Point pinLocation;
+    property SimpleMarkerSceneSymbol symbolMarker;
 
     header: ToolBar {
         id: header
@@ -60,7 +80,7 @@ Page {
                 anchors.fill: parent
             }
 
-            onClicked:  menu.open();
+            onClicked: menu.open();
         }
     }
 
@@ -77,7 +97,6 @@ Page {
     // Create SceneView
     SceneView {
         id:sceneView
-//        property alias compass: compass
 
         anchors.fill: parent
 
@@ -112,6 +131,11 @@ Page {
             }
         }
 
+        // add a graphics overlay
+        GraphicsOverlay {
+            id: graphicsOverlay
+        }
+
         Scene {
             id: scene
             initialViewpoint: initView
@@ -129,8 +153,18 @@ Page {
             service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
             serviceJan = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsJanServiceUrl });
             serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
+            serviceGlo = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsGlofasServiceUrl });
 
-            // connect to loadStatusChanged signal of the service
+            serviceGlo.loadStatusChanged.connect(function() {
+                if (serviceGlo.loadStatus === Enums.LoadStatusLoaded) {
+                    var serviceGloInfo = serviceGlo.serviceInfo;
+                    var layerInfos = serviceGloInfo.layerInfos;
+
+                    // get the all layers
+                    layerGloSL = layerInfos[0].sublayerInfos[3].sublayerInfos;
+                }
+            });
+
             service2wk.loadStatusChanged.connect(function() {
                 if (service2wk.loadStatus === Enums.LoadStatusLoaded) {
                     // get the layer info list
@@ -215,7 +249,7 @@ Page {
             service3day.load();
             serviceJan.load();
             serviceRegW.load();
-
+            serviceGlo.load();
 
             // set the default basemap
             scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
@@ -236,6 +270,10 @@ Page {
 
     Controls.CurrentPositionBtn {
         id:locationBtn
+    }
+
+    Controls.HomePositionBtn {
+        id:homeLocationBtn
     }
 
     Controls.DescriptionLayer {

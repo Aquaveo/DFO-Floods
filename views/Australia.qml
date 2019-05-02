@@ -239,6 +239,10 @@ Page {
         id:locationBtn
     }
 
+    Controls.HomePositionBtn {
+        id:homeLocationBtn
+    }
+
     Controls.DescriptionLayer {
         id:descLyrPage
         visible: false

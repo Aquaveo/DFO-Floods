@@ -136,8 +136,6 @@ Page {
             id: graphicsOverlay
         }
 
-//        attributionTextVisible: false
-
         Scene {
             id: scene
             initialViewpoint: initView
@@ -294,7 +292,6 @@ Page {
                     scene.operationalLayers.insert(1, wmsLayer3day);
                     scene.operationalLayers.setProperty(1, "name", layerNA3day.title);
                     scene.operationalLayers.setProperty(1, "description", layerNA3day.description);
-
                 }
             });
 
@@ -364,6 +361,10 @@ Page {
 
     Controls.CurrentPositionBtn {
         id:locationBtn
+    }
+
+    Controls.HomePositionBtn {
+        id:homeLocationBtn
     }
 
     Controls.DescriptionLayer {
