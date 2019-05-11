@@ -20,19 +20,15 @@ Page {
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-as/wms?service=wms&request=getCapabilities";
 
     property WmsService service2wk;
-    property WmsLayerInfo layerAS2wk;
     property WmsLayer wmsLayer2wk;
 
     property WmsService service3day;
-    property WmsLayerInfo layerAS3day;
     property WmsLayer wmsLayer3day;
 
     property WmsService serviceJan;
-    property WmsLayerInfo layerASJan;
     property WmsLayer wmsLayerJan;
 
     property WmsService serviceRegW;
-    property WmsLayerInfo layerASRegW;
     property WmsLayer wmsLayerRegW;
 
     property Scene scene;
@@ -138,15 +134,15 @@ Page {
                     var layerInfos = service2wkInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerAS2wk = layerInfos[0].sublayerInfos[0]
+                    layer2wk = layerInfos[0].sublayerInfos[0]
 
                     wmsLayer2wk = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                            layerInfos: [layerAS2wk]
+                                                                            layerInfos: [layer2wk]
                                                                         });
 
                     scene.operationalLayers.insert(0, wmsLayer2wk);
-                    scene.operationalLayers.setProperty(0, "name", layerAS2wk.title);
-                    scene.operationalLayers.setProperty(0, "description", layerAS2wk.description);
+                    scene.operationalLayers.setProperty(0, "name", layer2wk.title);
+                    scene.operationalLayers.setProperty(0, "description", layer2wk.description);
                 }
             });
 
@@ -157,16 +153,16 @@ Page {
                     var layerInfos = service3dayInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerAS3day = layerInfos[0].sublayerInfos[0]
+                    layer3day = layerInfos[0].sublayerInfos[0]
 
                     wmsLayer3day = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                             layerInfos: [layerAS3day],
+                                                                             layerInfos: [layer3day],
                                                                              visible: false
                                                                          });
 
                     scene.operationalLayers.insert(1, wmsLayer3day);
-                    scene.operationalLayers.setProperty(1, "name", layerAS3day.title);
-                    scene.operationalLayers.setProperty(1, "description", layerAS3day.description);
+                    scene.operationalLayers.setProperty(1, "name", layer3day.title);
+                    scene.operationalLayers.setProperty(1, "description", layer3day.description);
 
                 }
             });
@@ -178,16 +174,16 @@ Page {
                     var layerInfos = serviceJanInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerASJan = layerInfos[0].sublayerInfos[0]
+                    layerJan = layerInfos[0].sublayerInfos[0]
 
                     wmsLayerJan = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                            layerInfos: [layerASJan],
+                                                                            layerInfos: [layerJan],
                                                                             visible: false
                                                                         });
 
                     scene.operationalLayers.insert(2, wmsLayerJan);
-                    scene.operationalLayers.setProperty(2, "name", layerASJan.title);
-                    scene.operationalLayers.setProperty(2, "description", layerASJan.description);
+                    scene.operationalLayers.setProperty(2, "name", layerJan.title);
+                    scene.operationalLayers.setProperty(2, "description", layerJan.description);
                 }
             });
 
@@ -198,16 +194,16 @@ Page {
                     var layerInfos = serviceRegWInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerASRegW = layerInfos[0].sublayerInfos[0]
+                    layerRegW = layerInfos[0].sublayerInfos[0]
 
                     wmsLayerRegW = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                             layerInfos: [layerASRegW],
+                                                                             layerInfos: [layerRegW],
                                                                              visible: false
                                                                          });
 
                     scene.operationalLayers.append(wmsLayerRegW);
-                    scene.operationalLayers.setProperty(3, "name", layerASRegW.title);
-                    scene.operationalLayers.setProperty(3, "description", layerASRegW.description);
+                    scene.operationalLayers.setProperty(3, "name", layerRegW.title);
+                    scene.operationalLayers.setProperty(3, "description", layerRegW.description);
                 }
             });
 

@@ -130,6 +130,14 @@ Rectangle {
         color: "#80000000"
         smooth: true
     }
+
+    onVisibleChanged: {
+        if (initLoad) {
+            popUp.children[1].children[2].visible = 0;
+        } else {
+            popUp.children[1].children[2].visible = 1;
+        }
+    }
 }
 
 

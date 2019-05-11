@@ -6,7 +6,7 @@ import QtGraphicalEffects 1.0
 import ArcGIS.AppFramework 1.0
 import ArcGIS.AppFramework.Controls 1.0
 
-RowLayout{
+RowLayout {
     anchors.fill: parent
     spacing:0
     clip:true

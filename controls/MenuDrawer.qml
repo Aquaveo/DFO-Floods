@@ -542,7 +542,7 @@ Drawer {
                 height: parent.height
                 clip: true
 
-                model: layerGloSL
+                model: suggestedListM
 
                 ScrollBar.vertical: ScrollBar {
                     active: true
@@ -560,22 +560,44 @@ Drawer {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         padding: 24 * scaleFactor
-                        text:title
+                        text: typeof title !== "undefined" ? title : name
                         font.pixelSize: 14 * scaleFactor
                     }
 
                     MouseArea {
                         anchors.fill:parent
                         onClicked: {
-                            var wmsGlofasLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                         layerInfos: [layerGloSL[index]]
-                                                                                     })
+                            if (typeof title !== "undefined") {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layerGloSL[index]]
+                                                                                        });
+                            } else if (/2-week/.test(name)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layer2wk]
+                                                                                        });
+                                suggestedListM.remove(index, 1);
+                            } else if (/Current daily/.test(name)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layer3day]
+                                                                                        });
+                                suggestedListM.remove(index, 1);
+                            } else if (/January till/.test(name)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layerJan]
+                                                                                        });
+                                suggestedListM.remove(index, 1);
+                            } else if (/Regular water/.test(name)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layerRegW]
+                                                                                        });
+                                suggestedListM.remove(index, 1)
+                            }
 
                             var inContent = 0;
                             var inContentIx = -1;
 
                             sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
-                                if (lyr.name === layerGloSL[index].title) {
+                                if (lyr.name === (typeof title !== "undefined" ? title : name)) {
                                     inContent = 1;
                                     inContentIx = ix;
                                 }
@@ -583,9 +605,9 @@ Drawer {
 
                             if (inContent === 0) {
                                 stackListRect.color = "#249567";
-                                sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsGlofasLyr);
-                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", layerGloSL[index].title);
-                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "description", layerGloSL[index].description);
+                                sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsSuggestedLyr);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", title);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "description", description);
                                 menu.close();
                             } else if (inContent === 1) {
                                 stackListRect.color = "lightgray";

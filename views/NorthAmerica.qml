@@ -20,32 +20,21 @@ Page {
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-na/wms?service=wms&request=getCapabilities";
     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
 
-    property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
-
     property WmsService service2wk;
-    property WmsLayerInfo layerNA2wk;
     property WmsLayer wmsLayer2wk;
 
     property WmsService service3day;
-    property WmsLayerInfo layerNA3day;
     property WmsLayer wmsLayer3day;
 
     property WmsService serviceJan;
-    property WmsLayerInfo layerNAJan;
     property WmsLayer wmsLayerJan;
 
     property WmsService serviceRegW;
-    property WmsLayerInfo layerNARegW;
     property WmsLayer wmsLayerRegW;
 
     property WmsService serviceEv
     property WmsLayerInfo layerNAEv;
     property WmsLayer wmsLayerEv;
-
-    property WmsService serviceGlo
-    property WmsLayerInfo layerGlo;
-    property WmsLayer wmsLayerGlo;
-    property var layerGloSL;
 
     property WmsService serviceCu
     property WmsLayerInfo layerCu;
@@ -253,6 +242,15 @@ Page {
 
                     // get the all layers
                     layerGloSL = layerInfos[0].sublayerInfos[3].sublayerInfos;
+
+                    suggestedListM = Qt.createQmlObject('import QtQuick 2.7; ListModel {}', pageItem);
+                    function addToModel (item) {
+                        for (var p in item) {
+                            suggestedListM.append(item[p])
+                        }
+                    };
+
+                    addToModel(layerGloSL);
                 }
             });
 
@@ -263,15 +261,15 @@ Page {
                     var layerInfos = service2wkInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerNA2wk = layerInfos[0].sublayerInfos[0]
+                    layer2wk = layerInfos[0].sublayerInfos[0]
 
                     wmsLayer2wk = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                            layerInfos: [layerNA2wk]
+                                                                            layerInfos: [layer2wk]
                                                                         });
 
                     scene.operationalLayers.insert(0, wmsLayer2wk);
-                    scene.operationalLayers.setProperty(0, "name", layerNA2wk.title);
-                    scene.operationalLayers.setProperty(0, "description", layerNA2wk.description);
+                    scene.operationalLayers.setProperty(0, "name", layer2wk.title);
+                    scene.operationalLayers.setProperty(0, "description", layer2wk.description);
                 }
             });
 
@@ -282,16 +280,16 @@ Page {
                     var layerInfos = service3dayInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerNA3day = layerInfos[0].sublayerInfos[0]
+                    layer3day = layerInfos[0].sublayerInfos[0]
 
                     wmsLayer3day = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                             layerInfos: [layerNA3day],
+                                                                             layerInfos: [layer3day],
                                                                              visible: false
                                                                          });
 
                     scene.operationalLayers.insert(1, wmsLayer3day);
-                    scene.operationalLayers.setProperty(1, "name", layerNA3day.title);
-                    scene.operationalLayers.setProperty(1, "description", layerNA3day.description);
+                    scene.operationalLayers.setProperty(1, "name", layer3day.title);
+                    scene.operationalLayers.setProperty(1, "description", layer3day.description);
                 }
             });
 
@@ -302,16 +300,16 @@ Page {
                     var layerInfos = serviceJanInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerNAJan = layerInfos[0].sublayerInfos[0]
+                    layerJan = layerInfos[0].sublayerInfos[0]
 
                     wmsLayerJan = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                            layerInfos: [layerNAJan],
+                                                                            layerInfos: [layerJan],
                                                                             visible: false
                                                                         });
 
                     scene.operationalLayers.insert(2, wmsLayerJan);
-                    scene.operationalLayers.setProperty(2, "name", layerNAJan.title);
-                    scene.operationalLayers.setProperty(2, "description", layerNAJan.description);
+                    scene.operationalLayers.setProperty(2, "name", layerJan.title);
+                    scene.operationalLayers.setProperty(2, "description", layerJan.description);
                 }
             });
 
@@ -322,16 +320,16 @@ Page {
                     var layerInfos = serviceRegWInfo.layerInfos;
 
                     // get the desired layer from the list
-                    layerNARegW = layerInfos[0].sublayerInfos[0]
+                    layerRegW = layerInfos[0].sublayerInfos[0]
 
                     wmsLayerRegW = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                             layerInfos: [layerNARegW],
+                                                                             layerInfos: [layerRegW],
                                                                              visible: false
                                                                          });
 
                     scene.operationalLayers.append(wmsLayerRegW);
-                    scene.operationalLayers.setProperty(3, "name", layerNARegW.title);
-                    scene.operationalLayers.setProperty(3, "description", layerNARegW.description);
+                    scene.operationalLayers.setProperty(3, "name", layerRegW.title);
+                    scene.operationalLayers.setProperty(3, "description", layerRegW.description);
                 }
             });
 

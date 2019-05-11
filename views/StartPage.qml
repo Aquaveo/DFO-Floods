@@ -44,12 +44,8 @@ Rectangle{
         }
     }
 
-    Controls.PopUpPage {
-        id:popUp
-        visible: true
-
-        Component.onCompleted: {
-            popUp.children[1].children[2].visible = 0;
-        }
+    Component.onCompleted: {
+        popUp.visible = 1;
+        initLoad = false;
     }
 }

@@ -58,6 +58,9 @@ RoundButton {
 
         if (remLyr.name !== "All Events" && remLyr.name !== "Nearest Events") {
             sceneView.scene.operationalLayers.remove(remIx, 1);
+            if (/2-week|Current daily|January till|Regular water/.test(remLyr.name)) {
+                suggestedListM.append(remLyr);
+            }
         }
         descLyrPage.visible = 0;
         menu.open();

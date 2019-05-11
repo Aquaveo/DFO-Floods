@@ -34,6 +34,7 @@ Rectangle {
             width: parent.width
             height: 40 * scaleFactor
             radius: 12 * scaleFactor
+            border.color: "black"
             Text {
                 text: model.index + 1
                 color: "white"
