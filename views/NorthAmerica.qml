@@ -58,6 +58,9 @@ Page {
             id: menuButton
             width: 45 * scaleFactor
             height: 45 * scaleFactor
+            ToolTip.text: qsTr("Wait for map to load")
+            ToolTip.timeout: 3000
+
             anchors {
                 left: parent.left
                 verticalCenter: parent.verticalCenter
@@ -69,7 +72,14 @@ Page {
                 anchors.fill: parent
             }
 
-            onClicked: menu.open();
+            onClicked: {
+                if (sceneView.drawStatus === Enums.DrawStatusCompleted) {
+                    ToolTip.visible = false;
+                    menu.open();
+                } else {
+                    ToolTip.visible = true;
+                }
+            }
         }
     }
 

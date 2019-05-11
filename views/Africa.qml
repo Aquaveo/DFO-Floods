@@ -20,8 +20,6 @@ Page {
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-af/wms?service=wms&request=getCapabilities";
     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
 
-    property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
-
     property WmsService service2wk;
     property WmsLayer wmsLayer2wk;
 
@@ -37,11 +35,6 @@ Page {
     property WmsService serviceEv
     property WmsLayerInfo layerAFEv;
     property WmsLayer wmsLayerEv;
-
-    property WmsService serviceGlo
-    property WmsLayerInfo layerGlo;
-    property WmsLayer wmsLayerGlo;
-    property var layerGloSL;
 
     property WmsService serviceCu
     property WmsLayerInfo layerCu;
@@ -76,7 +69,11 @@ Page {
                 anchors.fill: parent
             }
 
-            onClicked: menu.open();
+            onClicked: {
+                if (sceneView.drawStatus === Enums.DrawStatusCompleted) {
+                    menu.open();
+                }
+            }
         }
     }
 

@@ -13,5 +13,5 @@ signApp=false
 notifications=none
 targetAndroid=true
 targetAndroidx86=false
-targetiOS=true
+targetiOS=false
 targetMacOS=false

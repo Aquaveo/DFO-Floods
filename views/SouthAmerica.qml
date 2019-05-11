@@ -69,7 +69,11 @@ Page {
                 anchors.fill: parent
             }
 
-            onClicked: menu.open();
+            onClicked: {
+                if (sceneView.drawStatus === Enums.DrawStatusCompleted) {
+                    menu.open();
+                }
+            }
         }
     }
 

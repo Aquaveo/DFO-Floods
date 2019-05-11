@@ -11,6 +11,7 @@ Drawer {
     id: menu
     width: 0.75 * parent.width
     height: parent.height
+    dragMargin: -1
 
     Flickable {
         id: mainColum
@@ -552,47 +553,23 @@ Drawer {
                 delegate: Rectangle {
                     id: stackListRect
                     width: parent.width
-                    height: 40 * scaleFactor
+                    height: suggestedLabel.height < 40 * scaleFactor ? 40 * scaleFactor : suggestedLabel.height
                     color: "lightgray"
                     anchors.fill: parent.fill
 
                     Label {
+                        id: suggestedLabel
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
-                        padding: 24 * scaleFactor
+                        padding: 12 * scaleFactor
                         text: typeof title !== "undefined" ? title : name
+                        wrapMode: Text.WordWrap
                         font.pixelSize: 14 * scaleFactor
                     }
 
                     MouseArea {
                         anchors.fill:parent
                         onClicked: {
-                            if (typeof title !== "undefined") {
-                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                            layerInfos: [layerGloSL[index]]
-                                                                                        });
-                            } else if (/2-week/.test(name)) {
-                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                            layerInfos: [layer2wk]
-                                                                                        });
-                                suggestedListM.remove(index, 1);
-                            } else if (/Current daily/.test(name)) {
-                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                            layerInfos: [layer3day]
-                                                                                        });
-                                suggestedListM.remove(index, 1);
-                            } else if (/January till/.test(name)) {
-                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                            layerInfos: [layerJan]
-                                                                                        });
-                                suggestedListM.remove(index, 1);
-                            } else if (/Regular water/.test(name)) {
-                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                            layerInfos: [layerRegW]
-                                                                                        });
-                                suggestedListM.remove(index, 1)
-                            }
-
                             var inContent = 0;
                             var inContentIx = -1;
 
@@ -605,6 +582,33 @@ Drawer {
 
                             if (inContent === 0) {
                                 stackListRect.color = "#249567";
+
+                                if (typeof title !== "undefined") {
+                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                                layerInfos: [layerGloSL[index]]
+                                                                                            });
+                                } else if (/2-week/.test(name)) {
+                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                                layerInfos: [layer2wk]
+                                                                                            });
+                                    suggestedListM.remove(index, 1);
+                                } else if (/Current daily/.test(name)) {
+                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                                layerInfos: [layer3day]
+                                                                                            });
+                                    suggestedListM.remove(index, 1);
+                                } else if (/January till/.test(name)) {
+                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                                layerInfos: [layerJan]
+                                                                                            });
+                                    suggestedListM.remove(index, 1);
+                                } else if (/Regular water/.test(name)) {
+                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                                layerInfos: [layerRegW]
+                                                                                            });
+                                    suggestedListM.remove(index, 1)
+                                }
+
                                 sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsSuggestedLyr);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", title);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "description", description);
@@ -695,9 +699,5 @@ Drawer {
         } else {
             mainColum.contentHeight = menu.height;
         }
-    }
-
-    onAboutToShow: {
-        layerList = sceneView.scene.operationalLayers;
     }
 }
