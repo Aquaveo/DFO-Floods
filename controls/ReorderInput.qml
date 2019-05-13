@@ -30,7 +30,7 @@ Rectangle {
         wrap: true
 
         delegate: Rectangle {
-            color: "#00693e"
+            color: index === menu.contentItem.children[0].contentItem.children[4].currentIndex ? Qt.darker('#00693e') : '#00693e';
             width: parent.width
             height: 40 * scaleFactor
             radius: 12 * scaleFactor
@@ -60,7 +60,6 @@ Rectangle {
                     sceneView.scene.operationalLayers.setProperty(model.index, "description", reoLyr.description);
                     descLyrPage.visible = 0;
                     menu.open();
-
                 }
             }
         }

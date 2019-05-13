@@ -200,9 +200,10 @@ Drawer {
                         Material.background: "transparent"
 
                         onClicked: {
-                            pageItem.descriptionLyr = description
+                            pageItem.descriptionLyr = description;
+                            layerVisibilityListView.currentIndex = index;
                             menu.close();
-                            descLyrPage.visible = 1
+                            descLyrPage.visible = 1;
                         }
 
                         Image {
@@ -559,11 +560,12 @@ Drawer {
 
                     Label {
                         id: suggestedLabel
+                        width: parent.width
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         padding: 12 * scaleFactor
                         text: typeof title !== "undefined" ? title : name
-                        wrapMode: Text.WordWrap
+                        wrapMode: Label.WordWrap
                         font.pixelSize: 14 * scaleFactor
                     }
 
