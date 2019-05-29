@@ -564,7 +564,7 @@ Drawer {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         padding: 12 * scaleFactor
-                        text: typeof title !== "undefined" ? title : name
+                        text: title ? title : name
                         wrapMode: Label.WordWrap
                         font.pixelSize: 14 * scaleFactor
                     }
@@ -576,7 +576,7 @@ Drawer {
                             var inContentIx = -1;
 
                             sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
-                                if (lyr.name === (typeof title !== "undefined" ? title : name)) {
+                                if (lyr.name === (title ? title : name)) {
                                     inContent = 1;
                                     inContentIx = ix;
                                 }
@@ -585,7 +585,7 @@ Drawer {
                             if (inContent === 0) {
                                 stackListRect.color = "#249567";
 
-                                if (typeof title !== "undefined") {
+                                if (title) {
                                     wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                                 layerInfos: [layerGloSL[index]]
                                                                                             });

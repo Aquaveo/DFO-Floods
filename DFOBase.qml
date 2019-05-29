@@ -22,15 +22,16 @@ App {
     property int  baseFontSize : app.info.propertyValue("baseFontSize", 15 * scaleFactor) + (isSmallScreen ? 0 : 3)
     property bool isSmallScreen: (width || height) < units(400)
 
-    property bool initLoad: true
-    property url qmlfile: "./views/StartPage.qml"
-    property string viewName
-    property string descriptionText
-    property LayerListModel layerList
+    property bool initLoad: true;
+    property url qmlfile: "./views/StartPage.qml";
+    property string viewName;
+    property string descriptionText;
+    property ListView layerVisibilityListView;
+    property LayerListModel layerList;
 
     property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
 
-    property WmsService serviceGlo
+    property WmsService serviceGlo;
     property var layerGloSL;
     property WmsLayerInfo layer2wk;
     property WmsLayerInfo layer3day;
@@ -46,7 +47,7 @@ App {
         // Add a Loader to load different views.
         contentItem: Rectangle {
             id: loader
-            anchors.top:app.top
+            anchors.top:parent.top
             Loader {
                 height: app.height
                 width: app.width

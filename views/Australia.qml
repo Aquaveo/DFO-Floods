@@ -57,9 +57,7 @@ Page {
             }
 
             onClicked: {
-                if (sceneView.drawStatus === Enums.DrawStatusCompleted) {
-                    menu.open();
-                }
+                menu.open();
             }
         }
     }

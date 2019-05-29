@@ -73,12 +73,7 @@ Page {
             }
 
             onClicked: {
-                if (sceneView.drawStatus === Enums.DrawStatusCompleted) {
-                    ToolTip.visible = false;
-                    menu.open();
-                } else {
-                    ToolTip.visible = true;
-                }
+                menu.open();
             }
         }
     }
@@ -139,8 +134,13 @@ Page {
             id: scene
             initialViewpoint: initView
 
-            onOperationalLayersChanged: {
-                layerList = sceneView.scene.operationalLayers;
+            onLoadStatusChanged: {
+                if (scene.loadStatus === Enums.LoadStatusLoaded) {
+                    layerList = sceneView.scene.operationalLayers;
+                    if (layerVisibilityListView) {
+                        layerVisibilityListView.forceLayout();
+                    }
+                }
             }
         }
 
