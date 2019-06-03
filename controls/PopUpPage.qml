@@ -47,17 +47,17 @@ Rectangle {
             model:ListModel {
                 id:viewItems
 
-                ListElement { name:"North America"; url:"../views/NorthAmerica.qml"; description:"<p> This layer group contains different flood products for North America.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"North America"; url:"../views/NorthAmerica.qml"; description:"<div><p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for North America.<br></p></div>" }
 
-                ListElement { name:"South America"; url:"../views/SouthAmerica.qml"; description:"<p> This layer group contains different flood products for South America.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"South America"; url:"../views/SouthAmerica.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for South America.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
-                ListElement { name:"Africa"; url:"../views/Africa.qml"; description:"<p> This layer group contains different flood products for Africa.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"Africa"; url:"../views/Africa.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Africa.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
-                ListElement { name:"Asia"; url:"../views/Asia.qml"; description:"<p> This layer group contains different flood products for Asia.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"Asia"; url:"../views/Asia.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Asia.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
-                ListElement { name:"Australia"; url:"../views/Australia.qml"; description:"<p> This layer group contains different flood products for Australia.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"Australia"; url:"../views/Australia.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Australia.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
-                ListElement { name:"Europe"; url:"../views/Europe.qml"; description:"<p> This layer group contains different flood products for Europe.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
+                ListElement { name:"Europe"; url:"../views/Europe.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Europe.<br><p></p><a href='http://floodobservatory.colorado.edu/'><span style=' text-decoration: underline; color:#0000ff;'>Dartmouth Flood Observatory</span></a></p>" }
 
             }
 

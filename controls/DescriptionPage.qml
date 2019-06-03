@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.1
 
 
@@ -60,9 +61,9 @@ Rectangle{
             Layout.fillHeight: true
             
             Flickable {
-                anchors.fill:parent
-                contentHeight: descText.height
-                clip:true
+                anchors.fill: parent
+                contentHeight: descText.height + imageRect.height + feedbackText.height + feedbackRect.height + (100 * scaleFactor)
+                clip: true
                 
                 Text {
                     id: descText
@@ -73,12 +74,111 @@ Rectangle{
                     color:"white"
                     width: 0.85 * parent.width
                     horizontalAlignment: Text.AlignLeft
-                    linkColor: "#e5e6e7"
                     wrapMode: Text.WordWrap
                     elide: Text.ElideRight
                     anchors.horizontalCenter: parent.horizontalCenter
                     font.pixelSize: app.baseFontSize
-                    onLinkActivated: Qt.openUrlExternally(link)
+                }
+
+                Column {
+                    id: imageRect
+                    width: parent.width
+                    spacing: 10 * scaleFactor
+                    anchors.top: descText.bottom
+
+                    Text {
+                        text: qsTr("Sponsors: ")
+                        textFormat: Text.StyledText
+                        color:"white"
+                        width: 0.85 * parent.width
+                        horizontalAlignment: Text.AlignLeft
+                        wrapMode: Text.WordWrap
+                        elide: Text.ElideRight
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        font.pixelSize: app.baseFontSize
+                        font.bold: true
+                    }
+
+                    Image {
+                        width: 0.5 * parent.width
+                        height: sourceSize.height * width * 0.35/100
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        source: "../assets/DFOLogo.jpg"
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: Qt.openUrlExternally('http://floodobservatory.colorado.edu/')
+                        }
+                    }
+
+                    Image {
+                        width: 0.85 * parent.width
+                        height: sourceSize.height * width * 0.2/100
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        source: "../assets/RSSlogo_inlineTXT.png"
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: Qt.openUrlExternally('http://remotesensingsolutions.com/')
+                        }
+                    }
+
+                    Image {
+                        width: 0.85 * parent.width
+                        height: sourceSize.height * width * 0.225/100
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        source: "../assets/nasaLogo.png"
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: Qt.openUrlExternally('https://sbir.nasa.gov/')
+                        }
+                    }
+                }
+
+                Text {
+                    id: feedbackText
+                    text: qsTr("Send Feedback")
+                    textFormat: Text.StyledText
+                    color:"white"
+                    width: 0.85 * parent.width
+                    horizontalAlignment: Text.AlignLeft
+                    wrapMode: Text.WordWrap
+                    elide: Text.ElideRight
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: imageRect.bottom
+                    anchors.topMargin: 20 * scaleFactor
+                    font.pixelSize: app.baseFontSize
+                    font.bold: true
+                }
+
+                Rectangle {
+                    id: feedbackRect
+                    width: 0.9 * parent.width
+                    height: 160 * scaleFactor > feedbackTextArea.contentHeight ? 200 * scaleFactor : feedbackTextArea.contentHeight + 50 * scaleFactor
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: feedbackText.bottom
+                    anchors.topMargin: 20 * scaleFactor
+                    radius: 6 * scaleFactor
+                    color: "white"
+                    border.color: "darkgrey"
+
+                    TextArea {
+                        id: feedbackTextArea
+                        color: "black"
+                        Material.accent:"#00693e"
+                        width: 0.85 * parent.width
+                        anchors.fill: parent
+                        anchors.margins: 10 * scaleFactor
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        font.pixelSize: 14 * scaleFactor
+                        selectByMouse: true
+                        selectedTextColor: "white"
+                        selectionColor: "#249567"
+                        wrapMode: TextArea.Wrap
+                        clip: true
+                    }
                 }
             }
         }

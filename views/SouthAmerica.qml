@@ -131,8 +131,12 @@ Page {
             id: scene
             initialViewpoint: initView
 
-            onOperationalLayersChanged: {
-                layerList = sceneView.scene.operationalLayers;
+            onLoadStatusChanged: {
+                if (scene.loadStatus === Enums.LoadStatusLoaded) {
+                    if (layerVisibilityListView) {
+                        layerVisibilityListView.forceLayout();
+                    }
+                }
             }
         }
 

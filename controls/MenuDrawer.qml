@@ -132,7 +132,7 @@ Drawer {
             clip: true
 
             // Assign the model to the list model of sublayers
-            model: layerList
+            model: sceneView.scene.operationalLayers
 
             // Assign the delegate to the delegate created above
             delegate: Item {
@@ -570,13 +570,14 @@ Drawer {
                     }
 
                     MouseArea {
+
                         anchors.fill:parent
                         onClicked: {
                             var inContent = 0;
                             var inContentIx = -1;
 
                             sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
-                                if (lyr.name === (title ? title : name)) {
+                                if (lyr.name === suggestedLabel.text) {
                                     inContent = 1;
                                     inContentIx = ix;
                                 }
@@ -585,39 +586,44 @@ Drawer {
                             if (inContent === 0) {
                                 stackListRect.color = "#249567";
 
-                                if (title) {
-                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                                layerInfos: [layerGloSL[index]]
-                                                                                            });
-                                } else if (/2-week/.test(name)) {
-                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                                layerInfos: [layer2wk]
-                                                                                            });
-                                    suggestedListM.remove(index, 1);
-                                } else if (/Current daily/.test(name)) {
-                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                                layerInfos: [layer3day]
-                                                                                            });
-                                    suggestedListM.remove(index, 1);
-                                } else if (/January till/.test(name)) {
-                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                                layerInfos: [layerJan]
-                                                                                            });
-                                    suggestedListM.remove(index, 1);
-                                } else if (/Regular water/.test(name)) {
-                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                                layerInfos: [layerRegW]
-                                                                                            });
-                                    suggestedListM.remove(index, 1)
-                                }
+                                loadDefaultOrSuggested();
 
                                 sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsSuggestedLyr);
-                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", title);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", suggestedLabel.text);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "description", description);
                                 menu.close();
                             } else if (inContent === 1) {
                                 stackListRect.color = "lightgray";
                                 sceneView.scene.operationalLayers.remove(inContentIx, 1);
+                            }
+                        }
+
+                        function loadDefaultOrSuggested() {
+                            if (/2-week/.test(suggestedLabel.text)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layer2wk]
+                                                                                        });
+                                suggestedListM.remove(index, 1);
+                            } else if (/Current daily/.test(suggestedLabel.text)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layer3day]
+                                                                                        });
+                                suggestedListM.remove(index, 1);
+                            } else if (/January till/.test(suggestedLabel.text)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layerJan]
+                                                                                        });
+                                suggestedListM.remove(index, 1);
+                            } else if (/Regular water/.test(suggestedLabel.text)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layerRegW]
+                                                                                        });
+                                suggestedListM.remove(index, 1)
+                            } else {
+                                subLayerGloSL = layerGloSL[index];
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [subLayerGloSL]
+                                                                                        });
                             }
                         }
                     }

@@ -136,7 +136,6 @@ Page {
 
             onLoadStatusChanged: {
                 if (scene.loadStatus === Enums.LoadStatusLoaded) {
-                    layerList = sceneView.scene.operationalLayers;
                     if (layerVisibilityListView) {
                         layerVisibilityListView.forceLayout();
                     }
@@ -254,13 +253,8 @@ Page {
                     layerGloSL = layerInfos[0].sublayerInfos[3].sublayerInfos;
 
                     suggestedListM = Qt.createQmlObject('import QtQuick 2.7; ListModel {}', pageItem);
-                    function addToModel (item) {
-                        for (var p in item) {
-                            suggestedListM.append(item[p])
-                        }
-                    };
 
-                    addToModel(layerGloSL);
+                    addToModel(layerGloSL, suggestedListM);
                 }
             });
 
@@ -352,6 +346,12 @@ Page {
 
             // set the default basemap
             scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
+        }
+    }
+
+    function addToModel (item, model) {
+        for (var p in item) {
+            model.append(item[p])
         }
     }
 

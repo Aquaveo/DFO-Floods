@@ -27,12 +27,12 @@ App {
     property string viewName;
     property string descriptionText;
     property ListView layerVisibilityListView;
-    property LayerListModel layerList;
 
     property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
 
     property WmsService serviceGlo;
     property var layerGloSL;
+    property WmsLayerInfo subLayerGloSL;
     property WmsLayerInfo layer2wk;
     property WmsLayerInfo layer3day;
     property WmsLayerInfo layerJan;
