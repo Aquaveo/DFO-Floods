@@ -136,20 +136,53 @@ Rectangle{
                     }
                 }
 
-                Text {
-                    id: feedbackText
-                    text: qsTr("Send Feedback")
-                    textFormat: Text.StyledText
-                    color:"white"
-                    width: 0.85 * parent.width
-                    horizontalAlignment: Text.AlignLeft
-                    wrapMode: Text.WordWrap
-                    elide: Text.ElideRight
+                Row {
+                    id: fbTitle
+                    width: 0.9 * parent.width
+                    height: 50 * scaleFactor
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: imageRect.bottom
                     anchors.topMargin: 20 * scaleFactor
-                    font.pixelSize: app.baseFontSize
-                    font.bold: true
+
+                    Text {
+                        id: feedbackText
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Send Feedback")
+                        textFormat: Text.StyledText
+                        color:"white"
+                        width: 0.75 * parent.width
+                        horizontalAlignment: Text.AlignLeft
+                        wrapMode: Text.WordWrap
+                        elide: Text.ElideRight
+
+                        font.pixelSize: app.baseFontSize
+                        font.bold: true
+                    }
+
+                    Button {
+                        id:feedbackSend
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        width: 0.25 * parent.width
+                        height: 50 * scaleFactor
+
+                        Material.background: "#00693e"
+                        text: "SEND"
+
+                        contentItem: Text {
+                            text: feedbackSend.text
+                            font.pixelSize: 14 * scaleFactor
+                            font.bold: true
+                            color: "white"
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                        }
+
+                        onClicked: {
+                             Qt.openUrlExternally('mailto:info2dfo@gmail.com?subject=DFO App Feedback&body=' + feedbackTextArea.text);
+                        }
+                    }
                 }
 
                 Rectangle {
@@ -157,8 +190,7 @@ Rectangle{
                     width: 0.9 * parent.width
                     height: 160 * scaleFactor > feedbackTextArea.contentHeight ? 200 * scaleFactor : feedbackTextArea.contentHeight + 50 * scaleFactor
                     anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: feedbackText.bottom
-                    anchors.topMargin: 20 * scaleFactor
+                    anchors.top: fbTitle.bottom
                     radius: 6 * scaleFactor
                     color: "white"
                     border.color: "darkgrey"
