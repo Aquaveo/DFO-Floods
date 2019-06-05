@@ -4,8 +4,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Material 2.1
 
 import ArcGIS.AppFramework 1.0
-import ArcGIS.AppFramework.Controls 1.0
-import Esri.ArcGISRuntime 100.4
+import Esri.ArcGISRuntime 100.5
 
 import QtPositioning 5.3
 

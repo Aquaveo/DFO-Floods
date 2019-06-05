@@ -6,8 +6,7 @@ import QtQuick.Controls.Material 2.1
 import QtGraphicalEffects 1.0
 
 import ArcGIS.AppFramework 1.0
-import ArcGIS.AppFramework.Controls 1.0
-import Esri.ArcGISRuntime 100.4
+import Esri.ArcGISRuntime 100.5
 
 import "controls" as Controls
 
@@ -31,7 +30,7 @@ App {
     property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
 
     property WmsService serviceGlo;
-    property var layerGloSL;
+    property list<WmsLayerInfo> layerGloSL;
     property WmsLayerInfo subLayerGloSL;
     property WmsLayerInfo layer2wk;
     property WmsLayerInfo layer3day;

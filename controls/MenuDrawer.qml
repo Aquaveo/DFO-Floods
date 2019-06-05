@@ -4,8 +4,7 @@ import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.3
 
 import ArcGIS.AppFramework 1.0
-import ArcGIS.AppFramework.Controls 1.0
-import Esri.ArcGISRuntime 100.4
+import Esri.ArcGISRuntime 100.5
 
 Drawer {
     id: menu
@@ -599,26 +598,28 @@ Drawer {
                         }
 
                         function loadDefaultOrSuggested() {
-                            if (/2-week/.test(suggestedLabel.text)) {
-                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                            layerInfos: [layer2wk]
-                                                                                        });
-                                suggestedListM.remove(index, 1);
-                            } else if (/Current daily/.test(suggestedLabel.text)) {
-                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                            layerInfos: [layer3day]
-                                                                                        });
-                                suggestedListM.remove(index, 1);
-                            } else if (/January till/.test(suggestedLabel.text)) {
-                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                            layerInfos: [layerJan]
-                                                                                        });
-                                suggestedListM.remove(index, 1);
-                            } else if (/Regular water/.test(suggestedLabel.text)) {
-                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                            layerInfos: [layerRegW]
-                                                                                        });
-                                suggestedListM.remove(index, 1)
+                            if (index > 3) {
+                                if (/2-week/.test(suggestedLabel.text)) {
+                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                                layerInfos: [layer2wk]
+                                                                                            });
+                                    suggestedListM.remove(index, 1);
+                                } else if (/Current daily/.test(suggestedLabel.text)) {
+                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                                layerInfos: [layer3day]
+                                                                                            });
+                                    suggestedListM.remove(index, 1);
+                                } else if (/January till/.test(suggestedLabel.text)) {
+                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                                layerInfos: [layerJan]
+                                                                                            });
+                                    suggestedListM.remove(index, 1);
+                                } else if (/Regular water/.test(suggestedLabel.text)) {
+                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                                layerInfos: [layerRegW]
+                                                                                            });
+                                    suggestedListM.remove(index, 1)
+                                }
                             } else {
                                 subLayerGloSL = layerGloSL[index];
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {

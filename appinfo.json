@@ -1,5 +1,5 @@
 {
-    "arcgisRuntime": 1004,
+    "arcgisRuntime": 1005,
     "capabilities": {
         "audio": false,
         "backgroundBluetoothCentral": false,
@@ -91,6 +91,6 @@
     "urlScheme": "",
     "version": {
         "major": 1,
-        "micro": 18
+        "micro": 19
     }
 }

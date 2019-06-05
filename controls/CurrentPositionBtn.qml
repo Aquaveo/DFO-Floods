@@ -3,8 +3,7 @@ import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
 
 import ArcGIS.AppFramework 1.0
-import ArcGIS.AppFramework.Controls 1.0
-import Esri.ArcGISRuntime 100.4
+import Esri.ArcGISRuntime 100.5
 
 RoundButton{
     id: locationBtn
@@ -21,7 +20,7 @@ RoundButton{
         topMargin: 205 * scaleFactor
     }
 
-    Image{
+    Image {
         source: "../assets/position.png"
         height: 24 * scaleFactor
         width: 24 * scaleFactor

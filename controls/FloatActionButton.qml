@@ -19,7 +19,7 @@ RoundButton {
         popUp.visible = 1
     }
     
-    Image{
+    Image {
         source: "../assets/switcher.png"
         height: 24 * scaleFactor
         width: 24 * scaleFactor
