@@ -583,22 +583,10 @@ Drawer {
                                 }
                             })
 
-                            if (inContent === 0 && !title) {
+                            if (inContent === 0) {
                                 stackListRect.color = "#249567";
 
                                 loadDefaultOrSuggested();
-
-                                sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsSuggestedLyr);
-                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", suggestedLabel.text);
-                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "description", description);
-                                menu.close();
-                            } if (inContent === 0 && title) {
-                                stackListRect.color = "#249567";
-
-                                subLayerGloSL = layerGloSL[index];
-                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                            layerInfos: [subLayerGloSL]
-                                                                                        });
 
                                 sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsSuggestedLyr);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", suggestedLabel.text);
@@ -631,6 +619,11 @@ Drawer {
                                                                                             layerInfos: [layerRegW]
                                                                                         });
                                 suggestedListM.remove(index, 1)
+                            } else {
+                                subLayerGloSL = layerGloSL[index];
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [subLayerGloSL]
+                                                                                        });
                             }
                         }
                     }
