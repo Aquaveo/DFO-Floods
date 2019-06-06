@@ -621,7 +621,8 @@ Drawer {
                                     suggestedListM.remove(index, 1)
                                 }
                             } else {
-                                subLayerGloSL = layerGloSL[index];
+                                var layerInfos = serviceGlo.serviceInfo.layerInfos;
+                                subLayerGloSL = layerInfos[0].sublayerInfos[3].sublayerInfos[index];
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerGloSL]
                                                                                         });
