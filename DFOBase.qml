@@ -30,7 +30,6 @@ App {
     property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
 
     property WmsService serviceGlo;
-    property list<WmsLayerInfo> layerGloSL;
     property WmsLayerInfo subLayerGloSL;
     property WmsLayerInfo layer2wk;
     property WmsLayerInfo layer3day;

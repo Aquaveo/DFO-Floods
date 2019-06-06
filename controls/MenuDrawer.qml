@@ -286,12 +286,10 @@ Drawer {
                                     var serviceEvInfo = serviceEv.serviceInfo;
                                     var layerInfos = serviceEvInfo.layerInfos;
 
-                                    // get the desired layer from the list
-                                    layerNAEv = layerInfos[0].sublayerInfos[0]
-                                    var layerNAEvTiles = layerInfos[0].sublayerInfos
+                                    layerNAEv = layerInfos[0].sublayerInfos
 
                                     wmsLayerEv = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                           layerInfos: [layerNAEv],
+                                                                                           layerInfos: layerNAEv,
                                                                                            visible: true
                                                                                        });
 
@@ -376,7 +374,6 @@ Drawer {
                     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
 
                     property WmsService serviceEv
-                    property WmsLayerInfo layerNAEvTiles;
                     property WmsLayer wmsLayerEv;
 
                     Material.accent: "#00693e"
@@ -385,6 +382,12 @@ Drawer {
                         if (checked == true) {
                             allEventLayersCheck.checked = false;
                             drawPin = true;
+                            if (radiusInput.text == "Radius" || radiusInput.text == "") {
+                                radiusSearch = 100;
+                            } else {
+                                radiusSearch = radiusInput.text;
+                            }
+
                             menu.close();
                             pinMessage.visible = 1;
                         } else {
@@ -409,6 +412,53 @@ Drawer {
                     font.pixelSize: 14 * scaleFactor
                     anchors.verticalCenter: parent.verticalCenter
                     padding: 8 * scaleFactor
+                }
+
+                Rectangle {
+                    id: radiusInputRect
+                    width: (0.5 * selectExtremeEvRow.width) - (selectEventLayersCheck.width * 1.5)
+                    height: 40 * scaleFactor
+                    radius: 6 * scaleFactor
+                    border.color: "darkgrey"
+
+                    TextInput {
+                        id: radiusInput
+                        text: "Radius"
+
+                        validator: DoubleValidator {
+                            bottom: 1
+                            top: 9999.99
+                            decimals: 2
+                            notation: DoubleValidator.StandardNotation
+                        }
+
+                        color: "black"
+                        width: parent.width
+                        height: 40 * scaleFactor
+                        font.pixelSize: 14 * scaleFactor
+                        anchors.centerIn: parent
+                        anchors.fill: parent
+                        anchors.margins: 10 * scaleFactor
+                        selectByMouse: true
+                        selectedTextColor: "white"
+                        selectionColor: "#249567"
+                        wrapMode: TextInput.WrapAnywhere
+
+                        onFocusChanged: {
+                            if (radiusInput.text === "Radius") {
+                                radiusInput.text = ""
+                            }
+                        }
+
+                        onAccepted: {
+                            radiusSearch = radiusInput.text;
+                            if (selectEventLayersCheck.checked == false) {
+                                selectEventLayersCheck.checked = true;
+                            } else {
+                                menu.close();
+                            }
+                        }
+                    }
                 }
             }
         }

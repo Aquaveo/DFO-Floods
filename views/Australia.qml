@@ -17,6 +17,7 @@ Page {
     property url wms3dayServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_3day_current_AU/wms?service=wms&request=getCapabilities";
     property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_AU/wms?service=wms&request=getCapabilities";
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-au/wms?service=wms&request=getCapabilities";
+    property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
 
     property WmsService service2wk;
     property WmsLayer wmsLayer2wk;
@@ -30,8 +31,21 @@ Page {
     property WmsService serviceRegW;
     property WmsLayer wmsLayerRegW;
 
-    property Scene scene;
+    property WmsService serviceEv
+    property list<WmsLayerInfo> layerNAEv;
+    property WmsLayer wmsLayerEv;
+
+    property WmsService serviceCu
+    property WmsLayerInfo layerCu;
+    property WmsLayer wmsLayerCu;
+    property var layerCuSL;
+
     property string descriptionLyr;
+
+    property double radiusSearch;
+    property bool drawPin: false;
+    property Point pinLocation;
+    property SimpleMarkerSceneSymbol symbolMarker;
 
     header: ToolBar {
         id: header
@@ -74,7 +88,6 @@ Page {
     // Create SceneView
     SceneView {
         id:sceneView
-//        property alias compass: compass
 
         anchors.fill: parent
 
@@ -109,6 +122,11 @@ Page {
             }
         }
 
+        // add a graphics overlay
+        GraphicsOverlay {
+            id: graphicsOverlay
+        }
+
         Scene {
             id: scene
             initialViewpoint: initView
@@ -122,16 +140,172 @@ Page {
             }
         }
 
+        onMouseClicked: {
+            pinMessage.visible = 0;
+            if (drawPin === true) {
+                function toRad(Value) {
+                    /** Converts numeric degrees to radians */
+                    return Value * Math.PI / 180;
+                }
+
+                function haversine(lat1,lat2,lng1,lng2) {
+                    var rad = 6372.8; // for km Use 3961 for miles
+                    var deltaLat = toRad(lat2-lat1);
+                    var deltaLng = toRad(lng2-lng1);
+                    lat1 = toRad(lat1);
+                    lat2 = toRad(lat2);
+                    var a = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) + Math.sin(deltaLng/2) * Math.sin(deltaLng/2) * Math.cos(lat1) * Math.cos(lat2);
+                    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    return  rad * c;
+                }
+
+                function insidePolygon(point, tile) {
+                    var x = point[0], y = point[1];
+
+                    var inside = false;
+                    for (var i = 0, j = tile.length - 1; i < tile.length; j = i++) {
+                        var xi = tile[i][0], yi = tile[i][1];
+                        var xj = tile[j][0], yj = tile[j][1];
+
+                        var intersect = ((yi > y) != (yj > y))
+                            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                        if (intersect) inside = !inside;
+                    }
+
+                    return inside;
+                };
+
+                pinLocation = mouse.mapPoint;
+                var xCoor = mouse.mapPoint.x.toFixed(2);
+                var yCoor = mouse.mapPoint.y.toFixed(2);
+
+                symbolMarker = ArcGISRuntimeEnvironment.createObject("SimpleMarkerSceneSymbol", {
+                                                                         style: Enums.SimpleMarkerSceneSymbolStyleSphere,
+                                                                         color: "#00693e",
+                                                                         width: 75,
+                                                                         height: 75,
+                                                                         depth: 75,
+                                                                     });
+
+                // create a graphic using the point and the symbol
+                var graphic = ArcGISRuntimeEnvironment.createObject("Graphic", {
+                                                                        geometry: pinLocation,
+                                                                        symbol: symbolMarker
+                                                                    });
+
+                // clear previous and add new  graphic to the graphics overlay
+                graphicsOverlay.graphics.clear();
+                graphicsOverlay.graphics.append(graphic);
+
+                sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
+                    if (lyr.name === "Nearest Events") {
+                        sceneView.scene.operationalLayers.remove(ix, 1);
+                    }
+                });
+
+                serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsEventServiceUrl });
+
+                serviceEv.loadStatusChanged.connect(function() {
+                    if (serviceEv.loadStatus === Enums.LoadStatusLoaded) {
+                        // get the layer info list
+                        var serviceEvInfo = serviceEv.serviceInfo;
+                        var layerInfos = serviceEvInfo.layerInfos;
+
+                        // get the all layers
+                        var layerNAEvTiles = layerInfos[0].sublayerInfos;
+
+                        var nearestTileList = [];
+
+                        for (var i=2; i<layerNAEvTiles.length; i++) {
+                            var inside = insidePolygon([xCoor, yCoor], [[layerInfos[0].sublayerInfos[i].extent.xMin, layerInfos[0].sublayerInfos[i].extent.yMin],
+                                                                        [layerInfos[0].sublayerInfos[i].extent.xMin, layerInfos[0].sublayerInfos[i].extent.yMax],
+                                                                        [layerInfos[0].sublayerInfos[i].extent.xMax, layerInfos[0].sublayerInfos[i].extent.yMax],
+                                                                        [layerInfos[0].sublayerInfos[i].extent.xMax, layerInfos[0].sublayerInfos[i].extent.yMin]
+                                                       ]);
+
+                            if (inside) {
+                                nearestTileList.push([0, i]);
+                                continue;
+                            }
+
+                            var ans = haversine(yCoor, layerInfos[0].sublayerInfos[i].extent.center.y,
+                                                xCoor, layerInfos[0].sublayerInfos[i].extent.center.x
+                                                );
+
+                            var ans1 = haversine(yCoor, layerInfos[0].sublayerInfos[i].extent.xMax,
+                                                 xCoor, layerInfos[0].sublayerInfos[i].extent.yMin
+                                                 );
+
+                            var ans2 = haversine(yCoor, layerInfos[0].sublayerInfos[i].extent.xMax,
+                                                 xCoor, layerInfos[0].sublayerInfos[i].extent.yMax
+                                                 );
+
+                            var ans3 = haversine(yCoor, layerInfos[0].sublayerInfos[i].extent.xMin,
+                                                 xCoor, layerInfos[0].sublayerInfos[i].extent.yMin
+                                                 );
+
+                            var ans4 = haversine(yCoor, layerInfos[0].sublayerInfos[i].extent.xMin,
+                                                 xCoor, layerInfos[0].sublayerInfos[i].extent.yMax
+                                                 );
+
+                            if (ans < radiusSearch) {
+                                nearestTileList.push([ans, i]);
+                            } else if (ans1 < radiusSearch) {
+                                nearestTileList.push([ans1, i]);
+                            } else if (ans2 < radiusSearch) {
+                                nearestTileList.push([ans2, i]);
+                            } else if (ans3 < radiusSearch) {
+                                nearestTileList.push([ans3, i]);
+                            } else if (ans4 < radiusSearch) {
+                                nearestTileList.push([ans4, i]);
+                            }
+                        }
+
+                        layerNAEv = [];
+
+                        if (nearestTileList.length > 0) {
+                            nearestTileList.forEach(function (elm) {
+                                layerNAEv.push(layerInfos[0].sublayerInfos[elm[1]])
+                            });
+
+                            wmsLayerEv = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                   layerInfos: layerNAEv,
+                                                                                   visible: true
+                                                                               });
+
+                            sceneView.scene.operationalLayers.insert(0, wmsLayerEv);
+                            sceneView.scene.operationalLayers.setProperty(0, "name", "Nearest Events");
+                            sceneView.scene.operationalLayers.setProperty(0, "description", layerNAEv.description);
+
+                            graphicsOverlay.graphics.clear();
+
+                            var newViewPointCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter", {
+                                                                                               center: layerInfos[0].sublayerInfos[nearestTileList[0][1]].extent.center,
+                                                                                               targetScale: 1000000 * layerInfos[0].sublayerInfos[nearestTileList[0][1]].extent.width * scaleFactor
+                                                                                           });
+                            sceneView.setViewpoint(newViewPointCenter);
+                        }
+                    }
+                });
+
+                serviceEv.load();
+
+            }
+        }
+
         Component.onCompleted: createWmsLayer();
 
         function createWmsLayer() {
+            // set the default basemap
+            scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
+
             // create the services
             service2wk = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms2wkServiceUrl });
             service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
             serviceJan = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsJanServiceUrl });
             serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
+            serviceGlo = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsGlofasServiceUrl });
 
-            // connect to loadStatusChanged signal of the service
             service2wk.loadStatusChanged.connect(function() {
                 if (service2wk.loadStatus === Enums.LoadStatusLoaded) {
                     // get the layer info list
@@ -148,6 +322,24 @@ Page {
                     scene.operationalLayers.insert(0, wmsLayer2wk);
                     scene.operationalLayers.setProperty(0, "name", layer2wk.title);
                     scene.operationalLayers.setProperty(0, "description", layer2wk.description);
+                }
+            });
+
+            // load default visible layer first
+            service2wk.load();
+
+            // load default visible layer first
+            service2wk.load();
+
+            serviceGlo.loadStatusChanged.connect(function() {
+                if (serviceGlo.loadStatus === Enums.LoadStatusLoaded) {
+                    var serviceGloInfo = serviceGlo.serviceInfo;
+                    var layerInfos = serviceGloInfo.layerInfos;
+
+                    // add all layers to model
+                    suggestedListM = Qt.createQmlObject('import QtQuick 2.7; ListModel {}', pageItem);
+
+                    addToModel(layerInfos[0].sublayerInfos[3].sublayerInfos, suggestedListM);
                 }
             });
 
@@ -168,7 +360,6 @@ Page {
                     scene.operationalLayers.insert(1, wmsLayer3day);
                     scene.operationalLayers.setProperty(1, "name", layer3day.title);
                     scene.operationalLayers.setProperty(1, "description", layer3day.description);
-
                 }
             });
 
@@ -212,15 +403,16 @@ Page {
                 }
             });
 
-            // load the services
-            service2wk.load();
+            // load other services
             service3day.load();
             serviceJan.load();
             serviceRegW.load();
+        }
+    }
 
-
-            // set the default basemap
-            scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
+    function addToModel (item, model) {
+        for (var p in item) {
+            model.append(item[p])
         }
     }
 
