@@ -12,7 +12,7 @@ signApp=false
 [CloudMake]
 notifications=none
 targetAndroid=true
-targetAndroidx86=true
+targetAndroidx86=false
 targetiOS=true
 targetMacOS=false
-targetAndroidArm64=true
+targetAndroidArm64=false

@@ -432,16 +432,20 @@ Drawer {
                             notation: DoubleValidator.StandardNotation
                         }
 
+                        inputMethodHints: Qt.ImhFormattedNumbersOnly
+
                         color: "black"
                         width: parent.width
                         height: 40 * scaleFactor
                         font.pixelSize: 14 * scaleFactor
-                        anchors.centerIn: parent
+                        verticalAlignment: TextInput.AlignVCenter
+                        horizontalAlignment: TextInput.AlignHCenter
                         anchors.fill: parent
-                        anchors.margins: 10 * scaleFactor
+                        anchors.margins: 5 * scaleFactor
                         selectByMouse: true
                         selectedTextColor: "white"
                         selectionColor: "#249567"
+                        clip: true
                         wrapMode: TextInput.WrapAnywhere
 
                         onFocusChanged: {
@@ -493,7 +497,8 @@ Drawer {
                 font.pixelSize: 14 * scaleFactor
                 font.capitalization: Font.AllLowercase
                 anchors.fill: parent
-                anchors.margins: 10 * scaleFactor
+                verticalAlignment: TextInput.AlignVCenter
+                anchors.margins: 13 * scaleFactor
                 selectByMouse: true
                 selectedTextColor: "white"
                 selectionColor: "#249567"
