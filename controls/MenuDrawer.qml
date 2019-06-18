@@ -200,6 +200,7 @@ Drawer {
 
                         onClicked: {
                             pageItem.descriptionLyr = description;
+                            pageItem.compLyrName = name;
                             layerVisibilityListView.currentIndex = index;
                             menu.close();
                             descLyrPage.visible = 1;

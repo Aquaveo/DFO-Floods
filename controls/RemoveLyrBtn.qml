@@ -25,7 +25,7 @@ RoundButton {
         var remLyr
         var remIx;
         sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
-            if (lyr.description === descLyrPage.desc) {
+            if (lyr.name === pageItem.compLyrName) {
                 remLyr = lyr
                 remIx = ix;
             }

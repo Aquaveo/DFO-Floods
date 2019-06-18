@@ -41,6 +41,7 @@ Page {
     property var layerCuSL;
 
     property string descriptionLyr;
+    property string compLyrName;
 
     property double radiusSearch;
     property bool drawPin: false;
