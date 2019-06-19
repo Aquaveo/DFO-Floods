@@ -48,7 +48,7 @@ Rectangle {
                     var reoLyr
                     var reoIx;
                     sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
-                        if (lyr.description === descLyrPage.desc) {
+                        if (lyr.name === pageItem.compLyrName) {
                             reoLyr = lyr
                             reoIx = ix;
                         }
