@@ -496,7 +496,6 @@ Drawer {
                 width: parent.width
                 height: 40 * scaleFactor
                 font.pixelSize: 14 * scaleFactor
-                font.capitalization: Font.AllLowercase
                 anchors.fill: parent
                 verticalAlignment: TextInput.AlignVCenter
                 anchors.margins: 13 * scaleFactor
