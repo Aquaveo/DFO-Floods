@@ -311,14 +311,14 @@ Drawer {
                     delegate: ItemDelegate {
                         Material.accent:"#00693e"
                         width: parent.width
+                        topPadding: 13 * scaleFactor
+                        bottomPadding: 13 * scaleFactor
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.horizontalCenter: parent.horizontalCenter
                             text: yearFilter.model[index]
                             font.pixelSize: 14 * scaleFactor
-                            topPadding: 13 * scaleFactor
-                            bottomPadding: 13 * scaleFactor
                         }
                     }
 

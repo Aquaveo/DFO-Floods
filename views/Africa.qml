@@ -327,9 +327,9 @@ Page {
                                                                             layerInfos: [layer2wk]
                                                                         });
 
-                    scene.operationalLayers.insert(0, wmsLayer2wk);
-                    scene.operationalLayers.setProperty(0, "name", layer2wk.title);
-                    scene.operationalLayers.setProperty(0, "description", layer2wk.description);
+                    scene.operationalLayers.append(wmsLayer2wk);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayer2wk), "name", layer2wk.title);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayer2wk), "description", layer2wk.description);
                 }
             });
 
@@ -364,9 +364,9 @@ Page {
                                                                              layerInfos: [layer3day],
                                                                          });
 
-                    scene.operationalLayers.insert(1, wmsLayer3day);
-                    scene.operationalLayers.setProperty(1, "name", layer3day.title);
-                    scene.operationalLayers.setProperty(1, "description", layer3day.description);
+                    scene.operationalLayers.append(wmsLayer3day);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayer3day), "name", layer3day.title);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayer3day), "description", layer3day.description);
                 }
             });
 
@@ -384,9 +384,9 @@ Page {
                                                                             visible: false
                                                                         });
 
-                    scene.operationalLayers.insert(2, wmsLayerJan);
-                    scene.operationalLayers.setProperty(2, "name", layerJan.title);
-                    scene.operationalLayers.setProperty(2, "description", layerJan.description);
+                    scene.operationalLayers.append(wmsLayerJan);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerJan), "name", layerJan.title);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerJan), "description", layerJan.description);
                 }
             });
 
@@ -403,9 +403,9 @@ Page {
                                                                              layerInfos: [layerRegW],
                                                                          });
 
-                    scene.operationalLayers.insert(3, wmsLayerRegW);
-                    scene.operationalLayers.setProperty(3, "name", layerRegW.title);
-                    scene.operationalLayers.setProperty(3, "description", layerRegW.description);
+                    scene.operationalLayers.append(wmsLayerRegW);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerRegW), "name", layerRegW.title);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerRegW), "description", layerRegW.description);
                 }
             });
 
@@ -422,9 +422,9 @@ Page {
                                                                              layerInfos: [layerHistW],
                                                                          });
 
-                    scene.operationalLayers.insert(4, wmsLayerHistW);
-                    scene.operationalLayers.setProperty(4, "name", layerHistW.title);
-                    scene.operationalLayers.setProperty(4, "description", layerHistW.description);
+                    scene.operationalLayers.append(wmsLayerHistW);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerHistW), "name", layerHistW.title);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerHistW), "description", layerHistW.description);
                 }
             });
 
