@@ -275,40 +275,7 @@ Drawer {
                         }
                     }
 
-                    onCheckedChanged: {
-                        if (checked == true) {
-                            menu.close()
-                            selectEventLayersCheck.checked = false;
-                            serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsEventServiceUrl });
-
-                            serviceEv.loadStatusChanged.connect(function() {
-                                if (serviceEv.loadStatus === Enums.LoadStatusLoaded) {
-                                    // get the layer info list
-                                    var serviceEvInfo = serviceEv.serviceInfo;
-                                    var layerInfos = serviceEvInfo.layerInfos;
-
-                                    layerNAEv = layerInfos[0].sublayerInfos
-
-                                    wmsLayerEv = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                           layerInfos: layerNAEv,
-                                                                                           visible: true
-                                                                                       });
-
-                                    sceneView.scene.operationalLayers.insert(0, wmsLayerEv);
-                                    sceneView.scene.operationalLayers.setProperty(0, "name", "All Events");
-                                    sceneView.scene.operationalLayers.setProperty(0, "description", layerNAEv.description);
-                                }
-                            });
-
-                            serviceEv.load();
-                        } else {
-                            sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
-                                if (lyr.name === "All Events") {
-                                    sceneView.scene.operationalLayers.remove(ix, 1);
-                                }
-                            })
-                        }
-                    }
+                    onCheckedChanged: mainColum.allEventsChanged();
 
                     Component.onCompleted: {
                         checked = false;
@@ -322,6 +289,75 @@ Drawer {
                     font.pixelSize: 14 * scaleFactor
                     anchors.verticalCenter: parent.verticalCenter
                     padding: 8 * scaleFactor
+                }
+
+                ComboBox {
+                    id: yearFilter
+                    currentIndex: -1
+                    displayText: currentIndex === -1 ? "Filter" : currentText
+                    width: (0.5 * allExtremeEvRow.width) - (allEventLayersCheck.width * 1.5)
+                    height: 40 * scaleFactor
+                    Material.accent:"#00693e"
+                    background: Rectangle {
+                        radius: 6 * scaleFactor
+                        border.color: "darkgrey"
+                        width: parent.width
+                        height: 40 * scaleFactor
+                    }
+
+                    font.pixelSize: 14 * scaleFactor
+                    model: ["All","2017","2018","2019"]
+
+                    delegate: ItemDelegate {
+                        Material.accent:"#00693e"
+                        width: parent.width
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: yearFilter.model[index]
+                            font.pixelSize: 14 * scaleFactor
+                        }
+                    }
+
+                    contentItem: Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        text: yearFilter.displayText
+                        font: yearFilter.font
+                    }
+
+                    indicator: Rectangle {
+                        visible: False
+                    }
+
+                    onCurrentTextChanged: {
+                        filterEventsByYear();
+                        mainColum.allEventsChanged();
+                        mainColum.selectEventsChanged();
+                    }
+
+                    function filterEventsByYear() {
+                        switch (yearFilter.currentText) {
+                        case "All":
+                            filteredEventServiceUrl = wmsEventServiceUrl;
+                            break;
+                        case "2017":
+                            filteredEventServiceUrl = wmsEventServiceUrl.toString().replace("/Events_", "/Events_2017_");
+                            break;
+                        case "2018":
+                            filteredEventServiceUrl = wmsEventServiceUrl.toString().replace("/Events_", "/Events_2018_");
+                            break;
+                        case "2019":
+                            filteredEventServiceUrl = wmsEventServiceUrl.toString().replace("/Events_", "/Events_2019_");
+                            break;
+                        default:
+                            filteredEventServiceUrl = wmsEventServiceUrl;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -372,34 +408,12 @@ Drawer {
                         }
                     }
 
-                    property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
-
                     property WmsService serviceEv
                     property WmsLayer wmsLayerEv;
 
                     Material.accent: "#00693e"
 
-                    onCheckedChanged: {
-                        if (checked == true) {
-                            allEventLayersCheck.checked = false;
-                            drawPin = true;
-                            if (radiusInput.text == "Radius" || radiusInput.text == "") {
-                                radiusSearch = 100;
-                            } else {
-                                radiusSearch = radiusInput.text;
-                            }
-
-                            menu.close();
-                            pinMessage.visible = 1;
-                        } else {
-                            drawPin = false;
-                            sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
-                                if (lyr.name === "Nearest Events") {
-                                    sceneView.scene.operationalLayers.remove(ix, 1);
-                                }
-                            })
-                        }
-                    }
+                    onCheckedChanged: mainColum.selectEventsChanged();
 
                     Component.onCompleted: {
                         checked = false;
@@ -457,7 +471,7 @@ Drawer {
 
                         onAccepted: {
                             radiusSearch = radiusInput.text;
-                            if (selectEventLayersCheck.checked == false) {
+                            if (selectEventLayersCheck.checked === false) {
                                 selectEventLayersCheck.checked = true;
                             } else {
                                 menu.close();
@@ -752,6 +766,77 @@ Drawer {
                         stackLayout.height = 0.25 * menu.width;
                     }
                 }
+            }
+        }
+
+        function selectEventsChanged() {
+            if (selectEventLayersCheck.checked == true) {
+                allEventLayersCheck.checked = false;
+
+                sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
+                    if (lyr.name === "Nearest Events") {
+                        sceneView.scene.operationalLayers.remove(ix, 1);
+                    }
+                });
+
+                drawPin = true;
+                if (radiusInput.text == "Radius" || radiusInput.text == "") {
+                    radiusSearch = 100;
+                } else {
+                    radiusSearch = radiusInput.text;
+                }
+
+                menu.close();
+                pinMessage.visible = 1;
+            } else {
+                drawPin = false;
+                sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
+                    if (lyr.name === "Nearest Events") {
+                        sceneView.scene.operationalLayers.remove(ix, 1);
+                    }
+                });
+            }
+        }
+
+        function allEventsChanged() {
+            if (allEventLayersCheck.checked == true) {
+                menu.close();
+                selectEventLayersCheck.checked = false;
+
+                sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
+                    if (lyr.name === "All Events") {
+                        sceneView.scene.operationalLayers.remove(ix, 1);
+                    }
+                });
+
+                serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: filteredEventServiceUrl });
+
+                serviceEv.loadStatusChanged.connect(function() {
+                    if (serviceEv.loadStatus === Enums.LoadStatusLoaded) {
+                        // get the layer info list
+                        var serviceEvInfo = serviceEv.serviceInfo;
+                        var layerInfos = serviceEvInfo.layerInfos;
+
+                        layerNAEv = layerInfos[0].sublayerInfos
+
+                        wmsLayerEv = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                               layerInfos: layerNAEv,
+                                                                               visible: true
+                                                                           });
+
+                        sceneView.scene.operationalLayers.insert(0, wmsLayerEv);
+                        sceneView.scene.operationalLayers.setProperty(0, "name", "All Events");
+                        sceneView.scene.operationalLayers.setProperty(0, "description", layerNAEv.description);
+                    }
+                });
+
+                serviceEv.load();
+            } else {
+                sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
+                    if (lyr.name === "All Events") {
+                        sceneView.scene.operationalLayers.remove(ix, 1);
+                    }
+                });
             }
         }
     }

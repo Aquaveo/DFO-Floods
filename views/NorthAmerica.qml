@@ -18,6 +18,7 @@ Page {
     property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_NA/wms?service=wms&request=getCapabilities";
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-na/wms?service=wms&request=getCapabilities";
     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
+    property url filteredEventServiceUrl: wmsEventServiceUrl;
 
     property WmsService service2wk;
     property WmsLayer wmsLayer2wk;
@@ -204,7 +205,7 @@ Page {
                     }
                 });
 
-                serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsEventServiceUrl });
+                serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: filteredEventServiceUrl });
 
                 serviceEv.loadStatusChanged.connect(function() {
                     if (serviceEv.loadStatus === Enums.LoadStatusLoaded) {
