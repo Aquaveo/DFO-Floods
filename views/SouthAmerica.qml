@@ -17,7 +17,10 @@ Page {
     property url wms3dayServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_3day_current_SA/wms?service=wms&request=getCapabilities";
     property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_SA/wms?service=wms&request=getCapabilities";
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-sa/wms?service=wms&request=getCapabilities";
-    property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
+    property url wmsHistWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Historical_flood_extent_SA/wms?service=wms&request=getCapabilities";
+    property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_SA/wms?service=wms&request=getCapabilities";
+    property url filteredEventServiceUrl: wmsEventServiceUrl;
+    property var availableEventYears: ["All","2017"];
 
     property WmsService service2wk;
     property WmsLayer wmsLayer2wk;
@@ -30,6 +33,9 @@ Page {
 
     property WmsService serviceRegW;
     property WmsLayer wmsLayerRegW;
+
+    property WmsService serviceHistW;
+    property WmsLayer wmsLayerHistW;
 
     property WmsService serviceEv
     property list<WmsLayerInfo> layerNAEv;
@@ -204,7 +210,7 @@ Page {
                     }
                 });
 
-                serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsEventServiceUrl });
+                serviceEv = ArcGISRuntimeEnvironment.createObject("WmsService", { url: filteredEventServiceUrl });
 
                 serviceEv.loadStatusChanged.connect(function() {
                     if (serviceEv.loadStatus === Enums.LoadStatusLoaded) {
@@ -305,6 +311,7 @@ Page {
             service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
             serviceJan = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsJanServiceUrl });
             serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
+            serviceHistW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsHistWServiceUrl });
             serviceGlo = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsGlofasServiceUrl });
 
             service2wk.loadStatusChanged.connect(function() {
@@ -355,7 +362,6 @@ Page {
 
                     wmsLayer3day = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                              layerInfos: [layer3day],
-                                                                             visible: false
                                                                          });
 
                     scene.operationalLayers.insert(1, wmsLayer3day);
@@ -395,12 +401,30 @@ Page {
 
                     wmsLayerRegW = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                              layerInfos: [layerRegW],
-                                                                             visible: false
                                                                          });
 
-                    scene.operationalLayers.append(wmsLayerRegW);
+                    scene.operationalLayers.insert(3, wmsLayerRegW);
                     scene.operationalLayers.setProperty(3, "name", layerRegW.title);
                     scene.operationalLayers.setProperty(3, "description", layerRegW.description);
+                }
+            });
+
+            serviceHistW.loadStatusChanged.connect(function() {
+                if (serviceHistW.loadStatus === Enums.LoadStatusLoaded) {
+                    // get the layer info list
+                    var serviceHistWInfo = serviceHistW.serviceInfo;
+                    var layerInfos = serviceHistWInfo.layerInfos;
+
+                    // get the desired layer from the list
+                    layerHistW = layerInfos[0].sublayerInfos[0]
+
+                    wmsLayerHistW = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                             layerInfos: [layerHistW],
+                                                                         });
+
+                    scene.operationalLayers.insert(4, wmsLayerHistW);
+                    scene.operationalLayers.setProperty(4, "name", layerHistW.title);
+                    scene.operationalLayers.setProperty(4, "description", layerHistW.description);
                 }
             });
 
@@ -408,6 +432,7 @@ Page {
             service3day.load();
             serviceJan.load();
             serviceRegW.load();
+            serviceHistW.load();
         }
     }
 

@@ -35,6 +35,7 @@ App {
     property WmsLayerInfo layer3day;
     property WmsLayerInfo layerJan;
     property WmsLayerInfo layerRegW;
+    property WmsLayerInfo layerHistW;
 
     property WmsLayer wmsSuggestedLyr;
     property ListModel suggestedListM;

@@ -127,7 +127,7 @@ Drawer {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: layerContentTitle.bottom
             width: 0.95 * parent.width
-            height: childrenRect.height <= 0.25 * menu.height ? childrenRect.height : 0.25 * menu.height
+            height: childrenRect.height <= 0.2 * menu.height ? childrenRect.height : 0.2 * menu.height
             clip: true
 
             // Assign the model to the list model of sublayers
@@ -306,7 +306,7 @@ Drawer {
                     }
 
                     font.pixelSize: 14 * scaleFactor
-                    model: ["All","2017","2018","2019"]
+                    model: availableEventYears
 
                     delegate: ItemDelegate {
                         Material.accent:"#00693e"
@@ -317,6 +317,8 @@ Drawer {
                             anchors.horizontalCenter: parent.horizontalCenter
                             text: yearFilter.model[index]
                             font.pixelSize: 14 * scaleFactor
+                            topPadding: 13 * scaleFactor
+                            bottomPadding: 13 * scaleFactor
                         }
                     }
 
@@ -684,6 +686,11 @@ Drawer {
                                                                                             });
                                     suggestedListM.remove(index, 1);
                                 } else if (/Regular water/.test(suggestedLabel.text)) {
+                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                                layerInfos: [layerRegW]
+                                                                                            });
+                                    suggestedListM.remove(index, 1)
+                                } else if (/Historical flood extent /.test(suggestedLabel.text)) {
                                     wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                                 layerInfos: [layerRegW]
                                                                                             });
