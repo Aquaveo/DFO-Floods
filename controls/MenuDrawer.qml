@@ -14,8 +14,11 @@ Drawer {
 
     Flickable {
         id: mainColum
-        width: parent.width
-        height: parent.height
+        width: menu.width
+        height: menu.height >= 1.25 * menu.width ? menu.height : 1.25 * menu.width
+        contentHeight: menu.height >= 1.25 * menu.width ? menu.height : (menuHeader.height + comboBoxBasemap.height + layerVisibilityListView.height +
+                                                                         allExtremeEvRect.height + selectExtremeEvRect.height + textInputRect.height + tabBar.height +
+                                                                         stackLayout.height + (4 * basemapTitle.height) + (20 * scaleFactor));
         anchors.fill: parent
 
         Rectangle {
@@ -850,10 +853,8 @@ Drawer {
     onHeightChanged: {
         if (menu.height <= menu.width * 1.25) {
             mainColum.contentHeight = (menuHeader.height + comboBoxBasemap.height + layerVisibilityListView.height +
-                    allExtremeEvRect.height + selectExtremeEvRect.height + textInputRect.height + tabBar.height +
-                    stackLayout.height + (160 * scaleFactor));
-        } else {
-            mainColum.contentHeight = menu.height;
+                                       allExtremeEvRect.height + selectExtremeEvRect.height + textInputRect.height + tabBar.height +
+                                       stackLayout.height + (4 * basemapTitle.height) + (20 * scaleFactor));
         }
     }
 }
