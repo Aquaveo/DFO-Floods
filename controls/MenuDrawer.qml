@@ -311,8 +311,7 @@ Drawer {
                     delegate: ItemDelegate {
                         Material.accent:"#00693e"
                         width: parent.width
-                        topPadding: 13 * scaleFactor
-                        bottomPadding: 13 * scaleFactor
+                        height: 40 * scaleFactor
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
@@ -606,7 +605,6 @@ Drawer {
             id: stackLayout
             width: 0.95 * parent.width
             anchors.top: tabBar.bottom
-            height: menu.height > menu.width * 1.25 ? menu.height - stackLayout.y - (20 * scaleFactor) : 0.25 * menu.width
             anchors.horizontalCenter: parent.horizontalCenter
             currentIndex: tabBar.currentIndex
             ListView {
@@ -658,9 +656,9 @@ Drawer {
 
                                 loadDefaultOrSuggested();
 
-                                sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsSuggestedLyr);
-                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", suggestedLabel.text);
-                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "description", description);
+                                sceneView.scene.operationalLayers.append(wmsSuggestedLyr);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsSuggestedLyr), "name", suggestedLabel.text);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsSuggestedLyr), "description", description);
                                 menu.close();
                             } else if (inContent === 1) {
                                 stackListRect.color = "lightgray";
@@ -720,11 +718,12 @@ Drawer {
                 delegate: Rectangle {
                     id: stackCuListRect
                     width: parent.width
-                    height: 40 * scaleFactor
+                    height: resultsLabel.height < 40 * scaleFactor ? 40 * scaleFactor : resultsLabel.height
                     color: "lightgray"
                     anchors.fill: parent.fill
 
                     Label {
+                        id: resultsLabel
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         padding: 24 * scaleFactor
@@ -751,9 +750,9 @@ Drawer {
 
                             if (inContent === 0) {
                                 stackCuListRect.color = "#249567";
-                                sceneView.scene.operationalLayers.insert(sceneView.scene.operationalLayers.count, wmsCustomLyr);
-                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "name", layerCuSL[index].title);
-                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.count-1, "description", layerCuSL[index].description);
+                                sceneView.scene.operationalLayers.append(wmsCustomLyr);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsCustomLyr), "name", layerCuSL[index].title);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsCustomLyr), "description", layerCuSL[index].description);
                                 menu.close();
                             } else if (inContent === 1) {
                                 stackCuListRect.color = "lightgray";
@@ -768,9 +767,9 @@ Drawer {
                 target: layerVisibilityListView
                 onHeightChanged: {
                     if (menu.height > menu.width * 1.25) {
-                        stackLayout.height = parent.height - stackLayout.y - (20 * scaleFactor);
+                        stackLayout.height = menu.height - stackLayout.y - (20 * scaleFactor);
                     } else {
-                        stackLayout.height = 0.25 * menu.width;
+                        stackLayout.height = 0.2 * menu.height;
                     }
                 }
             }
@@ -831,9 +830,9 @@ Drawer {
                                                                                visible: true
                                                                            });
 
-                        sceneView.scene.operationalLayers.insert(0, wmsLayerEv);
-                        sceneView.scene.operationalLayers.setProperty(0, "name", "All Events");
-                        sceneView.scene.operationalLayers.setProperty(0, "description", layerNAEv.description);
+                        sceneView.scene.operationalLayers.append(wmsLayerEv);
+                        sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsLayerEv), "name", "All Events");
+                        sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsLayerEv), "description", layerNAEv.description);
                     }
                 });
 

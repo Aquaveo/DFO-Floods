@@ -280,9 +280,9 @@ Page {
                                                                                    visible: true
                                                                                });
 
-                            sceneView.scene.operationalLayers.insert(0, wmsLayerEv);
-                            sceneView.scene.operationalLayers.setProperty(0, "name", "Nearest Events");
-                            sceneView.scene.operationalLayers.setProperty(0, "description", layerNAEv.description);
+                            sceneView.scene.operationalLayers.append(wmsLayerEv);
+                            sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsLayerEv), "name", "Nearest Events");
+                            sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsLayerEv), "description", layerNAEv.description);
 
                             graphicsOverlay.graphics.clear();
 
