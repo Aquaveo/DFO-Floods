@@ -5,21 +5,21 @@ import QtQuick.Layouts 1.1
 
 import ArcGIS.AppFramework 1.0
 
-Rectangle{
+Rectangle {
     id: descPage
     width: parent.width
     height: parent.height
-    anchors.fill:parent
+    anchors.fill: parent
 
-    ColumnLayout{
-        anchors.fill:parent
+    ColumnLayout {
+        anchors.fill: parent
         spacing: 0
         clip:true
 
-        Rectangle{
-            id:descPageheader
+        Rectangle {
+            id: descPageheader
             Layout.alignment: Qt.AlignTop
-            color:"#00693e"
+            color: "#00693e"
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: 50 * scaleFactor
 
@@ -58,7 +58,7 @@ Rectangle{
         }
 
         Rectangle {
-            color:"black"
+            color: "black"
             Layout.fillWidth: true
             Layout.fillHeight: true
             
@@ -166,10 +166,16 @@ Rectangle{
                         anchors.verticalCenter: parent.verticalCenter
 
                         width: 0.25 * parent.width
-                        height: 50 * scaleFactor
+                        height: 40 * scaleFactor
 
                         Material.background: "#00693e"
                         text: "SEND"
+                        background: Rectangle {
+                            width: parent.width
+                            height: parent.height
+                            color: "#00693e"
+                            radius: 6 * scaleFactor
+                        }
 
                         contentItem: Text {
                             text: feedbackSend.text
@@ -190,7 +196,7 @@ Rectangle{
                 Rectangle {
                     id: feedbackRect
                     width: 0.9 * parent.width
-                    height: 160 * scaleFactor > feedbackTextArea.contentHeight ? 200 * scaleFactor : feedbackTextArea.contentHeight + 50 * scaleFactor
+                    height: 160 * scaleFactor > feedbackTextArea.contentHeight ? 160 * scaleFactor : feedbackTextArea.contentHeight + 50 * scaleFactor
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: fbTitle.bottom
                     radius: 6 * scaleFactor
@@ -199,6 +205,7 @@ Rectangle{
 
                     TextArea {
                         id: feedbackTextArea
+                        text: "\n\n"
                         color: "black"
                         Material.accent:"#00693e"
                         width: 0.85 * parent.width

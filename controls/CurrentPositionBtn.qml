@@ -5,7 +5,7 @@ import QtQuick.Controls.Material 2.1
 import ArcGIS.AppFramework 1.0
 import Esri.ArcGISRuntime 100.5
 
-RoundButton{
+RoundButton {
     id: locationBtn
     radius: 30 * scaleFactor
     width: 60 * scaleFactor
@@ -16,8 +16,8 @@ RoundButton{
     anchors {
         right: parent.right
         top: parent.top
-        rightMargin: 20 * scaleFactor
-        topMargin: 205 * scaleFactor
+        rightMargin: 340 * scaleFactor < pageItem.height ? 20 * scaleFactor : 90 * scaleFactor
+        topMargin: 340 * scaleFactor < pageItem.height ? 205 * scaleFactor : 10 * scaleFactor
     }
 
     Image {

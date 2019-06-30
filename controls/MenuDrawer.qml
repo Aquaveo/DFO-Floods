@@ -334,7 +334,7 @@ Drawer {
                     }
 
                     indicator: Rectangle {
-                        visible: False
+                        visible: false
                     }
 
                     onCurrentTextChanged: {

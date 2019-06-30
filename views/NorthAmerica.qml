@@ -147,6 +147,124 @@ Page {
             }
         }
 
+        // Create outter rectangle for the legend
+        Rectangle {
+            id: legendRect
+            anchors {
+                margins: 10 * scaleFactor
+                bottomMargin: 30 * scaleFactor
+                left: parent.left
+                bottom: sceneView.bottom
+            }
+            property bool collapsed: true
+            height: 40 * scaleFactor
+            width: 175 * scaleFactor
+            color: "#00693e"
+            opacity: 0.95
+            radius: 10 * scaleFactor
+            clip: true
+
+            // Animate the expand and collapse of the legend
+            Behavior on height {
+                SpringAnimation {
+                    spring: 3
+                    damping: .8
+                }
+            }
+
+            // Catch mouse signals so they don't propagate to the map
+            MouseArea {
+                anchors.fill: parent
+                onClicked: mouse.accepted = true
+                onWheel: wheel.accepted = true
+            }
+
+            // Create UI for the user to select the layer to display
+            Column {
+                anchors {
+                    fill: parent
+                    leftMargin: 10 * scaleFactor
+                    rightMargin: 10 * scaleFactor
+                    bottomMargin: 6 * scaleFactor
+                    topMargin: 6 * scaleFactor
+                }
+                spacing: 6 * scaleFactor
+
+                Row {
+                    spacing: 55 * scaleFactor
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Legend")
+                        color: "white"
+                        font {
+                            pixelSize: 18 * scaleFactor
+                            bold: true
+                        }
+                    }
+
+                    // Legend icon to allow expanding and collapsing
+                    Image {
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: "../assets/legend.png"
+                        width: 28 * scaleFactor
+                        height: width
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if (legendRect.collapsed) {
+                                    legendRect.height = 200 * scaleFactor < pageItem.height - 85 * scaleFactor ? 200 * scaleFactor : pageItem.height - 85 * scaleFactor;
+                                    legendRect.collapsed = false;
+                                } else {
+                                    legendRect.height = 40 * scaleFactor;
+                                    legendRect.collapsed = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Create a list view to display the legend
+                ListView {
+                    id: legendListView
+                    anchors.margins: 10 * scaleFactor
+                    anchors.leftMargin: 0
+                    width: 165 * scaleFactor
+                    height: 160 * scaleFactor
+                    contentHeight: childrenRect.height
+
+                    model: legendModel
+
+                    delegate: Item {
+                        width: parent.width
+                        height: 35 * scaleFactor
+                        clip: true
+
+                        Row {
+                            spacing: 10 * scaleFactor
+
+                            Image {
+                                width: 20 * scaleFactor
+                                height: width
+                                source: symbolUrl
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                            Text {
+                                width: 125 * scaleFactor
+                                text: name
+                                color: "white"
+                                wrapMode: Text.WordWrap
+                                font.pixelSize: 12 * scaleFactor
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                        }
+                    }
+                    clip: true;
+                }
+            }
+        }
+
         onMouseClicked: {
             pinMessage.visible = 0;
             if (drawPin === true) {
