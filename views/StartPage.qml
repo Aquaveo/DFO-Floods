@@ -44,7 +44,7 @@ Rectangle{
             id: sceneView
             Scene {
                 id: scene
-                BasemapTopographic {}
+                BasemapImageryWithLabels {}
             }
 
             PositionSource {

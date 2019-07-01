@@ -63,7 +63,7 @@ Drawer {
             }
 
             font.pixelSize: 14 * scaleFactor
-            model: ["Topographic","Streets","Imagery","Terrain"]
+            model: ["Imagery","Streets","Terrain","Topographic"]
 
             delegate: ItemDelegate {
                 Material.accent:"#00693e"
@@ -89,24 +89,24 @@ Drawer {
 
             function changeBasemap() {
                 switch (comboBoxBasemap.currentText) {
-                case "Topographic":
-                    sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
+                case "Imagery":
+                    sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapImageryWithLabels");
                     menu.close();
                     break;
                 case "Streets":
                     sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapStreets");
                     menu.close();
                     break;
-                case "Imagery":
-                    sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapImageryWithLabels");
-                    menu.close();
-                    break;
                 case "Terrain":
                     sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTerrainWithLabels");
                     menu.close();
                     break;
-                default:
+                case "Topographic":
                     sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
+                    menu.close();
+                    break;
+                default:
+                    sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapImageryWithLabels");
                     menu.close();
                     break;
                 }
@@ -476,8 +476,11 @@ Drawer {
                         onAccepted: {
                             radiusSearch = radiusInput.text;
                             if (selectEventLayersCheck.checked === false) {
+                                radiusInput.focus = false;
                                 selectEventLayersCheck.checked = true;
                             } else {
+                                radiusInput.focus = false;
+                                pinMessage.children[0].text = qsTr("Zoom in and tap on a location");
                                 menu.close();
                             }
                         }
@@ -796,6 +799,7 @@ Drawer {
                 }
 
                 menu.close();
+                pinMessage.children[0].text = qsTr("Zoom in and tap on a location");
                 pinMessage.visible = 1;
             } else {
                 drawPin = false;
@@ -809,6 +813,7 @@ Drawer {
 
         function allEventsChanged() {
             if (allEventLayersCheck.checked == true) {
+                pinMessage.visible = 0;
                 menu.close();
                 selectEventLayersCheck.checked = false;
 

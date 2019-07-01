@@ -7,6 +7,7 @@ Rectangle {
     height: 40 * scaleFactor
     width: pinMessage.text === "" ? 0 : pinMessage.width + 30 * scaleFactor
     color: "#00693e"
+    radius: 6 * scaleFactor
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.leftMargin: 55 * scaleFactor

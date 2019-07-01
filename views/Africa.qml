@@ -409,6 +409,9 @@ Page {
                                                                                                targetScale: 1000000 * layerInfos[0].sublayerInfos[nearestTileList[0][1]].extent.width * scaleFactor
                                                                                            });
                             sceneView.setViewpoint(newViewPointCenter);
+                        } else {
+                            pinMessage.children[0].text = qsTr("No nearby event found");
+                            pinMessage.visible = 1;
                         }
                     }
                 });
@@ -422,7 +425,7 @@ Page {
 
         function createWmsLayer() {
             // set the default basemap
-            scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
+            scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapImageryWithLabels");
 
             // create the services
             service2wk = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms2wkServiceUrl });
