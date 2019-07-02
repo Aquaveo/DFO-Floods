@@ -13,8 +13,8 @@ import "../controls" as Controls
 Page {
     id: pageItem
     property real scaleFactor: AppFramework.displayScaleFactor
+    property url wms3dayServiceUrl: "http://floodobservatory.colorado.edu/geoserver/AS_3day_rs/wms?service=wms&request=getCapabilities";
     property url wms2wkServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_2wk_current_AS/wms?service=wms&request=getCapabilities";
-    property url wms3dayServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_3day_current_AS/wms?service=wms&request=getCapabilities";
     property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_AS/wms?service=wms&request=getCapabilities";
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-as/wms?service=wms&request=getCapabilities";
     property url wmsHistWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Historical_flood_extent_AS/wms?service=wms&request=getCapabilities";
