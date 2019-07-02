@@ -428,49 +428,12 @@ Page {
             scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapImageryWithLabels");
 
             // create the services
-            service2wk = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms2wkServiceUrl });
             service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
+            service2wk = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms2wkServiceUrl });
+            serviceGlo = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsGlofasServiceUrl });
             serviceJan = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsJanServiceUrl });
             serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
             serviceHistW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsHistWServiceUrl });
-            serviceGlo = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsGlofasServiceUrl });
-
-            service2wk.loadStatusChanged.connect(function() {
-                if (service2wk.loadStatus === Enums.LoadStatusLoaded) {
-                    // get the layer info list
-                    var service2wkInfo = service2wk.serviceInfo;
-                    var layerInfos = service2wkInfo.layerInfos;
-
-                    // get the desired layer from the list
-                    layer2wk = layerInfos[0].sublayerInfos[0]
-
-                    wmsLayer2wk = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                            layerInfos: [layer2wk]
-                                                                        });
-
-                    scene.operationalLayers.append(wmsLayer2wk);
-                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayer2wk), "name", layer2wk.title);
-                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayer2wk), "description", layer2wk.description);
-                }
-            });
-
-            // load default visible layer first
-            service2wk.load();
-
-            // load default visible layer first
-            service2wk.load();
-
-            serviceGlo.loadStatusChanged.connect(function() {
-                if (serviceGlo.loadStatus === Enums.LoadStatusLoaded) {
-                    var serviceGloInfo = serviceGlo.serviceInfo;
-                    var layerInfos = serviceGloInfo.layerInfos;
-
-                    // add all layers to model
-                    suggestedListM = Qt.createQmlObject('import QtQuick 2.7; ListModel {}', pageItem);
-
-                    addToModel(layerInfos[0].sublayerInfos[3].sublayerInfos, suggestedListM);
-                }
-            });
 
             service3day.loadStatusChanged.connect(function() {
                 if (service3day.loadStatus === Enums.LoadStatusLoaded) {
@@ -491,6 +454,46 @@ Page {
                 }
             });
 
+            serviceGlo.loadStatusChanged.connect(function() {
+                if (serviceGlo.loadStatus === Enums.LoadStatusLoaded) {
+                    var serviceGloInfo = serviceGlo.serviceInfo;
+                    var layerInfos = serviceGloInfo.layerInfos;
+
+                    // add all layers to model
+                    suggestedListM = Qt.createQmlObject('import QtQuick 2.7; ListModel {}', pageItem);
+
+                    addToModel(layerInfos[0].sublayerInfos[3].sublayerInfos, suggestedListM);
+                }
+            });
+
+            // load glofas service
+            serviceGlo.load();
+
+            service2wk.loadStatusChanged.connect(function() {
+                if (service2wk.loadStatus === Enums.LoadStatusLoaded) {
+                    // get the layer info list
+                    var service2wkInfo = service2wk.serviceInfo;
+                    var layerInfos = service2wkInfo.layerInfos;
+
+                    // get the desired layer from the list
+                    layer2wk = layerInfos[0].sublayerInfos[0]
+
+                    wmsLayer2wk = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                            layerInfos: [layer2wk]
+                                                                        });
+
+                    scene.operationalLayers.append(wmsLayer2wk);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayer2wk), "name", layer2wk.title);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayer2wk), "description", layer2wk.description);
+
+                    service3day.load();
+                } else if (service2wk.loadStatus === Enums.LoadStatusFailedToLoad ||
+                           service2wk.loadStatus === Enums.LoadStatusNotLoaded ||
+                           service2wk.loadStatus === Enums.LoadStatusUnknown) {
+                    service3day.load();
+                }
+            });
+
             serviceJan.loadStatusChanged.connect(function() {
                 if (serviceJan.loadStatus === Enums.LoadStatusLoaded) {
                     // get the layer info list
@@ -508,6 +511,12 @@ Page {
                     scene.operationalLayers.append(wmsLayerJan);
                     scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerJan), "name", layerJan.title);
                     scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerJan), "description", layerJan.description);
+
+                    service2wk.load();
+                } else if (serviceJan.loadStatus === Enums.LoadStatusFailedToLoad ||
+                           serviceJan.loadStatus === Enums.LoadStatusNotLoaded ||
+                           serviceJan.loadStatus === Enums.LoadStatusUnknown) {
+                    service2wk.load();
                 }
             });
 
@@ -527,6 +536,12 @@ Page {
                     scene.operationalLayers.append(wmsLayerRegW);
                     scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerRegW), "name", layerRegW.title);
                     scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerRegW), "description", layerRegW.description);
+
+                    serviceJan.load();
+                } else if (serviceRegW.loadStatus === Enums.LoadStatusFailedToLoad ||
+                           serviceRegW.loadStatus === Enums.LoadStatusNotLoaded ||
+                           serviceRegW.loadStatus === Enums.LoadStatusUnknown) {
+                    serviceJan.load();
                 }
             });
 
@@ -540,19 +555,23 @@ Page {
                     layerHistW = layerInfos[0].sublayerInfos[0]
 
                     wmsLayerHistW = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                             layerInfos: [layerHistW],
+                                                                              layerInfos: [layerHistW],
+                                                                              visible: false
                                                                          });
 
                     scene.operationalLayers.append(wmsLayerHistW);
                     scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerHistW), "name", layerHistW.title);
                     scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerHistW), "description", layerHistW.description);
+
+                    serviceRegW.load();
+                } else if (serviceHistW.loadStatus === Enums.LoadStatusFailedToLoad ||
+                           serviceHistW.loadStatus === Enums.LoadStatusNotLoaded ||
+                           serviceHistW.loadStatus === Enums.LoadStatusUnknown) {
+                    serviceRegW.load();
                 }
             });
 
-            // load other services
-            service3day.load();
-            serviceJan.load();
-            serviceRegW.load();
+            // start service load chain
             serviceHistW.load();
         }
     }

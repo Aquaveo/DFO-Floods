@@ -662,7 +662,7 @@ Drawer {
 
                                 loadDefaultOrSuggested();
 
-                                sceneView.scene.operationalLayers.append(wmsSuggestedLyr);
+                                sceneView.scene.operationalLayers.insert(0, wmsSuggestedLyr);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsSuggestedLyr), "name", suggestedLabel.text);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsSuggestedLyr), "description", description);
                                 menu.close();
