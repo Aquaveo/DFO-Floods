@@ -130,8 +130,10 @@ Drawer {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: layerContentTitle.bottom
             width: 0.95 * parent.width
-            height: childrenRect.height <= 0.2 * menu.height ? childrenRect.height : 0.2 * menu.height
+            height: childrenRect.height < 0.2 * menu.height ? childrenRect.height : 0.2 * menu.height
             clip: true
+
+            verticalLayoutDirection: ListView.BottomToTop
 
             // Assign the model to the list model of sublayers
             model: sceneView.scene.operationalLayers
@@ -140,7 +142,7 @@ Drawer {
             delegate: Item {
                 id: layerVisibilityDelegate
                 width: parent.width
-                height: layerRow.height < 35 * scaleFactor ? 35 * scaleFactor : layerRow.height
+                height: layerRow.height
 
                 Row {
                     id: layerRow
@@ -157,7 +159,7 @@ Drawer {
                     Switch {
                         id: layerSwitch
                         width: 0.25 * layerVisibilityDelegate.width
-                        height: layerVisibilityDelegate.height
+                        height: 35 * scaleFactor
 
                         indicator {
                             width: 35 * scaleFactor
@@ -197,7 +199,7 @@ Drawer {
                         id:infoLayer
 
                         width: 0.10 * layerVisibilityDelegate.width
-                        height: layerVisibilityDelegate.height
+                        height: 35 * scaleFactor
 
                         Material.background: "transparent"
 
@@ -217,6 +219,10 @@ Drawer {
                         }
                     }
                 }
+            }
+
+            onContentHeightChanged: {
+                layerVisibilityListView.positionViewAtEnd();
             }
         }
 
@@ -664,7 +670,7 @@ Drawer {
 
                                 sceneView.scene.operationalLayers.insert(0, wmsSuggestedLyr);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsSuggestedLyr), "name", suggestedLabel.text);
-                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsSuggestedLyr), "description", description);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsSuggestedLyr), "description", pageItem.descriptionLyr);
                                 menu.close();
                             } else if (inContent === 1) {
                                 stackListRect.color = "lightgray";
@@ -678,11 +684,13 @@ Drawer {
                                     wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                                 layerInfos: [layer2wk]
                                                                                             });
+                                    pageItem.descriptionLyr = layer2wk.description;
                                     suggestedListM.remove(index, 1);
                                 } else if (/Current daily/.test(suggestedLabel.text)) {
                                     wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                                 layerInfos: [layer3day]
                                                                                             });
+                                    pageItem.descriptionLyr = layer3day.description;
                                     suggestedListM.remove(index, 1);
                                 } else if (/January till/.test(suggestedLabel.text)) {
                                     wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
@@ -693,11 +701,13 @@ Drawer {
                                     wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                                 layerInfos: [layerRegW]
                                                                                             });
+                                    pageItem.descriptionLyr = layerRegW.description;
                                     suggestedListM.remove(index, 1)
                                 } else if (/Historical flood extent /.test(suggestedLabel.text)) {
                                     wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                                layerInfos: [layerRegW]
+                                                                                                layerInfos: [layerHistW]
                                                                                             });
+                                    pageItem.descriptionLyr = layerHistW.description;
                                     suggestedListM.remove(index, 1)
                                 }
                             } else {
@@ -706,6 +716,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerGloSL]
                                                                                         });
+                                pageItem.descriptionLyr = subLayerGloSL.description;
                             }
                         }
                     }
@@ -732,7 +743,7 @@ Drawer {
                         id: resultsLabel
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
-                        padding: 24 * scaleFactor
+                        padding: 12 * scaleFactor
                         text:title
                         font.pixelSize: 14 * scaleFactor
                     }

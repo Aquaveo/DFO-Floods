@@ -36,7 +36,7 @@ Rectangle {
             radius: 12 * scaleFactor
             border.color: "black"
             Text {
-                text: model.index + 1
+                text: sceneView.scene.operationalLayers.count - model.index
                 color: "white"
                 font.pixelSize: 18 * scaleFactor
                 anchors.centerIn: parent

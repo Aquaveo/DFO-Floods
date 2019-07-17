@@ -14,10 +14,10 @@ Page {
     id: pageItem
     property real scaleFactor: AppFramework.displayScaleFactor
     property url wms3dayServiceUrl: "http://floodobservatory.colorado.edu/geoserver/AF_3day_rs/wms?service=wms&request=getCapabilities";
-    property url wms2wkServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_2wk_current_AF/wms?service=wms&request=getCapabilities";
-    property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_Jan_till_current_AF/wms?service=wms&request=getCapabilities";
+    property url wms2wkServiceUrl: "http://floodobservatory.colorado.edu/geoserver/AF_2wk_rs/wms?service=wms&request=getCapabilities";
+    property url wmsJanServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_rs_Jan_till_current_AF/wms?service=wms&request=getCapabilities";
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-af/wms?service=wms&request=getCapabilities";
-    property url wmsHistWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Historical_flood_extent_AF/wms?service=wms&request=getCapabilities";
+    property url wmsHistWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/MOD_history_AF/wms?service=wms&request=getCapabilities";
     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_AF/wms?service=wms&request=getCapabilities";
     property url filteredEventServiceUrl: wmsEventServiceUrl;
     property var availableEventYears: ["All","2017","2018","2019"];
@@ -158,7 +158,7 @@ Page {
             }
             property bool collapsed: true
             height: 40 * scaleFactor
-            width: 175 * scaleFactor
+            width: 48 * scaleFactor
             color: "#00693e"
             opacity: 0.95
             radius: 10 * scaleFactor
@@ -166,6 +166,13 @@ Page {
 
             // Animate the expand and collapse of the legend
             Behavior on height {
+                SpringAnimation {
+                    spring: 3
+                    damping: .8
+                }
+            }
+
+            Behavior on width {
                 SpringAnimation {
                     spring: 3
                     damping: .8
@@ -191,11 +198,11 @@ Page {
                 spacing: 6 * scaleFactor
 
                 Row {
+                    id: legendTitleRow
                     spacing: 55 * scaleFactor
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Legend")
                         color: "white"
                         font {
                             pixelSize: 18 * scaleFactor
@@ -214,9 +221,13 @@ Page {
                             anchors.fill: parent
                             onClicked: {
                                 if (legendRect.collapsed) {
+                                    legendTitleRow.children[0].text = qsTr("Legend");
+                                    legendRect.width = 175 * scaleFactor;
                                     legendRect.height = 200 * scaleFactor < pageItem.height - 85 * scaleFactor ? 200 * scaleFactor : pageItem.height - 85 * scaleFactor;
                                     legendRect.collapsed = false;
                                 } else {
+                                    legendTitleRow.children[0].text = "";
+                                    legendRect.width = 48 * scaleFactor;
                                     legendRect.height = 40 * scaleFactor;
                                     legendRect.collapsed = true;
                                 }
