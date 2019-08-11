@@ -19,6 +19,7 @@ Page {
     property url wmsRegWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Permanent_water_2013-2016-na/wms?service=wms&request=getCapabilities";
     property url wmsHistWServiceUrl: "http://floodobservatory.colorado.edu/geoserver/MOD_history_NA/wms?service=wms&request=getCapabilities";
     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_NA/wms?service=wms&request=getCapabilities";
+    property url wmsWorldPopServiceUrl: "http://floodobservatory.colorado.edu/geoserver/NA_population/wms?service=wms&request=getCapabilities";
     property url filteredEventServiceUrl: wmsEventServiceUrl;
     property var availableEventYears: ["All","2017","2018","2019"];
 
@@ -40,6 +41,8 @@ Page {
     property WmsService serviceEv
     property list<WmsLayerInfo> layerNAEv;
     property WmsLayer wmsLayerEv;
+
+    property WmsService servicePop;
 
     property WmsService serviceCu
     property WmsLayerInfo layerCu;
@@ -441,10 +444,15 @@ Page {
             // create the services
             service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
             service2wk = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms2wkServiceUrl });
-            serviceGlo = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsGlofasServiceUrl });
             serviceJan = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsJanServiceUrl });
             serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
             serviceHistW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsHistWServiceUrl });
+
+            // suggested services
+            serviceGlo = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsGlofasServiceUrl });
+            serviceFF = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsFloodFreqServiceUrl });
+            serviceStations = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsStationsServiceUrl });
+            servicePop = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsWorldPopServiceUrl });
 
             service3day.loadStatusChanged.connect(function() {
                 if (service3day.loadStatus === Enums.LoadStatusLoaded) {
@@ -464,21 +472,6 @@ Page {
                     scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayer3day), "description", layer3day.description);
                 }
             });
-
-            serviceGlo.loadStatusChanged.connect(function() {
-                if (serviceGlo.loadStatus === Enums.LoadStatusLoaded) {
-                    var serviceGloInfo = serviceGlo.serviceInfo;
-                    var layerInfos = serviceGloInfo.layerInfos;
-
-                    // add all layers to model
-                    suggestedListM = Qt.createQmlObject('import QtQuick 2.7; ListModel {}', pageItem);
-
-                    addToModel(layerInfos[0].sublayerInfos[3].sublayerInfos, suggestedListM);
-                }
-            });
-
-            // load glofas service
-            serviceGlo.load();
 
             service2wk.loadStatusChanged.connect(function() {
                 if (service2wk.loadStatus === Enums.LoadStatusLoaded) {
@@ -584,6 +577,63 @@ Page {
 
             // start service load chain
             serviceHistW.load();
+
+            serviceGlo.loadStatusChanged.connect(function() {
+                if (serviceGlo.loadStatus === Enums.LoadStatusLoaded) {
+                    var serviceGloInfo = serviceGlo.serviceInfo;
+                    var layerInfos = serviceGloInfo.layerInfos;
+
+                    // add all layers to model
+                    suggestedListM = Qt.createQmlObject('import QtQuick 2.7; ListModel {}', pageItem);
+
+                    addToModel(layerInfos[0].sublayerInfos[3].sublayerInfos, suggestedListM);
+                    serviceFF.load();
+                } else if (serviceGlo.loadStatus === Enums.LoadStatusFailedToLoad ||
+                           serviceGlo.loadStatus === Enums.LoadStatusNotLoaded ||
+                           serviceGlo.loadStatus === Enums.LoadStatusUnknown) {
+                    serviceFF.load();
+                }
+            });
+
+            serviceFF.loadStatusChanged.connect(function() {
+                if (serviceFF.loadStatus === Enums.LoadStatusLoaded) {
+                    var serviceFFInfo = serviceFF.serviceInfo;
+                    var layerInfos = serviceFFInfo.layerInfos;
+
+                    suggestedListM.append(layerInfos[0].sublayerInfos[5]);
+                    servicePop.load();
+                } else if (serviceFF.loadStatus === Enums.LoadStatusFailedToLoad ||
+                           serviceFF.loadStatus === Enums.LoadStatusNotLoaded ||
+                           serviceFF.loadStatus === Enums.LoadStatusUnknown) {
+                    servicePop.load();
+                }
+            });
+
+            servicePop.loadStatusChanged.connect(function() {
+                if (servicePop.loadStatus === Enums.LoadStatusLoaded) {
+                    var servicePopInfo = servicePop.serviceInfo;
+                    var layerInfos = servicePopInfo.layerInfos;
+
+                    suggestedListM.append(layerInfos[0].sublayerInfos[0]);
+                    serviceStations.load();
+                } else if (servicePop.loadStatus === Enums.LoadStatusFailedToLoad ||
+                           servicePop.loadStatus === Enums.LoadStatusNotLoaded ||
+                           servicePop.loadStatus === Enums.LoadStatusUnknown) {
+                    serviceStations.load();
+                }
+            });
+
+            serviceStations.loadStatusChanged.connect(function() {
+                if (serviceStations.loadStatus === Enums.LoadStatusLoaded) {
+                    var serviceStationsInfo = serviceStations.serviceInfo;
+                    var layerInfos = serviceStationsInfo.layerInfos;
+
+                    suggestedListM.append(layerInfos[0].sublayerInfos[0]);
+                }
+            });
+
+            // load glofas service
+            serviceGlo.load();
         }
     }
 

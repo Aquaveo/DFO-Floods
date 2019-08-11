@@ -28,7 +28,7 @@ Rectangle {
 
         Text {
             id: titleText
-            text: qsTr("Choose a Layer Group")
+            text: qsTr("Choose a Region")
             font{
                 pixelSize:app.baseFontSize
                 bold:true
@@ -38,7 +38,7 @@ Rectangle {
             anchors.bottom:popUpListView.top
         }
 
-        ListView{
+        ListView {
             id:popUpListView
             anchors.topMargin: 64 * scaleFactor
             anchors.bottomMargin: 40 * scaleFactor

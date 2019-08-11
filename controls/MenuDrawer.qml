@@ -679,44 +679,65 @@ Drawer {
                         }
 
                         function loadDefaultOrSuggested() {
-                            if (index > 3) {
-                                if (/2-week/.test(suggestedLabel.text)) {
-                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                                layerInfos: [layer2wk]
-                                                                                            });
-                                    pageItem.descriptionLyr = layer2wk.description;
-                                    suggestedListM.remove(index, 1);
-                                } else if (/Current daily/.test(suggestedLabel.text)) {
-                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                                layerInfos: [layer3day]
-                                                                                            });
-                                    pageItem.descriptionLyr = layer3day.description;
-                                    suggestedListM.remove(index, 1);
-                                } else if (/January till/.test(suggestedLabel.text)) {
-                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                                layerInfos: [layerJan]
-                                                                                            });
-                                    suggestedListM.remove(index, 1);
-                                } else if (/Regular water/.test(suggestedLabel.text)) {
-                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                                layerInfos: [layerRegW]
-                                                                                            });
-                                    pageItem.descriptionLyr = layerRegW.description;
-                                    suggestedListM.remove(index, 1)
-                                } else if (/Historical flood extent /.test(suggestedLabel.text)) {
-                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                                layerInfos: [layerHistW]
-                                                                                            });
-                                    pageItem.descriptionLyr = layerHistW.description;
-                                    suggestedListM.remove(index, 1)
-                                }
+                            if (/2-week/.test(suggestedLabel.text)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layer2wk]
+                                                                                        });
+                                pageItem.descriptionLyr = layer2wk.description;
+                                suggestedListM.remove(index, 1);
+                            } else if (/Current daily/.test(suggestedLabel.text)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layer3day]
+                                                                                        });
+                                pageItem.descriptionLyr = layer3day.description;
+                                suggestedListM.remove(index, 1);
+                            } else if (/January till/.test(suggestedLabel.text)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layerJan]
+                                                                                        });
+                                suggestedListM.remove(index, 1);
+                            } else if (/Regular water/.test(suggestedLabel.text)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layerRegW]
+                                                                                        });
+                                pageItem.descriptionLyr = layerRegW.description;
+                                suggestedListM.remove(index, 1)
+                            } else if (/Historical flood extent /.test(suggestedLabel.text)) {
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [layerHistW]
+                                                                                        });
+                                pageItem.descriptionLyr = layerHistW.description;
+                                suggestedListM.remove(index, 1)
+                            } else if (/Annual Flood Frequency/.test(suggestedLabel.text)) {
+                                var layerInfos = serviceFF.serviceInfo.layerInfos;
+                                var regIx = popUp.children[1].children[1].currentIndex + 1;
+                                subLayerFFSL = layerInfos[0].sublayerInfos[regIx];
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [subLayerFFSL]
+                                                                                        });
+                                pageItem.descriptionLyr = subLayerFFSL.description;
+                            } else if (/World population/.test(suggestedLabel.text)) {
+                                layerInfos = servicePop.serviceInfo.layerInfos;
+                                subLayerWPSL = layerInfos[0].sublayerInfos[0];
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [subLayerWPSL]
+                                                                                        });
+                                pageItem.descriptionLyr = subLayerWPSL.description;
+                            } else if (/River Discharge Stations/.test(suggestedLabel.text)) {
+                                layerInfos = serviceStations.serviceInfo.layerInfos;
+                                subLayerStationsSL = layerInfos[0].sublayerInfos[0];
+                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                            layerInfos: [subLayerStationsSL]
+                                                                                        });
+                                pageItem.descriptionLyr = subLayerStationsSL.description;
                             } else {
-                                var layerInfos = serviceGlo.serviceInfo.layerInfos;
+                                layerInfos = serviceGlo.serviceInfo.layerInfos;
                                 subLayerGloSL = layerInfos[0].sublayerInfos[3].sublayerInfos[index];
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerGloSL]
                                                                                         });
                                 pageItem.descriptionLyr = subLayerGloSL.description;
+
                             }
                         }
                     }

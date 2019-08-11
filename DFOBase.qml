@@ -28,9 +28,18 @@ App {
     property ListView layerVisibilityListView;
 
     property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
+    property url wmsFloodFreqServiceUrl: "http://floodobservatory.colorado.edu/geoserver/annual_flood_frequency_MOD/wms?service=wms&request=getCapabilities";
+    property url wmsStationsServiceUrl: "http://floodobservatory.colorado.edu/geoserver/DFO_rw_gauging_world/wms?service=wms&request=getCapabilities";
 
     property WmsService serviceGlo;
+    property WmsService serviceFF;
+    property WmsService serviceStations;
+
     property WmsLayerInfo subLayerGloSL;
+    property WmsLayerInfo subLayerFFSL;
+    property WmsLayerInfo subLayerStationsSL;
+    property WmsLayerInfo subLayerWPSL;
+
     property WmsLayerInfo layer2wk;
     property WmsLayerInfo layer3day;
     property WmsLayerInfo layerJan;

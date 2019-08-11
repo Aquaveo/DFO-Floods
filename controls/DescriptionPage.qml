@@ -11,6 +11,12 @@ Rectangle {
     height: parent.height
     anchors.fill: parent
 
+    MouseArea {
+        anchors.fill: parent
+        onClicked: mouse.accepted = true
+        onWheel: wheel.accepted = true
+    }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
