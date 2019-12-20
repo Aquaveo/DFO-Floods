@@ -21,6 +21,7 @@ App {
     property int  baseFontSize : app.info.propertyValue("baseFontSize", 15 * scaleFactor) + (isSmallScreen ? 0 : 3)
     property bool isSmallScreen: (width || height) < units(400)
 
+    property bool disclaimerAccepted: app.settings.value("disclaimerAccepted");
     property bool initLoad: true;
     property url qmlfile: "./views/StartPage.qml";
     property string viewName;
@@ -72,18 +73,23 @@ App {
         }
     }
 
+    Controls.Disclaimer {
+        id: disclaimer
+        visible: false
+    }
+
     Controls.PopUpPage {
-        id:popUp
+        id: popUp
         visible: false
     }
 
     Controls.DescriptionPage {
-        id:descPage
+        id: descPage
         visible: false
     }
 
     Controls.PinMessage {
-        id:pinMessage
+        id: pinMessage
         visible: false
     }
 }

@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.1
+import QtQuick.Controls.Material 2.1
 
 import ArcGIS.AppFramework 1.0
 import Esri.ArcGISRuntime 100.5
@@ -9,13 +10,13 @@ import QtPositioning 5.3
 
 import "../controls" as Controls
 
-Rectangle{
+Rectangle {
     id: startPage
     width: parent.width
     height: parent.height
     anchors.fill:parent
 
-    ColumnLayout{
+    ColumnLayout {
         anchors.fill: parent
         spacing: 0
         clip: true
@@ -61,7 +62,10 @@ Rectangle{
     }
 
     Component.onCompleted: {
-        popUp.visible = 1;
-        initLoad = false;
+        if (!disclaimerAccepted) {
+            disclaimer.visible = true;
+        } else {
+            popUp.visible = 1;
+        }
     }
 }

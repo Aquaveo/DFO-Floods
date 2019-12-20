@@ -168,7 +168,7 @@ Rectangle {
                     }
 
                     Button {
-                        id:feedbackSend
+                        id: feedbackSend
                         anchors.verticalCenter: parent.verticalCenter
 
                         width: 0.25 * parent.width

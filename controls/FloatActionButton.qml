@@ -3,7 +3,7 @@ import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
 
 RoundButton {
-    id:switchBtn
+    id: switchBtn
     radius: 30 * scaleFactor
     width: 60 * scaleFactor
     height: 60 * scaleFactor

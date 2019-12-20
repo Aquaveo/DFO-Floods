@@ -6,8 +6,10 @@ import QtQuick.Controls.Material 2.1
 
 import ArcGIS.AppFramework 1.0
 
+import "../controls" as Controls
+
 Rectangle {
-    id:popUp
+    id: popUp
     anchors.fill: parent
     color: "#80000000"
 
@@ -18,13 +20,13 @@ Rectangle {
     }
 
     Rectangle {
-        id:popUpWindow
+        id: popUpWindow
         height: 270 * scaleFactor
         width: 280 * scaleFactor
         anchors.centerIn: parent
         radius: 3 * scaleFactor
         Material.background:  "#FAFAFA"
-        Material.elevation:24
+        Material.elevation: 24
 
         Text {
             id: titleText
@@ -79,7 +81,8 @@ Rectangle {
                 MouseArea{
                     anchors.fill:parent
                     onClicked: {
-                        popUp.visible = 0
+                        popUp.visible = 0;
+                        initLoad = false;
                         popUpListView.currentIndex = index
                         qmlfile = viewItems.get(index).url
                         viewName = viewItems.get(index).name
@@ -124,11 +127,17 @@ Rectangle {
         smooth: true
     }
 
+    Controls.TandCButton {
+        id: tandCBtn
+        visible: true
+    }
+
     onVisibleChanged: {
         if (initLoad) {
             popUp.children[1].children[2].visible = 0;
         } else {
             popUp.children[1].children[2].visible = 1;
+            popUp.children[3].visible = 0;
         }
     }
 }
