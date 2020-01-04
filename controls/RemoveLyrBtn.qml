@@ -61,6 +61,9 @@ RoundButton {
                 suggestedListM.append(remLyr);
             }
         }
+
+        legendListView.model.remove(menu.contentItem.children[0].contentItem.children[4].count - remIx, 1);
+
         descLyrPage.visible = 0;
         menu.open();
     }

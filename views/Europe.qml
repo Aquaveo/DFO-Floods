@@ -442,10 +442,10 @@ Page {
             scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapImageryWithLabels");
 
             // create the services
+            serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
             service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
             service2wk = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms2wkServiceUrl });
             serviceJan = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsJanServiceUrl });
-            serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
             serviceHistW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsHistWServiceUrl });
 
             // suggested services
@@ -453,6 +453,25 @@ Page {
             serviceFF = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsFloodFreqServiceUrl });
             serviceStations = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsStationsServiceUrl });
             servicePop = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsWorldPopServiceUrl });
+
+            serviceRegW.loadStatusChanged.connect(function() {
+                if (serviceRegW.loadStatus === Enums.LoadStatusLoaded) {
+                    // get the layer info list
+                    var serviceRegWInfo = serviceRegW.serviceInfo;
+                    var layerInfos = serviceRegWInfo.layerInfos;
+
+                    // get the desired layer from the list
+                    layerRegW = layerInfos[0].sublayerInfos[0]
+
+                    wmsLayerRegW = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                             layerInfos: [layerRegW],
+                                                                         });
+
+                    scene.operationalLayers.append(wmsLayerRegW);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerRegW), "name", layerRegW.title);
+                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerRegW), "description", layerRegW.description);
+                }
+            });
 
             service3day.loadStatusChanged.connect(function() {
                 if (service3day.loadStatus === Enums.LoadStatusLoaded) {
@@ -470,6 +489,12 @@ Page {
                     scene.operationalLayers.append(wmsLayer3day);
                     scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayer3day), "name", layer3day.title);
                     scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayer3day), "description", layer3day.description);
+
+                    serviceRegW.load();
+                } else if (service3day.loadStatus === Enums.LoadStatusFailedToLoad ||
+                           service3day.loadStatus === Enums.LoadStatusNotLoaded ||
+                           service3day.loadStatus === Enums.LoadStatusUnknown) {
+                    serviceRegW.load();
                 }
             });
 
@@ -524,31 +549,6 @@ Page {
                 }
             });
 
-            serviceRegW.loadStatusChanged.connect(function() {
-                if (serviceRegW.loadStatus === Enums.LoadStatusLoaded) {
-                    // get the layer info list
-                    var serviceRegWInfo = serviceRegW.serviceInfo;
-                    var layerInfos = serviceRegWInfo.layerInfos;
-
-                    // get the desired layer from the list
-                    layerRegW = layerInfos[0].sublayerInfos[0]
-
-                    wmsLayerRegW = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                             layerInfos: [layerRegW],
-                                                                         });
-
-                    scene.operationalLayers.append(wmsLayerRegW);
-                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerRegW), "name", layerRegW.title);
-                    scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerRegW), "description", layerRegW.description);
-
-                    serviceJan.load();
-                } else if (serviceRegW.loadStatus === Enums.LoadStatusFailedToLoad ||
-                           serviceRegW.loadStatus === Enums.LoadStatusNotLoaded ||
-                           serviceRegW.loadStatus === Enums.LoadStatusUnknown) {
-                    serviceJan.load();
-                }
-            });
-
             serviceHistW.loadStatusChanged.connect(function() {
                 if (serviceHistW.loadStatus === Enums.LoadStatusLoaded) {
                     // get the layer info list
@@ -567,11 +567,11 @@ Page {
                     scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerHistW), "name", layerHistW.title);
                     scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(wmsLayerHistW), "description", layerHistW.description);
 
-                    serviceRegW.load();
+                    serviceJan.load();
                 } else if (serviceHistW.loadStatus === Enums.LoadStatusFailedToLoad ||
                            serviceHistW.loadStatus === Enums.LoadStatusNotLoaded ||
                            serviceHistW.loadStatus === Enums.LoadStatusUnknown) {
-                    serviceRegW.load();
+                    serviceJan.load();
                 }
             });
 

@@ -148,6 +148,7 @@ Drawer {
                     id: layerRow
                     spacing: 0
                     anchors.verticalCenter: parent.verticalCenter
+
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         width: 0.65 * layerVisibilityDelegate.width
@@ -188,7 +189,9 @@ Drawer {
 
                         onCheckedChanged: {
                             layerVisible = checked;
+                            legendListView.model.setProperty(layerVisibilityListView.count - 1 - index, "visible", checked)
                         }
+
                         Component.onCompleted: {
                             checked = layerVisible;
                         }
@@ -196,7 +199,7 @@ Drawer {
                     }
 
                     Button {
-                        id:infoLayer
+                        id: infoLayer
 
                         width: 0.10 * layerVisibilityDelegate.width
                         height: 35 * scaleFactor
@@ -683,29 +686,35 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layer2wk]
                                                                                         });
+                                legendModel.append({name: "Two Week Flooded Area", symbolUrl: "../assets/2wk_blue.png", visible: true});
                                 pageItem.descriptionLyr = layer2wk.description;
                                 suggestedListM.remove(index, 1);
                             } else if (/Current daily/.test(suggestedLabel.text)) {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layer3day]
                                                                                         });
+                                legendModel.append({name: "Current Daily Flooded Area", symbolUrl: "../assets/3day_red.png", visible: true});
                                 pageItem.descriptionLyr = layer3day.description;
                                 suggestedListM.remove(index, 1);
                             } else if (/January till/.test(suggestedLabel.text)) {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layerJan]
                                                                                         });
+                                legendModel.append({name: "January till Current Flooded Area", symbolUrl: "../assets/jant_cyan.png", visible: true});
+                                pageItem.descriptionLyr = layerJan.description;
                                 suggestedListM.remove(index, 1);
                             } else if (/Regular water/.test(suggestedLabel.text)) {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layerRegW]
                                                                                         });
+                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/regW_white.png", visible: true});
                                 pageItem.descriptionLyr = layerRegW.description;
                                 suggestedListM.remove(index, 1)
                             } else if (/Historical flood extent /.test(suggestedLabel.text)) {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layerHistW]
                                                                                         });
+                                legendModel.append({name: "Historical Water Extent", symbolUrl: "../assets/histW_gray.png", visible: true});
                                 pageItem.descriptionLyr = layerHistW.description;
                                 suggestedListM.remove(index, 1)
                             } else if (/Annual Flood Frequency/.test(suggestedLabel.text)) {
@@ -715,6 +724,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerFFSL]
                                                                                         });
+//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/regW_white.png", visible: true});
                                 pageItem.descriptionLyr = subLayerFFSL.description;
                             } else if (/World population/.test(suggestedLabel.text)) {
                                 layerInfos = servicePop.serviceInfo.layerInfos;
@@ -722,6 +732,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerWPSL]
                                                                                         });
+//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/regW_white.png", visible: true});
                                 pageItem.descriptionLyr = subLayerWPSL.description;
                             } else if (/River Discharge Stations/.test(suggestedLabel.text)) {
                                 layerInfos = serviceStations.serviceInfo.layerInfos;
@@ -729,6 +740,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerStationsSL]
                                                                                         });
+//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/regW_white.png", visible: true});
                                 pageItem.descriptionLyr = subLayerStationsSL.description;
                             } else {
                                 layerInfos = serviceGlo.serviceInfo.layerInfos;
@@ -736,6 +748,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerGloSL]
                                                                                         });
+//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/regW_white.png", visible: true});
                                 pageItem.descriptionLyr = subLayerGloSL.description;
 
                             }

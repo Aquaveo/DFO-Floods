@@ -50,14 +50,6 @@ App {
     property WmsLayer wmsSuggestedLyr;
     property ListModel suggestedListM;
 
-    property ListModel legendModel: ListModel {
-        ListElement {name: "Current Daily Flooded Area"; symbolUrl: "../assets/3day_red.png"}
-        ListElement {name: "Two Week Flooded Area"; symbolUrl: "../assets/2wk_blue.png"}
-        ListElement {name: "January till Current Flooded Area"; symbolUrl: "../assets/jant_cyan.png"}
-        ListElement {name: "Regular Water Extent"; symbolUrl: "../assets/regW_white.png"}
-        ListElement {name: "Historical Water Extent"; symbolUrl: "../assets/histW_gray.png"}
-    }
-
     Page {
         anchors.fill: parent
 

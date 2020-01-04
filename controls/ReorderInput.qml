@@ -58,6 +58,7 @@ Rectangle {
                     sceneView.scene.operationalLayers.insert(model.index, reoLyr);
                     sceneView.scene.operationalLayers.setProperty(model.index, "name", reoLyr.title);
                     sceneView.scene.operationalLayers.setProperty(model.index, "description", reoLyr.description);
+                    legendListView.model.move(menu.contentItem.children[0].contentItem.children[4].count - 1 - menu.contentItem.children[0].contentItem.children[4].currentIndex, menu.contentItem.children[0].contentItem.children[4].count - 1 - model.index, 1);
                     descLyrPage.visible = 0;
                     menu.open();
                 }
