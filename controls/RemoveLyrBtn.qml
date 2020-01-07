@@ -57,12 +57,13 @@ RoundButton {
 
         if (remLyr.name !== "All Events" && remLyr.name !== "Nearest Events") {
             sceneView.scene.operationalLayers.remove(remIx, 1);
+
             if (/2-week|Current daily|January till|Regular water|Historical flood extent /.test(remLyr.name)) {
                 suggestedListM.append(remLyr);
             }
-        }
 
-        legendListView.model.remove(menu.contentItem.children[0].contentItem.children[4].count - remIx, 1);
+            legendListView.model.remove(menu.contentItem.children[0].contentItem.children[4].count - remIx, 1);
+        }
 
         descLyrPage.visible = 0;
         menu.open();

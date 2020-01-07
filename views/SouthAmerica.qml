@@ -25,11 +25,11 @@ Page {
 
     property ListModel legendModel: ListModel {
         id: legendModel
-        ListElement {name: "Regular Water Extent"; symbolUrl: "../assets/regW_white.png"; visible: true}
-        ListElement {name: "Current Daily Flooded Area"; symbolUrl: "../assets/3day_red.png"; visible: true}
-        ListElement {name: "Two Week Flooded Area"; symbolUrl: "../assets/2wk_blue.png"; visible: true}
-        ListElement {name: "January till Current Flooded Area"; symbolUrl: "../assets/jant_cyan.png"; visible: false}
-        ListElement {name: "Historical Water Extent"; symbolUrl: "../assets/histW_gray.png"; visible: false}
+        ListElement {name: "Regular Water Extent"; symbolUrl: "../assets/legend_icons/regW_white.png"; visible: true}
+        ListElement {name: "Current Daily Flooded Area"; symbolUrl: "../assets/legend_icons/3day_red.png"; visible: true}
+        ListElement {name: "Two Week Flooded Area"; symbolUrl: "../assets/legend_icons/2wk_blue.png"; visible: true}
+        ListElement {name: "January till Current Flooded Area"; symbolUrl: "../assets/legend_icons/jant_cyan.png"; visible: false}
+        ListElement {name: "Historical Water Extent"; symbolUrl: "../assets/legend_icons/histW_gray.png"; visible: false}
     }
 
     property WmsService service2wk;

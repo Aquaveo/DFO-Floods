@@ -686,35 +686,35 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layer2wk]
                                                                                         });
-                                legendModel.append({name: "Two Week Flooded Area", symbolUrl: "../assets/2wk_blue.png", visible: true});
+                                legendModel.append({name: "Two Week Flooded Area", symbolUrl: "../assets/legend_icons/2wk_blue.png", visible: true});
                                 pageItem.descriptionLyr = layer2wk.description;
                                 suggestedListM.remove(index, 1);
                             } else if (/Current daily/.test(suggestedLabel.text)) {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layer3day]
                                                                                         });
-                                legendModel.append({name: "Current Daily Flooded Area", symbolUrl: "../assets/3day_red.png", visible: true});
+                                legendModel.append({name: "Current Daily Flooded Area", symbolUrl: "../assets/legend_icons/3day_red.png", visible: true});
                                 pageItem.descriptionLyr = layer3day.description;
                                 suggestedListM.remove(index, 1);
                             } else if (/January till/.test(suggestedLabel.text)) {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layerJan]
                                                                                         });
-                                legendModel.append({name: "January till Current Flooded Area", symbolUrl: "../assets/jant_cyan.png", visible: true});
+                                legendModel.append({name: "January till Current Flooded Area", symbolUrl: "../assets/legend_icons/jant_cyan.png", visible: true});
                                 pageItem.descriptionLyr = layerJan.description;
                                 suggestedListM.remove(index, 1);
                             } else if (/Regular water/.test(suggestedLabel.text)) {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layerRegW]
                                                                                         });
-                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/regW_white.png", visible: true});
+                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/legend_icons/regW_white.png", visible: true});
                                 pageItem.descriptionLyr = layerRegW.description;
                                 suggestedListM.remove(index, 1)
                             } else if (/Historical flood extent /.test(suggestedLabel.text)) {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layerHistW]
                                                                                         });
-                                legendModel.append({name: "Historical Water Extent", symbolUrl: "../assets/histW_gray.png", visible: true});
+                                legendModel.append({name: "Historical Water Extent", symbolUrl: "../assets/legend_icons/histW_gray.png", visible: true});
                                 pageItem.descriptionLyr = layerHistW.description;
                                 suggestedListM.remove(index, 1)
                             } else if (/Annual Flood Frequency/.test(suggestedLabel.text)) {
@@ -724,7 +724,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerFFSL]
                                                                                         });
-//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/regW_white.png", visible: true});
+//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/legend_icons/regW_white.png", visible: true});
                                 pageItem.descriptionLyr = subLayerFFSL.description;
                             } else if (/World population/.test(suggestedLabel.text)) {
                                 layerInfos = servicePop.serviceInfo.layerInfos;
@@ -732,7 +732,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerWPSL]
                                                                                         });
-//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/regW_white.png", visible: true});
+//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/legend_icons/regW_white.png", visible: true});
                                 pageItem.descriptionLyr = subLayerWPSL.description;
                             } else if (/River Discharge Stations/.test(suggestedLabel.text)) {
                                 layerInfos = serviceStations.serviceInfo.layerInfos;
@@ -740,7 +740,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerStationsSL]
                                                                                         });
-//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/regW_white.png", visible: true});
+//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/legend_icons/regW_white.png", visible: true});
                                 pageItem.descriptionLyr = subLayerStationsSL.description;
                             } else {
                                 layerInfos = serviceGlo.serviceInfo.layerInfos;
@@ -748,7 +748,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerGloSL]
                                                                                         });
-//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/regW_white.png", visible: true});
+//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/legend_icons/regW_white.png", visible: true});
                                 pageItem.descriptionLyr = subLayerGloSL.description;
 
                             }
@@ -853,6 +853,12 @@ Drawer {
                         sceneView.scene.operationalLayers.remove(ix, 1);
                     }
                 });
+
+                for (var i=0; i<legendModel.count; i++) {
+                    if (legendModel.get(i).name === "Nearest Extreme Event") {
+                        legendModel.remove(i, 1);
+                    }
+                }
             }
         }
 
@@ -890,12 +896,18 @@ Drawer {
                 });
 
                 serviceEv.load();
+                legendModel.insert(0, {name: "All Extreme Events", symbolUrl: "../assets/legend_icons/x_events_red.png", visible: true});
             } else {
                 sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
                     if (lyr.name === "All Events") {
                         sceneView.scene.operationalLayers.remove(ix, 1);
                     }
                 });
+                for (var i=0; i<legendModel.count; i++) {
+                    if (legendModel.get(i).name === "All Extreme Events") {
+                        legendModel.remove(i, 1);
+                    }
+                }
             }
         }
     }
