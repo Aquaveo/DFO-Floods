@@ -32,6 +32,8 @@ Page {
         ListElement {name: "Historical Water Extent"; symbolUrl: "../assets/legend_icons/histW_gray.png"; visible: false}
     }
 
+    property var defaultLayersArr: ["Regular Water Extent", "Current Daily Flooded Area / Clouds", "Two Week Flooded Area", "January till Current Flooded Area", "Historical Water Extent", "All Extreme Events", "Nearest Extreme Event"];
+
     property WmsService service2wk;
     property WmsLayer wmsLayer2wk;
 
@@ -260,27 +262,44 @@ Page {
                     model: legendModel
 
                     delegate: Item {
+                        id: legendDelegate
                         width: parent.width
-                        height: model.visible ? 35 * scaleFactor : 0
+                        height: model.visible ? (defaultLayersArr.indexOf(model.name) === -1 ? childrenRect.height + 10 * scaleFactor : 35 * scaleFactor) : 0
                         visible: model.visible
                         clip: true
 
-                        Row {
-                            spacing: 10 * scaleFactor
+                        Rectangle {
+                            id: legendInnerRect
+                            height: childrenRect.height
 
-                            Image {
-                                width: 20 * scaleFactor
-                                height: width
-                                source: symbolUrl
-                                anchors.verticalCenter: parent.verticalCenter
+                            Row {
+                                id: legendRow
+                                height: 35 * scaleFactor
+                                spacing: 10 * scaleFactor
+
+                                Image {
+                                    id: legendSymbol
+                                    anchors.verticalCenter: parent.verticalCenter
+                                }
+
+                                Text {
+                                    id: legendText
+                                    width: defaultLayersArr.indexOf(model.name) === -1 ? 150 * scaleFactor : (150 * scaleFactor) - legendSymbol.width
+                                    text: name
+                                    color: "white"
+                                    wrapMode: Text.Wrap
+                                    font.pixelSize: 12 * scaleFactor
+                                    anchors.verticalCenter: parent.verticalCenter
+                                }
                             }
-                            Text {
-                                width: 125 * scaleFactor
-                                text: name
-                                color: "white"
-                                wrapMode: Text.WordWrap
-                                font.pixelSize: 12 * scaleFactor
-                                anchors.verticalCenter: parent.verticalCenter
+
+                            Component.onCompleted: {
+                                if (defaultLayersArr.indexOf(model.name) === -1) {
+                                    legendRow.children[0].destroy();
+                                    Qt.createQmlObject('import QtQuick 2.7; Image {id: legendSymbol; source: symbolUrl; anchors.top: legendRow.bottom}', legendInnerRect)
+                                } else {
+                                    legendSymbol.source = symbolUrl;
+                                }
                             }
                         }
                     }

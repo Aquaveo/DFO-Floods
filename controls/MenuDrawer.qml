@@ -724,7 +724,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerFFSL]
                                                                                         });
-//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/legend_icons/regW_white.png", visible: true});
+                                legendModel.append({name: "Annual Flood Frequency", symbolUrl: "http://floodobservatory.colorado.edu/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=MOD_an_frequency_af:Annualfrequency_water_af&TRANSPARENT=true&legend_options=fontColor:ffffff", visible: true});
                                 pageItem.descriptionLyr = subLayerFFSL.description;
                             } else if (/World population/.test(suggestedLabel.text)) {
                                 layerInfos = servicePop.serviceInfo.layerInfos;
@@ -740,7 +740,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerStationsSL]
                                                                                         });
-//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/legend_icons/regW_white.png", visible: true});
+                                legendModel.append({name: "Discharge Stations", symbolUrl: "http://floodobservatory.colorado.edu/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=RiverWatch:rw_gauginglocations_af&TRANSPARENT=true&legend_options=fontColor:ffffff", visible: true});
                                 pageItem.descriptionLyr = subLayerStationsSL.description;
                             } else {
                                 layerInfos = serviceGlo.serviceInfo.layerInfos;
