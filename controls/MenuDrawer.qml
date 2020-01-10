@@ -669,7 +669,7 @@ Drawer {
                             if (inContent === 0) {
                                 stackListRect.color = "#249567";
 
-                                loadDefaultOrSuggested();
+                                loadDefaultOrSuggested(name);
 
                                 sceneView.scene.operationalLayers.insert(0, wmsSuggestedLyr);
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsSuggestedLyr), "name", suggestedLabel.text);
@@ -678,10 +678,11 @@ Drawer {
                             } else if (inContent === 1) {
                                 stackListRect.color = "lightgray";
                                 sceneView.scene.operationalLayers.remove(inContentIx, 1);
+                                legendModel.remove(layerVisibilityListView.count - inContentIx, 1);
                             }
                         }
 
-                        function loadDefaultOrSuggested() {
+                        function loadDefaultOrSuggested(rawName) {
                             if (/2-week/.test(suggestedLabel.text)) {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layer2wk]
@@ -693,7 +694,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [layer3day]
                                                                                         });
-                                legendModel.append({name: "Current Daily Flooded Area", symbolUrl: "../assets/legend_icons/3day_red.png", visible: true});
+                                legendModel.append({name: "Current Daily Flooded Area / Clouds", symbolUrl: "../assets/legend_icons/3day_red.png", visible: true});
                                 pageItem.descriptionLyr = layer3day.description;
                                 suggestedListM.remove(index, 1);
                             } else if (/January till/.test(suggestedLabel.text)) {
@@ -744,11 +745,11 @@ Drawer {
                                 pageItem.descriptionLyr = subLayerStationsSL.description;
                             } else {
                                 layerInfos = serviceGlo.serviceInfo.layerInfos;
-                                subLayerGloSL = layerInfos[0].sublayerInfos[3].sublayerInfos[index];
+                                subLayerGloSL = layerInfos[0].sublayerInfos[2].sublayerInfos[index];
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerGloSL]
                                                                                         });
-//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/legend_icons/regW_white.png", visible: true});
+                                legendModel.append({name: "ECMWF " + suggestedLabel.text, symbolUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?version=1.3.0&service=WMS&request=GetLegendGraphic&sld_version=1.1.0&layer=" + rawName + "&format=image/png", visible: true});
                                 pageItem.descriptionLyr = subLayerGloSL.description;
 
                             }

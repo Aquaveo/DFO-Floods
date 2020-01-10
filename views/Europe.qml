@@ -586,7 +586,7 @@ Page {
                     // add all layers to model
                     suggestedListM = Qt.createQmlObject('import QtQuick 2.7; ListModel {}', pageItem);
 
-                    addToModel(layerInfos[0].sublayerInfos[3].sublayerInfos, suggestedListM);
+                    addToModel(layerInfos[0].sublayerInfos[2].sublayerInfos, suggestedListM);
                     serviceFF.load();
                 } else if (serviceGlo.loadStatus === Enums.LoadStatusFailedToLoad ||
                            serviceGlo.loadStatus === Enums.LoadStatusNotLoaded ||

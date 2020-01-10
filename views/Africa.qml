@@ -296,7 +296,11 @@ Page {
                             Component.onCompleted: {
                                 if (defaultLayersArr.indexOf(model.name) === -1) {
                                     legendRow.children[0].destroy();
-                                    Qt.createQmlObject('import QtQuick 2.7; Image {id: legendSymbol; source: symbolUrl; anchors.top: legendRow.bottom}', legendInnerRect)
+                                    if (name.includes("ECMWF ")) {
+                                        Qt.createQmlObject('import QtQuick 2.7; Rectangle {width: 0.65 * legendListView.width; height: childrenRect.height; color: "transparent"; clip: true; anchors.top: legendRow.bottom; Image {id: legendSymbol; source: symbolUrl}}', legendInnerRect);
+                                    } else {
+                                        Qt.createQmlObject('import QtQuick 2.7; Image {id: legendSymbol; source: symbolUrl; anchors.top: legendRow.bottom}', legendInnerRect);
+                                    }
                                 } else {
                                     legendSymbol.source = symbolUrl;
                                 }
@@ -617,7 +621,7 @@ Page {
                     // add all layers to model
                     suggestedListM = Qt.createQmlObject('import QtQuick 2.7; ListModel {}', pageItem);
 
-                    addToModel(layerInfos[0].sublayerInfos[3].sublayerInfos, suggestedListM);
+                    addToModel(layerInfos[0].sublayerInfos[2].sublayerInfos, suggestedListM);
                     serviceFF.load();
                 } else if (serviceGlo.loadStatus === Enums.LoadStatusFailedToLoad ||
                            serviceGlo.loadStatus === Enums.LoadStatusNotLoaded ||
@@ -670,7 +674,10 @@ Page {
 
     function addToModel (item, model) {
         for (var p in item) {
-            model.append(item[p])
+            var ECMWFPrecip = ["EGE_probRgt300", "EGE_probRgt150", "EGE_probRgt50", "AccRainEGE"];
+            if (ECMWFPrecip.includes(item[p].name)) {
+                model.append(item[p]);
+            }
         }
     }
 
