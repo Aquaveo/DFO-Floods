@@ -733,7 +733,7 @@ Drawer {
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerWPSL]
                                                                                         });
-//                                legendModel.append({name: "Regular Water Extent", symbolUrl: "../assets/legend_icons/regW_white.png", visible: true});
+                                legendModel.append({name: "World Population", symbolUrl: "http://floodobservatory.colorado.edu/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=AF_population:ago_ppp_2015&height=8&WIDTH=10&TRANSPARENT=true&legend_options=fontSize:8;fontColor:ffffff", visible: true});
                                 pageItem.descriptionLyr = subLayerWPSL.description;
                             } else if (/River Discharge Stations/.test(suggestedLabel.text)) {
                                 layerInfos = serviceStations.serviceInfo.layerInfos;
