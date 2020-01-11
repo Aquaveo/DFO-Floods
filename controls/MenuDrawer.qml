@@ -307,7 +307,7 @@ Drawer {
                     id: yearFilter
                     currentIndex: -1
                     displayText: currentIndex === -1 ? "Filter" : currentText
-                    width: (0.5 * allExtremeEvRow.width) - (allEventLayersCheck.width * 1.5)
+                    width: (0.5 * allExtremeEvRow.width) - (allEventLayersCheck.width * 1.5) - (30 * scaleFactor)  // to match radius width
                     height: 40 * scaleFactor
                     Material.accent:"#00693e"
                     background: Rectangle {
@@ -444,7 +444,7 @@ Drawer {
 
                 Rectangle {
                     id: radiusInputRect
-                    width: (0.5 * selectExtremeEvRow.width) - (selectEventLayersCheck.width * 1.5)
+                    width: (0.5 * selectExtremeEvRow.width) - (selectEventLayersCheck.width * 1.5) - radiusSearchUnitsCB.width
                     height: 40 * scaleFactor
                     radius: 6 * scaleFactor
                     border.color: "darkgrey"
@@ -493,6 +493,51 @@ Drawer {
                                 menu.close();
                             }
                         }
+                    }
+                }
+
+                ComboBox {
+                    id: radiusSearchUnitsCB
+                    width: 30 * scaleFactor
+                    height: 40 * scaleFactor
+
+                    model: ["km", "mi"]
+
+                    Material.accent:"#00693e"
+                    background: Rectangle {
+                        height: 40 * scaleFactor
+                    }
+
+                    font.pixelSize: 14 * scaleFactor
+
+                    delegate: ItemDelegate {
+                        Material.accent:"#00693e"
+                        width: parent.width
+                        height: 40 * scaleFactor
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: radiusSearchUnitsCB.model[index]
+                            font.pixelSize: 14 * scaleFactor
+                        }
+                    }
+
+                    contentItem: Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                        text: radiusSearchUnitsCB.displayText
+                        font: radiusSearchUnitsCB.font
+                    }
+
+                    indicator: Rectangle {
+                        visible: false
+                    }
+
+                    onCurrentTextChanged: {
+                        radiusSearchUnits = radiusSearchUnitsCB.currentText
                     }
                 }
             }
@@ -840,6 +885,7 @@ Drawer {
                 drawPin = true;
                 if (radiusInput.text == "Radius" || radiusInput.text == "") {
                     radiusSearch = 100;
+                    radiusSearchUnits = "km";
                 } else {
                     radiusSearch = radiusInput.text;
                 }

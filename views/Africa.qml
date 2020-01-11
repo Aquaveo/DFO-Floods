@@ -64,6 +64,7 @@ Page {
     property string compLyrName;
 
     property double radiusSearch;
+    property string radiusSearchUnits;
     property bool drawPin: false;
     property Point pinLocation;
     property SimpleMarkerSceneSymbol symbolMarker;
@@ -322,6 +323,11 @@ Page {
 
                 function haversine(lat1,lat2,lng1,lng2) {
                     var rad = 6372.8; // for km Use 3961 for miles
+                    if (radiusSearchUnits === 'km') {
+                        rad = 6372.8;
+                    } else if (radiusSearchUnits === 'mi') {
+                        rad = 3961;
+                    }
                     var deltaLat = toRad(lat2-lat1);
                     var deltaLng = toRad(lng2-lng1);
                     lat1 = toRad(lat1);
