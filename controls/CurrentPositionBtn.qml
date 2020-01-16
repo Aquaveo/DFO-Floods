@@ -32,8 +32,8 @@ RoundButton {
     }
 
     function zoomToCurrentLocation(){
-        positionSource.update();
-        var currentPositionPoint = ArcGISRuntimeEnvironment.createObject("Point", {x: positionSource.position.coordinate.longitude, y: positionSource.position.coordinate.latitude, spatialReference: SpatialReference.createWgs84()});
+        sceneView.positionSource.update();
+        var currentPositionPoint = ArcGISRuntimeEnvironment.createObject("Point", {x: sceneView.positionSource.position.coordinate.longitude, y: sceneView.positionSource.position.coordinate.latitude, spatialReference: SpatialReference.createWgs84()});
         var centerPoint = GeometryEngine.project(currentPositionPoint, sceneView.spatialReference);
 
         var viewPointCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter",{center: centerPoint, targetScale: 15000});

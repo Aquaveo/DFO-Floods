@@ -3,9 +3,10 @@ import QtQuick.Controls 2.1
 
 
 Rectangle {
-    id:pipMessageRec
+    property alias label: pinMessageLabel
+
     height: 40 * scaleFactor
-    width: pinMessage.text === "" ? 0 : pinMessage.width + 30 * scaleFactor
+    width: pinMessageLabel.text === "" ? 0 : pinMessageLabel.width + 30 * scaleFactor
     color: "#00693e"
     radius: 6 * scaleFactor
     anchors.top: parent.top
@@ -14,7 +15,7 @@ Rectangle {
     anchors.topMargin: 55 * scaleFactor
 
     Label {
-        id: pinMessage
+        id: pinMessageLabel
         text: qsTr("Zoom in and tap on a location")
         anchors.centerIn: parent
         font.pixelSize: 12 * scaleFactor

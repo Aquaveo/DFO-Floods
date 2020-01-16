@@ -5,7 +5,7 @@ import QtQuick.Controls.Material 2.1
 import ArcGIS.AppFramework 1.0
 import Esri.ArcGISRuntime 100.5
 
-RoundButton{
+RoundButton {
     id: homeLocationBtn
     radius: 30 * scaleFactor
     width: 60 * scaleFactor
@@ -51,7 +51,7 @@ RoundButton{
             y = 5.579062;
         }
 
-        positionSource.update();
+        sceneView.positionSource.update();
         var currentPositionPoint = ArcGISRuntimeEnvironment.createObject("Point", {x: x, y: y, spatialReference: SpatialReference.createWgs84()});
         var centerPoint = GeometryEngine.project(currentPositionPoint, sceneView.spatialReference);
 

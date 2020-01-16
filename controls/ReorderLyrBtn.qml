@@ -23,8 +23,8 @@ RoundButton {
 
     onClicked: {
         if (popUpReorder.visible === false) {
-            popUpReorder.children[0].model = sceneView.scene.operationalLayers.count;
-            popUpReorder.children[0].currentIndex = menu.contentItem.children[0].contentItem.children[4].currentIndex;
+            popUpReorder.wheel.model = sceneView.scene.operationalLayers.count;
+            popUpReorder.wheel.currentIndex = menu.lyrToC.currentIndex;
             popUpReorder.visible = true;
         } else if (popUpReorder.visible === true) {
             popUpReorder.visible = false;

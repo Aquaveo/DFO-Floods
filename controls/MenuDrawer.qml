@@ -8,6 +8,15 @@ import Esri.ArcGISRuntime 100.5
 
 Drawer {
     id: menu
+
+    property alias allEventsLyrName: allEventsLyrName
+    property alias allEventsLyrCheck: allEventLayersCheck
+    property alias nearestEventLyrName: selectEventLyrText
+    property alias nearestEventLyrCheck: selectEventLayersCheck
+    property alias suggestedLyrsList: suggestedList
+    property alias customLyrList: resultsList
+    property alias lyrToC: layerVisibilityListView
+
     width: 0.75 * parent.width
     height: parent.height
     dragMargin: -1
@@ -124,7 +133,7 @@ Drawer {
             padding: 8 * scaleFactor
         }
 
-        // Create a list view to display the layer items
+        // Create layer table of content (ToC)
         ListView {
             id: layerVisibilityListView
             anchors.horizontalCenter: parent.horizontalCenter
@@ -189,7 +198,7 @@ Drawer {
 
                         onCheckedChanged: {
                             layerVisible = checked;
-                            legendListView.model.setProperty(layerVisibilityListView.count - 1 - index, "visible", checked)
+                            sceneView.legendListView.model.setProperty(layerVisibilityListView.count - 1 - index, "visible", checked)
                         }
 
                         Component.onCompleted: {
@@ -295,6 +304,7 @@ Drawer {
                 }
 
                 Text {
+                    id: allEventsLyrName
                     width: 0.45 * allExtremeEvRow.width
                     text: qsTr("All Events")
                     wrapMode: Text.WordWrap
@@ -434,6 +444,7 @@ Drawer {
                 }
 
                 Text {
+                    id: selectEventLyrText
                     width: 0.45 * selectExtremeEvRow.width
                     text: qsTr("Nearest Events")
                     wrapMode: Text.WordWrap
@@ -489,7 +500,7 @@ Drawer {
                                 selectEventLayersCheck.checked = true;
                             } else {
                                 radiusInput.focus = false;
-                                pinMessage.children[0].text = qsTr("Zoom in and tap on a location");
+                                pinMessage.label.text = qsTr("Zoom in and tap on a location");
                                 menu.close();
                             }
                         }
@@ -667,6 +678,7 @@ Drawer {
             anchors.top: tabBar.bottom
             anchors.horizontalCenter: parent.horizontalCenter
             currentIndex: tabBar.currentIndex
+
             ListView {
                 id: suggestedList
                 height: parent.height
@@ -681,6 +693,9 @@ Drawer {
 
                 delegate: Rectangle {
                     id: stackListRect
+
+                    property alias label: suggestedLabel
+
                     width: parent.width
                     height: suggestedLabel.height < 40 * scaleFactor ? 40 * scaleFactor : suggestedLabel.height
                     color: "lightgray"
@@ -765,7 +780,7 @@ Drawer {
                                 suggestedListM.remove(index, 1)
                             } else if (/Annual Flood Frequency/.test(suggestedLabel.text)) {
                                 var layerInfos = serviceFF.serviceInfo.layerInfos;
-                                var regIx = popUp.children[1].children[1].currentIndex + 1;
+                                var regIx = popUp.listViewCurrentIndex + 1;
                                 subLayerFFSL = layerInfos[0].sublayerInfos[regIx];
                                 wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                             layerInfos: [subLayerFFSL]
@@ -814,6 +829,9 @@ Drawer {
 
                 delegate: Rectangle {
                     id: stackCuListRect
+
+                    property alias label: resultsLabel
+
                     width: parent.width
                     height: resultsLabel.height < 40 * scaleFactor ? 40 * scaleFactor : resultsLabel.height
                     color: "lightgray"
@@ -824,7 +842,7 @@ Drawer {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         padding: 12 * scaleFactor
-                        text:title
+                        text: title.replace(/\_/g, " ")
                         font.pixelSize: 14 * scaleFactor
                     }
 
@@ -833,13 +851,13 @@ Drawer {
                         onClicked: {
                             var wmsCustomLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
                                                                                          layerInfos: [layerCuSL[index]]
-                                                                                     })
+                                                                                     });
 
                             var inContent = 0;
                             var inContentIx = -1;
 
                             sceneView.scene.operationalLayers.forEach(function (lyr, ix) {
-                                if (lyr.name === layerCuSL[index].title) {
+                                if (lyr.name === layerCuSL[index].title.replace(/\_/g, " ")) {
                                     inContent = 1;
                                     inContentIx = ix;
                                 }
@@ -847,13 +865,25 @@ Drawer {
 
                             if (inContent === 0) {
                                 stackCuListRect.color = "#249567";
-                                sceneView.scene.operationalLayers.append(wmsCustomLyr);
-                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsCustomLyr), "name", layerCuSL[index].title);
+                                sceneView.scene.operationalLayers.insert(0, wmsCustomLyr);
+                                sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsCustomLyr), "name", layerCuSL[index].title.replace(/\_/g, " "));
                                 sceneView.scene.operationalLayers.setProperty(sceneView.scene.operationalLayers.indexOf(wmsCustomLyr), "description", layerCuSL[index].description);
+
+                                var legendParams;
+                                if (textInput.text.includes("arcgis")) {
+                                    legendParams = "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=" + index + "&TRANSPARENT=true";
+                                } else if (textInput.text.includes("geoserver")) {
+                                    legendParams = "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=" + layerCuSL[index].name + "&TRANSPARENT=true&legend_options=fontColor:ffffff";
+                                } else {
+                                    legendParams = "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=" + layerCuSL[index].name;
+                                }
+
+                                legendModel.append({name: layerCuSL[index].title.replace(/\_/g, " "), symbolUrl: textInput.text.split("?")[0] + legendParams, visible: true});
                                 menu.close();
                             } else if (inContent === 1) {
                                 stackCuListRect.color = "lightgray";
                                 sceneView.scene.operationalLayers.remove(inContentIx, 1);
+                                legendModel.remove(layerVisibilityListView.count - inContentIx, 1);
                             }
                         }
                     }
@@ -891,7 +921,7 @@ Drawer {
                 }
 
                 menu.close();
-                pinMessage.children[0].text = qsTr("Zoom in and tap on a location");
+                pinMessage.label.text = qsTr("Zoom in and tap on a location");
                 pinMessage.visible = 1;
             } else {
                 drawPin = false;

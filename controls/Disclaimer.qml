@@ -114,7 +114,7 @@ Rectangle {
                     app.settings.setValue("disclaimerAccepted", true);
                     disclaimer.visible = 0;
                     popUp.visible = 1;
-                    popUp.children[3].visible = 1;
+                    popUp.tandCBtn.visible = 1;
                 }
             }
 

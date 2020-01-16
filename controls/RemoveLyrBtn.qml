@@ -31,27 +31,23 @@ RoundButton {
             }
         })
 
-        if (menu.contentItem.children[0].contentItem.children[6].children[0].children[1] &&
-                menu.contentItem.children[0].contentItem.children[6].children[0].children[1].text === remLyr.name) {
-            menu.contentItem.children[0].contentItem.children[6].children[0].children[0].checked = false;
+        if (menu.allEventsLyrName && menu.allEventsLyrName.text === remLyr.name) {
+            menu.allEventsLyrCheck.checked = false;
         }
 
-        if (menu.contentItem.children[0].contentItem.children[7].children[0].children[1] &&
-                menu.contentItem.children[0].contentItem.children[7].children[0].children[1].text === remLyr.name) {
-            menu.contentItem.children[0].contentItem.children[7].children[0].children[0].checked = false;
+        if (menu.nearestEventLyrName && menu.nearestEventLyrName.text === remLyr.name) {
+            menu.nearestEventLyrCheck.checked = false;
         }
 
-        for (var suggested in menu.contentItem.children[0].contentItem.children[11].children[0].contentItem.children) {
-            if (menu.contentItem.children[0].contentItem.children[11].children[0].contentItem.children[suggested].children[0] &&
-                    menu.contentItem.children[0].contentItem.children[11].children[0].contentItem.children[suggested].children[0].text === remLyr.name) {
-                menu.contentItem.children[0].contentItem.children[11].children[0].contentItem.children[suggested].color = 'lightgray';
+        for (var suggested in menu.suggestedLyrsList.contentItem.children) {
+            if (menu.suggestedLyrsList.contentItem.children[suggested].label && menu.suggestedLyrsList.contentItem.children[suggested].label.text === remLyr.name) {
+                menu.suggestedLyrsList.contentItem.children[suggested].color = 'lightgray';
             }
         }
 
-        for (var custom in menu.contentItem.children[0].contentItem.children[11].children[1].contentItem.children) {
-            if (menu.contentItem.children[0].contentItem.children[11].children[1].contentItem.children[custom].children[0] &&
-                    menu.contentItem.children[0].contentItem.children[11].children[1].contentItem.children[custom].children[0].text === remLyr.name) {
-                menu.contentItem.children[0].contentItem.children[11].children[1].contentItem.children[custom].color = 'lightgray';
+        for (var custom in menu.customLyrList.contentItem.children) {
+            if (menu.customLyrList.contentItem.children[custom].label && menu.customLyrList.contentItem.children[custom].label.text === remLyr.name) {
+                menu.customLyrList.contentItem.children[custom].color = 'lightgray';
             }
         }
 
@@ -62,7 +58,7 @@ RoundButton {
                 suggestedListM.append(remLyr);
             }
 
-            legendListView.model.remove(menu.contentItem.children[0].contentItem.children[4].count - remIx, 1);
+            sceneView.legendListView.model.remove(menu.lyrToC.count - remIx, 1);
         }
 
         descLyrPage.visible = 0;

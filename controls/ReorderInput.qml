@@ -8,6 +8,9 @@ import ArcGIS.AppFramework 1.0
 
 Rectangle {
     id: popUpReorder
+
+    property alias wheel: reorderTmbl
+
     width: 40 * scaleFactor
     height: 120 * scaleFactor
     anchors {
@@ -30,7 +33,7 @@ Rectangle {
         wrap: true
 
         delegate: Rectangle {
-            color: index === menu.contentItem.children[0].contentItem.children[4].currentIndex ? Qt.darker('#00693e') : '#00693e';
+            color: index === menu.lyrToC.currentIndex ? Qt.darker('#00693e') : '#00693e';
             width: parent.width
             height: 40 * scaleFactor
             radius: 12 * scaleFactor
@@ -58,7 +61,7 @@ Rectangle {
                     sceneView.scene.operationalLayers.insert(model.index, reoLyr);
                     sceneView.scene.operationalLayers.setProperty(model.index, "name", reoLyr.title);
                     sceneView.scene.operationalLayers.setProperty(model.index, "description", reoLyr.description);
-                    legendListView.model.move(menu.contentItem.children[0].contentItem.children[4].count - 1 - menu.contentItem.children[0].contentItem.children[4].currentIndex, menu.contentItem.children[0].contentItem.children[4].count - 1 - model.index, 1);
+                    sceneView.legendListView.model.move(menu.lyrToC.count - 1 - menu.lyrToC.currentIndex, menu.lyrToC.count - 1 - model.index, 1);
                     descLyrPage.visible = 0;
                     menu.open();
                 }

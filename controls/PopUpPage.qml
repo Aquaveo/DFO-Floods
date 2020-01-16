@@ -9,7 +9,9 @@ import ArcGIS.AppFramework 1.0
 import "../controls" as Controls
 
 Rectangle {
-    id: popUp
+    property alias listViewCurrentIndex: popUpListView.currentIndex
+    property alias tandCBtn: tandCBtn
+
     anchors.fill: parent
     color: "#80000000"
 
@@ -41,7 +43,7 @@ Rectangle {
         }
 
         ListView {
-            id:popUpListView
+            id: popUpListView
             anchors.topMargin: 64 * scaleFactor
             anchors.bottomMargin: 40 * scaleFactor
             anchors.fill: parent
@@ -63,7 +65,7 @@ Rectangle {
             }
 
             delegate: Rectangle {
-                width:280 * scaleFactor
+                width: 280 * scaleFactor
                 height: 40 * scaleFactor
                 color: qmlfile.toString().match(viewItems.get(index).url.toString().replace('..', ''))
                        ? index===popUpListView.currentIndex
@@ -93,7 +95,7 @@ Rectangle {
         }
 
         Text {
-            id:cancelText
+            id: cancelText
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.bottomMargin: 13 * scaleFactor
@@ -134,10 +136,10 @@ Rectangle {
 
     onVisibleChanged: {
         if (initLoad) {
-            popUp.children[1].children[2].visible = 0;
+            cancelText.visible = 0;
         } else {
-            popUp.children[1].children[2].visible = 1;
-            popUp.children[3].visible = 0;
+            cancelText.visible = 1;
+            tandCBtn.visible = 0;
         }
     }
 }
