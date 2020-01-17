@@ -16,7 +16,7 @@ RowLayout {
 
     Text {
         text: "DFO - " + qsTr(viewName)
-        color:"white"
+        color: "white"
         font.pixelSize: app.baseFontSize * 1.1
         font.bold: true
         maximumLineCount:2
@@ -26,12 +26,12 @@ RowLayout {
     }
 
     Rectangle {
-        id:infoImageRect
+        id: infoImageRect
         Layout.alignment: Qt.AlignRight
         Layout.preferredWidth: 50 * scaleFactor
 
         Button {
-            id:infoImage
+            id: infoImage
             Material.background: "transparent"
             height: 30 * scaleFactor
             width: 30 * scaleFactor

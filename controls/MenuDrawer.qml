@@ -317,7 +317,7 @@ Drawer {
                     id: yearFilter
                     currentIndex: -1
                     displayText: currentIndex === -1 ? "Filter" : currentText
-                    width: (0.5 * allExtremeEvRow.width) - (allEventLayersCheck.width * 1.5) - (30 * scaleFactor)  // to match radius width
+                    width: (0.5 * allExtremeEvRow.width) - (allEventLayersCheck.width * 1.5)  // to match radius width
                     height: 40 * scaleFactor
                     Material.accent:"#00693e"
                     background: Rectangle {
@@ -455,7 +455,7 @@ Drawer {
 
                 Rectangle {
                     id: radiusInputRect
-                    width: (0.5 * selectExtremeEvRow.width) - (selectEventLayersCheck.width * 1.5) - radiusSearchUnitsCB.width
+                    width: (0.5 * selectExtremeEvRow.width) - (selectEventLayersCheck.width * 1.5)
                     height: 40 * scaleFactor
                     radius: 6 * scaleFactor
                     border.color: "darkgrey"

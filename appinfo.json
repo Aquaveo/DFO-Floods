@@ -30,7 +30,7 @@
         "location": true,
         "microphone": false,
         "network": true,
-        "storage": false,
+        "storage": true,
         "vibration": false
     },
     "deployment": {
@@ -102,7 +102,7 @@
     "urlScheme": "",
     "version": {
         "major": 1,
-        "micro": 12,
+        "micro": 24,
         "minor": 1
     }
 }

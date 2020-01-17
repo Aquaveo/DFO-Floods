@@ -118,12 +118,17 @@ Rectangle {
 
                     Row {
                         id: legendRow
-                        height: childrenRect.height < 35 * scaleFactor ? 35 * scaleFactor : childrenRect.height
+                        height: childrenRect.height < 35 * scaleFactor ? 35 * scaleFactor : childrenRect.height * scaleFactor
                         spacing: 10 * scaleFactor
 
                         Image {
                             id: legendSymbol
                             anchors.verticalCenter: parent.verticalCenter
+
+                            Component.onCompleted: {
+                                legendSymbol.width = legendSymbol.width * scaleFactor
+                                legendSymbol.height = legendSymbol.height * scaleFactor
+                            }
                         }
 
                         Text {
@@ -141,9 +146,37 @@ Rectangle {
                         if (defaultLayersArr.indexOf(model.name) === -1) {
                             legendSymbol.destroy();
                             if (name.includes("ECMWF ")) {
-                                Qt.createQmlObject('import QtQuick 2.7; Rectangle {width: 0.65 * legendListView.width; height: childrenRect.height; color: "transparent"; clip: true; anchors.top: legendRow.bottom; Image {id: legendSymbol; source: symbolUrl}}', legendInnerRect);
+                                Qt.createQmlObject("import QtQuick 2.7;
+                                                    Rectangle {
+                                                        width: 0.65 * sceneView.legendListView.width;
+                                                        height: childrenRect.height * scaleFactor;
+                                                        color: 'transparent';
+                                                        clip: true;
+                                                        anchors.top: legendRow.bottom;
+                                                        Image {
+                                                            id: legendSymbol;
+                                                            source: symbolUrl;
+                                                            transformOrigin: Item.TopLeft;
+                                                            scale: scaleFactor;
+                                                        }
+                                                    }",
+                                                   legendInnerRect);
                             } else {
-                                Qt.createQmlObject('import QtQuick 2.7; Image {id: legendSymbol; source: symbolUrl; anchors.top: legendRow.bottom}', legendInnerRect);
+                                Qt.createQmlObject("import QtQuick 2.7;
+                                                    Rectangle {
+                                                        width: sceneView.legendListView.width;
+                                                        height: childrenRect.height * scaleFactor;
+                                                        color: 'transparent';
+                                                        clip: true;
+                                                        anchors.top: legendRow.bottom;
+                                                        Image {
+                                                            id: legendSymbol;
+                                                            source: symbolUrl;
+                                                            transformOrigin: Item.TopLeft;
+                                                            scale: scaleFactor;
+                                                        }
+                                                    }",
+                                                   legendInnerRect);
                             }
                         } else {
                             legendSymbol.source = symbolUrl;

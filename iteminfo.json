@@ -19,17 +19,18 @@
     "id": "f2b6d190ebb84eeebbbb254e73deeec3",
     "industries": [
     ],
+    "isOrgItem": true,
     "itemControl": "admin",
     "languages": [
     ],
     "largeThumbnail": null,
     "licenseInfo": null,
     "listed": false,
-    "modified": 1565552793000,
+    "modified": 1579301805000,
     "name": "f2b6d190ebb84eeebbbb254e73deeec3.zip",
-    "numComments": 40,
+    "numComments": 54,
     "numRatings": 0,
-    "numViews": 40,
+    "numViews": 64,
     "owner": "Aquaveo",
     "ownerFolder": null,
     "properties": null,
@@ -38,7 +39,7 @@
     "scoreCompleteness": 83,
     "screenshots": [
     ],
-    "size": 261019,
+    "size": 250331,
     "snippet": "This application displays hydrologic data from the Dartmouth Flood Observatory (DFO)",
     "spatialReference": null,
     "tags": [
