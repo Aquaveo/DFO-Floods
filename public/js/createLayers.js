@@ -1,6 +1,19 @@
 function addWmsLayers() {
     // set the default basemap
-    scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapImageryWithLabels");
+    var basemapLongName = {
+        "Imagery": "BasemapImageryWithLabels",
+        "Streets": "BasemapStreets",
+        "Terrain": "BasemapTerrainWithLabels",
+        "Topographic": "BasemapTopographic"
+    }
+
+    if (app.settings.boolValue("basemap")) {
+        var defaultBasemap = basemapLongName[app.settings.value("basemap")];
+    } else {
+        defaultBasemap = "BasemapImageryWithLabels";
+    }
+
+    scene.basemap = ArcGISRuntimeEnvironment.createObject(defaultBasemap);
 
     // create the services
     serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });

@@ -9,6 +9,7 @@ import Esri.ArcGISRuntime 100.5
 Drawer {
     id: menu
 
+    property alias comboBoxBasemap: comboBoxBasemap
     property alias allEventsLyrName: allEventsLyrName
     property alias allEventsLyrCheck: allEventLayersCheck
     property alias nearestEventLyrName: selectEventLyrText
@@ -74,6 +75,8 @@ Drawer {
             font.pixelSize: 14 * scaleFactor
             model: ["Imagery","Streets","Terrain","Topographic"]
 
+            currentIndex: -1
+            displayText: app.settings.boolValue("basemap") ? app.settings.value("basemap") : "Imagery"
             delegate: ItemDelegate {
                 Material.accent:"#00693e"
                 width: parent.width
@@ -91,6 +94,7 @@ Drawer {
             }
 
             onCurrentTextChanged: {
+                displayText = currentText;
                 if (sceneView.scene !== null && sceneView.scene.loadStatus === Enums.LoadStatusLoaded) {
                     changeBasemap();
                 }
@@ -112,10 +116,6 @@ Drawer {
                     break;
                 case "Topographic":
                     sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapTopographic");
-                    menu.close();
-                    break;
-                default:
-                    sceneView.scene.basemap = ArcGISRuntimeEnvironment.createObject("BasemapImageryWithLabels");
                     menu.close();
                     break;
                 }

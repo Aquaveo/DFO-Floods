@@ -95,6 +95,10 @@ Page {
         id: homeLocationBtn
     }
 
+    Controls.SaveStateBtn {
+        id: saveStateBtn
+    }
+
     Controls.DescriptionLayer {
         id: descLyrPage
         visible: false

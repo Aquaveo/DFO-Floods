@@ -16,8 +16,8 @@ RoundButton{
     anchors {
         right: parent.right
         top: parent.top
-        rightMargin: 20 * scaleFactor
-        topMargin: 140 * scaleFactor
+        rightMargin: 340 * scaleFactor < pageItem.height ? 20 * scaleFactor : 90 * scaleFactor
+        topMargin: 340 * scaleFactor < pageItem.height ? 140 * scaleFactor : 75 * scaleFactor
     }
 
     Image{

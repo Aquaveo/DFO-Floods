@@ -8,6 +8,8 @@ import "../controls" as Controls
 
 Page {
     id: pageItem
+
+    property alias saveState: saveStagePg
     property Point currentPositionPoint: Point {x: 19.675945; y: -5.579062; spatialReference: SpatialReference.createWgs84()}
 
     property real scaleFactor: AppFramework.displayScaleFactor
@@ -93,6 +95,15 @@ Page {
 
     Controls.HomePositionBtn {
         id: homeLocationBtn
+    }
+
+    Controls.SaveStateBtn {
+        id: saveStateBtn
+    }
+
+    Controls.SaveStatePage {
+        id: saveStagePg
+        visible: false
     }
 
     Controls.DescriptionLayer {

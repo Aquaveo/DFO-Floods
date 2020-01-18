@@ -14,9 +14,11 @@ App {
     id: app
     width: 414
     height: 736
+
     function units(value) {
         return AppFramework.displayScaleFactor * value
     }
+
     property real scaleFactor: AppFramework.displayScaleFactor
     property int  baseFontSize : app.info.propertyValue("baseFontSize", 15 * scaleFactor) + (isSmallScreen ? 0 : 3)
     property bool isSmallScreen: (width || height) < units(400)
@@ -60,7 +62,7 @@ App {
             Loader {
                 height: app.height
                 width: app.width
-                source: qmlfile
+                source: app.settings.boolValue("region") ? app.settings.value("region"): qmlfile
             }
         }
     }

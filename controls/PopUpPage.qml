@@ -38,8 +38,8 @@ Rectangle {
                 bold:true
             }
             padding: 24 * scaleFactor
-            anchors.top:parent.top
-            anchors.bottom:popUpListView.top
+            anchors.top: parent.top
+            anchors.bottom: popUpListView.top
         }
 
         ListView {
@@ -47,8 +47,8 @@ Rectangle {
             anchors.topMargin: 64 * scaleFactor
             anchors.bottomMargin: 40 * scaleFactor
             anchors.fill: parent
-            model:ListModel {
-                id:viewItems
+            model: ListModel {
+                id: viewItems
 
                 ListElement { name:"Africa"; url:"../views/Africa.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Africa.<br></p>" }
                 ListElement { name:"Asia"; url:"../views/Asia.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Asia.<br></p>" }
@@ -143,7 +143,3 @@ Rectangle {
         }
     }
 }
-
-
-
-

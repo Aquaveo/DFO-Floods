@@ -34,7 +34,6 @@ Button {
     }
 
     onClicked: {
-//        app.settings.setValue("disclaimerAccepted", false);
         popUp.visible = false;
         tandCBtn.visible = false;
         disclaimer.visible = true;
