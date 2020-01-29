@@ -8,6 +8,10 @@ import "../controls" as Controls
 
 Page {
     id: pageItem
+
+    property bool regionInitLoad: true
+
+    property alias saveState: saveStagePg
     property Point currentPositionPoint: Point {x: 18.365050; y: 48.921274; spatialReference: SpatialReference.createWgs84()}
 
     property real scaleFactor: AppFramework.displayScaleFactor
@@ -23,11 +27,21 @@ Page {
 
     property ListModel legendModel: ListModel {
         id: legendModel
-        ListElement {name: "Regular Water Extent"; symbolUrl: "../assets/legend_icons/regW_white.png"; visible: true}
-        ListElement {name: "Current Daily Flooded Area / Clouds"; symbolUrl: "../assets/legend_icons/3day_red.png"; visible: true}
-        ListElement {name: "Two Week Flooded Area"; symbolUrl: "../assets/legend_icons/2wk_blue.png"; visible: true}
-        ListElement {name: "January till Current Flooded Area"; symbolUrl: "../assets/legend_icons/jant_cyan.png"; visible: false}
-        ListElement {name: "Historical Water Extent"; symbolUrl: "../assets/legend_icons/histW_gray.png"; visible: false}
+
+        Component.onCompleted: {
+            if (app.settings.value("layer_list", false) === false) {
+                legendModel.append({"name": "Regular Water Extent", "symbolUrl": "../assets/legend_icons/regW_white.png", "visible": true});
+                legendModel.append({"name": "Current Daily Flooded Area / Clouds", "symbolUrl": "../assets/legend_icons/3day_red.png", visible: true});
+                legendModel.append({"name": "Two Week Flooded Area", "symbolUrl": "../assets/legend_icons/2wk_blue.png", "visible": true});
+                legendModel.append({"name": "January till Current Flooded Area", "symbolUrl": "../assets/legend_icons/jant_cyan.png", visible: false});
+                legendModel.append({"name": "Historical Water Extent", "symbolUrl": "../assets/legend_icons/histW_gray.png", "visible": false})
+            } else {
+                var dataModel = JSON.parse(app.settings.value("layer_list"));
+                for (var i = 0; i < dataModel.length; i++) {
+                    legendModel.append({"name": dataModel[i].legendName, "symbolUrl": dataModel[i].symbolUrl, "visible": dataModel[i].legendVisible});
+                }
+            }
+        }
     }
 
     property var defaultLayersArr: ["Regular Water Extent", "Current Daily Flooded Area / Clouds", "Two Week Flooded Area", "January till Current Flooded Area", "Historical Water Extent", "All Extreme Events", "Nearest Extreme Event"];
@@ -97,6 +111,16 @@ Page {
 
     Controls.SaveStateBtn {
         id: saveStateBtn
+    }
+
+    Controls.SaveStatePage {
+        id: saveStagePg
+        visible: false
+    }
+
+    Controls.ClearAllSaveSettings {
+        id: clearAllSS
+        visible: false
     }
 
     Controls.DescriptionLayer {

@@ -76,8 +76,12 @@ Rectangle {
                 pageItem.saveState.layerListcheck = false;
                 app.settings.setValue("region", false);
                 pageItem.saveState.regioncheck = false;
+                app.settings.setValue("zoom", false);
+                pageItem.saveState.zoomcheck = false;
+
                 clearAllSS.visible = false;
-                app.qmlfile = "../views/StartPage.qml"
+                app.initLoad = true
+                app.qmlfile = "../views/StartPage.qml";
             }
         }
 
@@ -106,8 +110,8 @@ Rectangle {
 
     DropShadow {
         id: headerbarShadow
-        source: popUpDecline
-        anchors.fill: popUpDecline
+        source: popUpClearSS
+        anchors.fill: popUpClearSS
         width: source.width
         height: source.height
         cached: true

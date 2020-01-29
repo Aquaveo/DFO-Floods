@@ -439,7 +439,7 @@ Drawer {
                     onCheckedChanged: mainColum.selectEventsChanged();
 
                     Component.onCompleted: {
-                        checked = false;
+                        checked = app.settings.value("layer_list", false) !== false && app.settings.value("layer_list").includes("Nearest Event") ? true : false;
                     }
                 }
 
@@ -698,7 +698,7 @@ Drawer {
 
                     width: parent.width
                     height: suggestedLabel.height < 40 * scaleFactor ? 40 * scaleFactor : suggestedLabel.height
-                    color: "lightgray"
+                    color: app.settings.value("layer_list", false) !== false && app.settings.value("layer_list").includes(suggestedLabel.text) ? "#249567" : "lightgray"
                     anchors.fill: parent.fill
 
                     Label {

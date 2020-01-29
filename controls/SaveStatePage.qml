@@ -15,6 +15,7 @@ Rectangle {
     property alias basemapcheck: basemapSSCheck.checked
     property alias layerListcheck: layerListSSCheck.checked
     property alias regioncheck: regionSSCheck.checked
+    property alias zoomcheck: zoomSSCheck.checked
 
     MouseArea {
         anchors.fill: parent
@@ -218,6 +219,64 @@ Rectangle {
             }
         }
 
+        Rectangle {
+            id: zoomSSRect
+            width: parent.width
+            height: 40 * scaleFactor
+            anchors.top: regionSSRect.bottom
+
+            Row {
+                id: zoomSSRow
+                spacing: 30 * scaleFactor
+                anchors.verticalCenter: parent.verticalCenter
+                leftPadding: 20 * scaleFactor
+                rightPadding: 20 * scaleFactor
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 0.7 * saveStateRect.width - (20 * scaleFactor)
+                    text: "ZOOM AREA"
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: 14 * scaleFactor
+                }
+
+                CheckBox {
+                    id: zoomSSCheck
+                    width: 0.3 * saveStateRect.width - (20 * scaleFactor)
+                    height: zoomSSRow.height
+                    Material.accent: "#00693e"
+                    checked: app.settings.value("zoom", false) !== false ? true : false
+
+                    indicator: Rectangle {
+                        width: 30 * scaleFactor
+                        height: 30 * scaleFactor
+                        radius: 2 * scaleFactor
+                        anchors.leftMargin: 8 * scaleFactor
+                        anchors.verticalCenter: parent.verticalCenter
+                        border {
+                            color: "black"
+                            width: 2 * scaleFactor
+                        }
+
+                        Rectangle {
+                            width: parent.width
+                            height: parent.height
+                            radius: 2 * scaleFactor
+                            color: "#00693e"
+                            visible: zoomSSCheck.checked
+
+                            Image {
+                                width: parent.width * 0.8
+                                height: parent.height * 0.8
+                                anchors.centerIn: parent
+                                source: "../assets/checkmark.png"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         Text {
             id: applySaveStateRect
             anchors.bottom: parent.bottom
@@ -271,6 +330,12 @@ Rectangle {
                         app.settings.setValue("region", false);
                     }
 
+                    if (zoomSSCheck.checked) {
+                        app.settings.setValue("zoom", JSON.stringify(sceneView.currentViewpointCenter.json));
+                    } else if (!zoomSSCheck.checked) {
+                        app.settings.setValue("zoom", false);
+                    }
+
                     pageItem.saveState.visible = 0;
                 }
             }
@@ -282,7 +347,7 @@ Rectangle {
             anchors.right: closeSaveStateRect.left
             anchors.bottomMargin: 13 * scaleFactor
             anchors.rightMargin: 30 * scaleFactor
-            text: qsTr("CLEAR")
+            text: qsTr("CLEAR ALL")
             color: "#00693e"
             font {
                 pixelSize: 14 * scaleFactor

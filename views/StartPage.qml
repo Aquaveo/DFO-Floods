@@ -65,7 +65,7 @@ Rectangle {
         if (!disclaimerAccepted) {
             disclaimer.visible = true;
         } else {
-            popUp.visible = 1;
+            popUp.visible = true;
         }
     }
 }

@@ -43,13 +43,29 @@ SceneView {
         onPositionChanged: {
             if(sceneView.scene !== null && sceneView.scene.loadStatus === Enums.LoadStatusLoaded && isInitial) {
                 isInitial = false;
-                zoomToRegionLocation();
 
-                function zoomToRegionLocation(){
+                if (app.settings.value("zoom", false) !== false) {
                     positionSource.update();
-                    var centerPoint = GeometryEngine.project(currentPositionPoint, sceneView.spatialReference);
+                    var savedLocation = JSON.parse(app.settings.value("zoom"));
+                    var savedPoint = ArcGISRuntimeEnvironment.createObject("Point", {
+                                                                               x: savedLocation.targetGeometry.x,
+                                                                               y: savedLocation.targetGeometry.y,
+                                                                               z: savedLocation.targetGeometry.z,
+                                                                               spatialReference: savedLocation.targetGeometry.spatialReference
+                                                                           });
 
-                    var viewPointCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter",{center: centerPoint});
+                    var centerPoint = GeometryEngine.project(savedPoint, sceneView.spatialReference);
+                    var viewPointCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter", {
+                                                                                    center: centerPoint,
+                                                                                    rotation: savedLocation.rotation,
+                                                                                    targetScale: savedLocation.scale
+                                                                                });
+                    sceneView.setViewpoint(viewPointCenter);
+                } else {
+                    positionSource.update();
+                    centerPoint = GeometryEngine.project(currentPositionPoint, sceneView.spatialReference);
+
+                    viewPointCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter",{center: centerPoint});
                     sceneView.setViewpoint(viewPointCenter);
                 }
             }

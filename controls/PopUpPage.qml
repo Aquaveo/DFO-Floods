@@ -27,15 +27,15 @@ Rectangle {
         width: 280 * scaleFactor
         anchors.centerIn: parent
         radius: 3 * scaleFactor
-        Material.background:  "#FAFAFA"
+        Material.background: "#FAFAFA"
         Material.elevation: 24
 
         Text {
             id: titleText
             text: qsTr("Choose a Region")
             font{
-                pixelSize:app.baseFontSize
-                bold:true
+                pixelSize: app.baseFontSize
+                bold: true
             }
             padding: 24 * scaleFactor
             anchors.top: parent.top
@@ -68,20 +68,20 @@ Rectangle {
                 width: 280 * scaleFactor
                 height: 40 * scaleFactor
                 color: qmlfile.toString().match(viewItems.get(index).url.toString().replace('..', ''))
-                       ? index===popUpListView.currentIndex
+                       ? index===popUpListView.currentIndex || app.settings.value("region", false) !== false
                          ? "#249567"
-                         :"transparent"
-                       :"transparent"
+                         : "transparent"
+                       : "transparent"
 
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
                     padding: 24 * scaleFactor
                     font.pixelSize: 14 * scaleFactor
-                    text:name
+                    text: name
                 }
 
                 MouseArea{
-                    anchors.fill:parent
+                    anchors.fill: parent
                     onClicked: {
                         popUp.visible = 0;
                         initLoad = false;
@@ -104,7 +104,7 @@ Rectangle {
             color: "#00693e"
             font {
                 pixelSize: 14 * scaleFactor
-                bold:true
+                bold: true
             }
 
             MouseArea {
@@ -136,10 +136,10 @@ Rectangle {
 
     onVisibleChanged: {
         if (initLoad) {
-            cancelText.visible = 0;
+            cancelText.visible = false;
         } else {
-            cancelText.visible = 1;
-            tandCBtn.visible = 0;
+            cancelText.visible = true;
+            tandCBtn.visible = false;
         }
     }
 }
