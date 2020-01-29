@@ -85,6 +85,7 @@ SceneView {
 
     Component.onCompleted: {
         CreateLyrs.addWmsLayers();
+        pageItem.regionInitLoad = false;
     }
 }
 

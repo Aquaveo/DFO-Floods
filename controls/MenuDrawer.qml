@@ -75,8 +75,8 @@ Drawer {
             font.pixelSize: 14 * scaleFactor
             model: ["Imagery","Streets","Terrain","Topographic"]
 
-            currentIndex: -1
-            displayText: app.settings.boolValue("basemap") ? app.settings.value("basemap") : "Imagery"
+            currentIndex: app.settings.value("basemap", false) !== false ? find(app.settings.value("basemap")) : 0
+            displayText: app.settings.value("basemap", false) !== false ? app.settings.value("basemap") : "Imagery"
             delegate: ItemDelegate {
                 Material.accent:"#00693e"
                 width: parent.width
@@ -299,7 +299,7 @@ Drawer {
                     onCheckedChanged: mainColum.allEventsChanged();
 
                     Component.onCompleted: {
-                        checked = false;
+                        checked = app.settings.value("layer_list", false) !== false && app.settings.value("layer_list").includes("All Events") ? true : false;
                     }
                 }
 
@@ -940,7 +940,7 @@ Drawer {
         }
 
         function allEventsChanged() {
-            if (allEventLayersCheck.checked == true) {
+            if (allEventLayersCheck.checked == true && !pageItem.regionInitLoad) {
                 pinMessage.visible = 0;
                 menu.close();
                 selectEventLayersCheck.checked = false;

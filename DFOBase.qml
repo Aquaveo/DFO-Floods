@@ -24,10 +24,10 @@ App {
     property bool isSmallScreen: (width || height) < units(400)
 
     property bool disclaimerAccepted: app.settings.value("disclaimerAccepted");
-    property bool initLoad: true;
-    property url qmlfile: "./views/StartPage.qml";
-    property string viewName;
-    property string descriptionText;
+    property bool initLoad: app.settings.value("region", false) ? false : true;
+    property url qmlfile: app.settings.value("region", false) ? app.settings.value("region") : "./views/StartPage.qml";
+    property string viewName: app.settings.value("region", false) !== false ? app.settings.value("region").split("views/")[1].replace("America", " America").split(".")[0] : ""
+    property string descriptionText: app.settings.value("region", false) !== false ? "<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for " + viewName + ".<br></p>" : "";
     property ListView layerVisibilityListView;
 
     property url wmsGlofasServiceUrl: "http://globalfloods-ows.ecmwf.int/glofas-ows/ows.py?service=wms&request=getCapabilities";
@@ -62,7 +62,7 @@ App {
             Loader {
                 height: app.height
                 width: app.width
-                source: app.settings.boolValue("region") ? app.settings.value("region"): qmlfile
+                source: qmlfile
             }
         }
     }

@@ -50,12 +50,12 @@ Rectangle {
             model: ListModel {
                 id: viewItems
 
-                ListElement { name:"Africa"; url:"../views/Africa.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Africa.<br></p>" }
-                ListElement { name:"Asia"; url:"../views/Asia.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Asia.<br></p>" }
-                ListElement { name:"Australia"; url:"../views/Australia.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Australia.<br></p>" }
-                ListElement { name:"Europe"; url:"../views/Europe.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Europe.<br></p>" }
-                ListElement { name:"North America"; url:"../views/NorthAmerica.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for North America.<br></p>" }
-                ListElement { name:"South America"; url:"../views/SouthAmerica.qml"; description:"<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for South America.<br></p>" }
+                ListElement { name: "Africa"; url: "../views/Africa.qml"; description: "<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Africa.<br></p>" }
+                ListElement { name: "Asia"; url: "../views/Asia.qml"; description: "<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Asia.<br></p>" }
+                ListElement { name: "Australia"; url: "../views/Australia.qml"; description: "<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Australia.<br></p>" }
+                ListElement { name: "Europe"; url: "../views/Europe.qml"; description: "<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for Europe.<br></p>" }
+                ListElement { name: "North America"; url: "../views/NorthAmerica.qml"; description: "<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for North America.<br></p>" }
+                ListElement { name: "South America"; url: "../views/SouthAmerica.qml"; description: "<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for South America.<br></p>" }
             }
 
             clip: true

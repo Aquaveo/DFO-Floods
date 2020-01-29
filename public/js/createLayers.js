@@ -7,7 +7,7 @@ function addWmsLayers() {
         "Topographic": "BasemapTopographic"
     }
 
-    if (app.settings.boolValue("basemap")) {
+    if (app.settings.value("basemap", false) !== false) {
         var defaultBasemap = basemapLongName[app.settings.value("basemap")];
     } else {
         defaultBasemap = "BasemapImageryWithLabels";
@@ -150,7 +150,22 @@ function addWmsLayers() {
     });
 
     // start service load chain
-    serviceHistW.load();
+    if (app.settings.value("layer_list", false) !== false) {
+        var dataModel = JSON.parse(app.settings.value("layer_list"))
+        for (var i = 0; i < dataModel.length; i++) {
+            var savedLayer = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                       url: dataModel[i].url,
+                                                                       layerNames: dataModel[i].layerNames,
+                                                                       visible: dataModel[i].visible
+                                                                   });
+
+            scene.operationalLayers.append(savedLayer);
+            scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(savedLayer), "name", dataModel[i].name);
+            scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(savedLayer), "description", dataModel[i].description);
+        }
+    } else {
+        serviceHistW.load();
+    }
 
     serviceGlo.loadStatusChanged.connect(function() {
         if (serviceGlo.loadStatus === Enums.LoadStatusLoaded) {

@@ -7,7 +7,7 @@ import QtQuick.Controls.Material 2.1
 import ArcGIS.AppFramework 1.0
 
 Rectangle {
-    id: declinedTandC
+    id: clearAllSSRect
     anchors.fill: parent
     color: "#80000000"
 
@@ -18,7 +18,7 @@ Rectangle {
     }
 
     Rectangle {
-        id: popUpDecline
+        id: popUpClearSS
         height: 180 * scaleFactor
         width: 280 * scaleFactor
         anchors.centerIn: parent
@@ -29,7 +29,7 @@ Rectangle {
         Text {
             id: titleText
             width: parent.width
-            text: qsTr("The T&C must be accepted to use the app.")
+            text: qsTr("This action will clear all the saved settings.")
             font{
                 pixelSize:app.baseFontSize
                 bold:true
@@ -40,7 +40,7 @@ Rectangle {
         }
 
         Button {
-            id: closeAppBtn
+            id: clearSSBtn
             width: 0.8 * parent.width
             height: 50 * scaleFactor
             anchors {
@@ -51,7 +51,7 @@ Rectangle {
 
             Material.background: "#00693e"
 
-            text: "CLOSE APP"
+            text: "CONFIRM"
             background: Rectangle {
                 width: parent.width
                 height: parent.height
@@ -60,7 +60,7 @@ Rectangle {
             }
 
             contentItem: Text {
-                text: closeAppBtn.text
+                text: clearSSBtn.text
                 font.pixelSize: 14 * scaleFactor
                 font.bold: true
                 color: "white"
@@ -70,17 +70,24 @@ Rectangle {
             }
 
             onClicked: {
-                Qt.quit();
+                app.settings.setValue("basemap", false);
+                pageItem.saveState.basemapcheck = false;
+                app.settings.setValue("layer_list", false);
+                pageItem.saveState.layerListcheck = false;
+                app.settings.setValue("region", false);
+                pageItem.saveState.regioncheck = false;
+                clearAllSS.visible = false;
+                app.qmlfile = "../views/StartPage.qml"
             }
         }
 
         Text {
-            id:cancelText
+            id: cancelClearAllSS
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.bottomMargin: 13 * scaleFactor
             anchors.rightMargin: 16 * scaleFactor
-            text: qsTr("BACK TO T&C")
+            text: qsTr("CANCEL")
             color: "#00693e"
             font {
                 pixelSize: 14 * scaleFactor
@@ -90,8 +97,8 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    declinedTandC.visible = 0;
-                    disclaimer.visible = 1;
+                    clearAllSS.visible = 0;
+                    saveStagePg.visible = 1;
                 }
             }
         }

@@ -8,6 +8,8 @@ import "../controls" as Controls
 
 Page {
     id: pageItem
+
+    property bool regionInitLoad: true
     property Point currentPositionPoint: Point {x: -62.963135; y: -11.065338; spatialReference: SpatialReference.createWgs84()}
 
     property real scaleFactor: AppFramework.displayScaleFactor
