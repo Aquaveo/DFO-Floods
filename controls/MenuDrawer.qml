@@ -153,81 +153,120 @@ Drawer {
                 width: parent.width
                 height: layerRow.height
 
-                Row {
-                    id: layerRow
-                    spacing: 0
-                    anchors.verticalCenter: parent.verticalCenter
+                MouseArea {
+                    id: dragArea
 
-                    Text {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 0.65 * layerVisibilityDelegate.width
-                        text: name
-                        wrapMode: Text.WordWrap
-                        font.pixelSize: 14 * scaleFactor
+                    property bool held: false
+                    property int dragItemIndex: index
+
+                    anchors.fill: parent
+
+                    height: layerRow.height
+
+                    drag.target: held ? layerRow : undefined
+                    drag.axis: Drag.YAxis
+
+                    onPressAndHold: held = true
+                    onReleased: {
+                        held = false;
+                        layerRow.y = dragArea.y
                     }
 
-                    Switch {
-                        id: layerSwitch
-                        width: 0.25 * layerVisibilityDelegate.width
-                        height: 35 * scaleFactor
+                    Row {
+                        id: layerRow
+                        spacing: 0
 
-                        indicator {
-                            width: 35 * scaleFactor
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 0.65 * layerVisibilityDelegate.width
+                            text: name
+                            wrapMode: Text.WordWrap
+                            font.pixelSize: 14 * scaleFactor
+                        }
+
+                        Switch {
+                            id: layerSwitch
+                            width: 0.25 * layerVisibilityDelegate.width
                             height: 35 * scaleFactor
+
+                            indicator {
+                                width: 35 * scaleFactor
+                                height: 35 * scaleFactor
+                            }
+
+                            Binding {
+                                target: (layerSwitch.indicator ? layerSwitch.indicator.children[0] : null)
+                                property: 'height'
+                                value: 14 * scaleFactor
+                            }
+
+                            Binding {
+                                target: (layerSwitch.indicator ? layerSwitch.indicator.children[1] : null)
+                                property: 'width'
+                                value: 20 * scaleFactor
+                            }
+
+                            Binding {
+                                target: (layerSwitch.indicator ? layerSwitch.indicator.children[1] : null)
+                                property: 'height'
+                                value: 20 * scaleFactor
+                            }
+
+                            Material.accent: "#00693e"
+
+                            onCheckedChanged: {
+                                layerVisible = checked;
+                                sceneView.legendListView.model.setProperty(layerVisibilityListView.count - 1 - index, "visible", checked)
+                            }
+
+                            Component.onCompleted: {
+                                checked = layerVisible;
+                            }
+
                         }
 
-                        Binding {
-                            target: (layerSwitch.indicator ? layerSwitch.indicator.children[0] : null)
-                            property: 'height'
-                            value: 14 * scaleFactor
+                        Button {
+                            id: infoLayer
+
+                            width: 0.10 * layerVisibilityDelegate.width
+                            height: 35 * scaleFactor
+
+                            Material.background: "transparent"
+
+                            onClicked: {
+                                pageItem.descriptionLyr = description;
+                                pageItem.compLyrName = name;
+                                layerVisibilityListView.currentIndex = index;
+                                menu.close();
+                                descLyrPage.visible = 1;
+                            }
+
+                            Image {
+                                source: "../assets/layerInfo.png"
+                                height: 24 * scaleFactor
+                                width: 24 * scaleFactor
+                                anchors.centerIn: parent
+                            }
                         }
 
-                        Binding {
-                            target: (layerSwitch.indicator ? layerSwitch.indicator.children[1] : null)
-                            property: 'width'
-                            value: 20 * scaleFactor
-                        }
-
-                        Binding {
-                            target: (layerSwitch.indicator ? layerSwitch.indicator.children[1] : null)
-                            property: 'height'
-                            value: 20 * scaleFactor
-                        }
-
-                        Material.accent: "#00693e"
-
-                        onCheckedChanged: {
-                            layerVisible = checked;
-                            sceneView.legendListView.model.setProperty(layerVisibilityListView.count - 1 - index, "visible", checked)
-                        }
-
-                        Component.onCompleted: {
-                            checked = layerVisible;
-                        }
-
+                        Drag.active: dragArea.held
+                        Drag.source: dragArea
+                        Drag.hotSpot.x: width / 2
+                        Drag.hotSpot.y: height / 2
                     }
 
-                    Button {
-                        id: infoLayer
-
-                        width: 0.10 * layerVisibilityDelegate.width
-                        height: 35 * scaleFactor
-
-                        Material.background: "transparent"
-
-                        onClicked: {
-                            pageItem.descriptionLyr = description;
-                            pageItem.compLyrName = name;
-                            layerVisibilityListView.currentIndex = index;
-                            menu.close();
-                            descLyrPage.visible = 1;
-                        }
-
-                        Image {
-                            source: "../assets/layerInfo.png"
-                            height: 24 * scaleFactor
-                            width: 24 * scaleFactor
-                            anchors.centerIn: parent
+                    DropArea {
+                        anchors.fill: parent
+                        onEntered: {
+                            if (drag.source.dragItemIndex !== dragArea.dragItemIndex) {
+                                if (drag.source.dragItemIndex > dragArea.dragItemIndex) {
+                                    sceneView.scene.operationalLayers.move(drag.source.dragItemIndex, dragArea.dragItemIndex, 1);
+                                    sceneView.legendListView.model.move(menu.lyrToC.count - 1 - drag.source.dragItemIndex, menu.lyrToC.count - 1 - dragArea.dragItemIndex, 1);
+                                } else {
+                                    sceneView.scene.operationalLayers.move(drag.source.dragItemIndex, dragArea.dragItemIndex + 1, 1);
+                                    sceneView.legendListView.model.move(menu.lyrToC.count - 1 - dragArea.dragItemIndex, menu.lyrToC.count - 1 - drag.source.dragItemIndex, 1);
+                                }
+                            }
                         }
                     }
                 }
