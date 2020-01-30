@@ -166,7 +166,10 @@ Drawer {
                     drag.target: held ? layerRow : undefined
                     drag.axis: Drag.YAxis
 
-                    onPressAndHold: held = true
+                    onPressAndHold: {
+                        held = true;
+                    }
+
                     onReleased: {
                         held = false;
                         layerRow.y = dragArea.y
@@ -176,9 +179,24 @@ Drawer {
                         id: layerRow
                         spacing: 0
 
+                        Rectangle {
+                            id: dragRect
+
+                            width: 0.10 * layerVisibilityDelegate.width
+                            height: 40 * scaleFactor
+                            Material.background: "transparent"
+
+                            Image {
+                                source: "../assets/drag-reorder.png"
+                                height: 24 * scaleFactor
+                                width: 24 * scaleFactor
+                                anchors.centerIn: parent
+                            }
+                        }
+
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            width: 0.65 * layerVisibilityDelegate.width
+                            width: 0.55 * layerVisibilityDelegate.width
                             text: name
                             wrapMode: Text.WordWrap
                             font.pixelSize: 14 * scaleFactor
@@ -238,7 +256,7 @@ Drawer {
                                 pageItem.compLyrName = name;
                                 layerVisibilityListView.currentIndex = index;
                                 menu.close();
-                                descLyrPage.visible = 1;
+                                descLyrPage.visible = true;
                             }
 
                             Image {
@@ -259,11 +277,12 @@ Drawer {
                         anchors.fill: parent
                         onEntered: {
                             if (drag.source.dragItemIndex !== dragArea.dragItemIndex) {
+                                layerVisibilityListView.positionViewAtIndex(drag.source.dragItemIndex, ListView.Center);
                                 if (drag.source.dragItemIndex > dragArea.dragItemIndex) {
                                     sceneView.scene.operationalLayers.move(drag.source.dragItemIndex, dragArea.dragItemIndex, 1);
                                     sceneView.legendListView.model.move(menu.lyrToC.count - 1 - drag.source.dragItemIndex, menu.lyrToC.count - 1 - dragArea.dragItemIndex, 1);
                                 } else {
-                                    sceneView.scene.operationalLayers.move(drag.source.dragItemIndex, dragArea.dragItemIndex + 1, 1);
+                                    sceneView.scene.operationalLayers.move(dragArea.dragItemIndex, drag.source.dragItemIndex, 1);
                                     sceneView.legendListView.model.move(menu.lyrToC.count - 1 - dragArea.dragItemIndex, menu.lyrToC.count - 1 - drag.source.dragItemIndex, 1);
                                 }
                             }
