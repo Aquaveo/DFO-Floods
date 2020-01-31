@@ -168,10 +168,12 @@ Drawer {
 
                     onPressAndHold: {
                         held = true;
+                        layerVisibilityDelegate.opacity = 0.4
                     }
 
                     onReleased: {
                         held = false;
+                        layerVisibilityDelegate.opacity = 1.0
                         layerRow.y = dragArea.y
                     }
 
@@ -179,11 +181,12 @@ Drawer {
                         id: layerRow
                         spacing: 0
 
+
                         Rectangle {
                             id: dragRect
 
                             width: 0.10 * layerVisibilityDelegate.width
-                            height: 40 * scaleFactor
+                            height: 50 * scaleFactor
                             Material.background: "transparent"
 
                             Image {
@@ -277,13 +280,14 @@ Drawer {
                         anchors.fill: parent
                         onEntered: {
                             if (drag.source.dragItemIndex !== dragArea.dragItemIndex) {
-                                layerVisibilityListView.positionViewAtIndex(drag.source.dragItemIndex, ListView.Center);
                                 if (drag.source.dragItemIndex > dragArea.dragItemIndex) {
                                     sceneView.scene.operationalLayers.move(drag.source.dragItemIndex, dragArea.dragItemIndex, 1);
                                     sceneView.legendListView.model.move(menu.lyrToC.count - 1 - drag.source.dragItemIndex, menu.lyrToC.count - 1 - dragArea.dragItemIndex, 1);
+                                    layerVisibilityListView.positionViewAtIndex(drag.source.dragItemIndex, ListView.Center);
                                 } else {
                                     sceneView.scene.operationalLayers.move(dragArea.dragItemIndex, drag.source.dragItemIndex, 1);
                                     sceneView.legendListView.model.move(menu.lyrToC.count - 1 - dragArea.dragItemIndex, menu.lyrToC.count - 1 - drag.source.dragItemIndex, 1);
+                                    layerVisibilityListView.positionViewAtIndex(drag.source.dragItemIndex, ListView.Center);
                                 }
                             }
                         }
