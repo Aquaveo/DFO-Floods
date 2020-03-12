@@ -27,12 +27,11 @@ Rectangle {
         Material.elevation: 24
 
         Text {
-            id: titleText
             width: parent.width
             text: qsTr("This action will clear all the saved settings.")
-            font{
-                pixelSize:app.baseFontSize
-                bold:true
+            font {
+                pixelSize: app.baseFontSize
+                bold: true
             }
             padding: 24 * scaleFactor
             anchors.top: parent.top

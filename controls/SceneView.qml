@@ -3,7 +3,7 @@ import QtQuick.Controls 2.1
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Material 2.1
 
-import Esri.ArcGISRuntime 100.5
+import Esri.ArcGISRuntime 100.7
 
 import QtPositioning 5.3
 

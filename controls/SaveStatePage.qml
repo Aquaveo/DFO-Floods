@@ -6,8 +6,6 @@ import QtQuick.Controls.Material 2.1
 
 import ArcGIS.AppFramework 1.0
 
-import "../controls" as Controls
-
 Rectangle {
     anchors.fill: parent
     color: "#80000000"
@@ -42,7 +40,6 @@ Rectangle {
             }
             padding: 24 * scaleFactor
             anchors.top: parent.top
-            anchors.bottom: settingsListView.top
         }
 
         Rectangle {

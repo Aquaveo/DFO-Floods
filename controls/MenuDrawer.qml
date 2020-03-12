@@ -703,7 +703,7 @@ Drawer {
                 contentItem: Text {
                     text: qsTr("Suggested")
                     font.pixelSize: 14 * scaleFactor
-                    color: tabBar.currentIndex == 0 ? "#00693e" : "black"
+                    color: tabBar.currentIndex === 0 ? "#00693e" : "black"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -720,7 +720,7 @@ Drawer {
                 contentItem: Text {
                     text: qsTr("Results")
                     font.pixelSize: 14 * scaleFactor
-                    color: tabBar.currentIndex == 1 ? "#00693e" : "black"
+                    color: tabBar.currentIndex === 1 ? "#00693e" : "black"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }

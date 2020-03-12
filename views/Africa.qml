@@ -45,7 +45,7 @@ Page {
     }
 
     property var defaultLayersArr: ["Regular Water Extent", "Current Daily Flooded Area / Clouds", "Two Week Flooded Area", "January till Current Flooded Area", "Historical Water Extent", "All Extreme Events", "Nearest Extreme Event"];
-
+    property var defaultLayersLongArr: ["Regular water Africa", "Current daily water extent Africa", "2-week accummulated flooded area Africa", "January till current flooded area Africa", "Historical flood extent AF"];
     property WmsService service2wk;
     property WmsLayer wmsLayer2wk;
 
@@ -113,8 +113,17 @@ Page {
         id: saveStateBtn
     }
 
+    Controls.OfflineBtn {
+        id: offlineBtn
+    }
+
     Controls.SaveStatePage {
         id: saveStagePg
+        visible: false
+    }
+
+    Controls.OfflinePage {
+        id: offlinePg
         visible: false
     }
 

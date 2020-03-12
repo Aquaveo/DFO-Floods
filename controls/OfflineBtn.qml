@@ -15,18 +15,18 @@ RoundButton {
     anchors {
         right: parent.right
         bottom: parent.bottom
-        rightMargin: 20 * scaleFactor
+        rightMargin: 90 * scaleFactor
         bottomMargin: 20 * scaleFactor
     }
 
     Image {
-        source: "../assets/saveStateBtn.png"
+        source: "../assets/offlineBtn.png"
         height: 24 * scaleFactor
         width: 24 * scaleFactor
         anchors.centerIn: parent
     }
 
     onClicked: {
-        saveStagePg.visible = true
+        offlinePg.visible = true
     }
 }

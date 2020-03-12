@@ -13,8 +13,6 @@ function addWmsLayers() {
         defaultBasemap = "BasemapImageryWithLabels";
     }
 
-    scene.basemap = ArcGISRuntimeEnvironment.createObject(defaultBasemap);
-
     // create the services
     serviceRegW = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wmsRegWServiceUrl });
     service3day = ArcGISRuntimeEnvironment.createObject("WmsService", { url: wms3dayServiceUrl });
@@ -150,21 +148,77 @@ function addWmsLayers() {
     });
 
     // start service load chain
-    if (app.settings.value("layer_list", false) !== false) {
-        var dataModel = JSON.parse(app.settings.value("layer_list"))
-        for (var i = 0; i < dataModel.length; i++) {
-            var savedLayer = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                       url: dataModel[i].url,
-                                                                       layerNames: dataModel[i].layerNames,
-                                                                       visible: dataModel[i].visible
-                                                                   });
+    if (app.isOnline) {
+        scene.basemap = ArcGISRuntimeEnvironment.createObject(defaultBasemap);
 
-            scene.operationalLayers.append(savedLayer);
-            scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(savedLayer), "name", dataModel[i].name);
-            scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(savedLayer), "description", dataModel[i].description);
+        if (app.settings.value("layer_list", false) !== false) {
+            var dataModel = JSON.parse(app.settings.value("layer_list"));
+            for (var i = 0; i < dataModel.length; i++) {
+                var savedLayer = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                           url: dataModel[i].url,
+                                                                           layerNames: dataModel[i].layerNames,
+                                                                           visible: dataModel[i].visible
+                                                                       });
+
+                scene.operationalLayers.append(savedLayer);
+                scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(savedLayer), "name", dataModel[i].name);
+                scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(savedLayer), "description", dataModel[i].description);
+            }
+        } else {
+            serviceHistW.load();
         }
     } else {
-        serviceHistW.load();
+        if (app.settings.value("offline_maps", false) !== false) {
+            var xTileCache = ArcGISRuntimeEnvironment.createObject("TileCache", { path: "../../../../ArcGIS/AppStudio/Data/BasemapTileCache_%1.tpk".arg(JSON.parse(app.settings.value("offline_maps"))[0]["name"]) } );
+
+            var xTiledLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: xTileCache } );
+
+            // create a new basemap with the tiled layer
+            var basemap = ArcGISRuntimeEnvironment.createObject("Basemap");
+            basemap.baseLayers.append(xTiledLayer);
+
+            // set the new basemap on the map
+            scene.basemap = basemap;
+
+            var offDataModel = JSON.parse(app.settings.value("offline_maps"))[0]["layer_list"];
+            for (var j = 0; j < offDataModel.length; j++) {
+                console.log(j, "yessssssssssss7")
+                var credential = ArcGISRuntimeEnvironment.createObject("Credential", {
+                                                                          username: 'Aquaveo',
+                                                                          password: 'aee#}Q8X=J'
+                                                                      })
+                var raster = ArcGISRuntimeEnvironment.createObject("Raster", {
+                                                                       path: "../../../../ArcGIS/AppStudio/Data/layer_%1.tiff",
+                                                                       credential: credential,
+                                                                   })
+                var offLayer = ArcGISRuntimeEnvironment.createObject("RasterLayer", {
+                                                                         raster: raster,
+                                                                         credential: credential,
+                                                                         visible: offDataModel[j].visible
+                                                                     });
+
+                offLayer.loadStatusChanged.connect(function () {
+                    if (offLayer === null) {
+                        console.log('nulllllllllllllllllllllllllllllllllll')
+                        return;
+                    }
+
+                    if (offLayer.loadStatus !== Enums.LoadStatusLoaded) {
+                        console.log(offLayer.loadError.code, offLayer.loadError.message, 'noooooooooooooooooooooo')
+                        return;
+                    } else {
+                        console.log('yessssssssssssssssssssssssss0')
+                    }
+
+//                    sceneView.setViewpointCenterAndScale(offLayer.fullExtent.center, 80000);
+                })
+
+                scene.operationalLayers.append(offLayer);
+                scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(offLayer), "name", offDataModel[j].name);
+                scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(offLayer), "description", offDataModel[j].description);
+                console.log(scene.operationalLayers.get(0).visible, '###')
+            }
+        }
     }
 
     serviceGlo.loadStatusChanged.connect(function() {
@@ -223,7 +277,9 @@ function addWmsLayers() {
     });
 
     // load suggested services
-    serviceGlo.load();
+    if (app.isOnline) {
+        serviceGlo.load();
+    }
 }
 
 function addToModel (item, model) {
