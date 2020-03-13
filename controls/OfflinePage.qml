@@ -148,7 +148,6 @@ Rectangle {
             clip: true
 
             Flickable {
-                anchors.fill: parent
                 contentHeight: howToOMText.height
                 clip: true
 

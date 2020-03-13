@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Material 2.1
 import QtQuick.Layouts 1.1
+import QtGraphicalEffects 1.0
 
 import ArcGIS.AppFramework 1.0
 
@@ -13,6 +14,7 @@ Rectangle {
     height: parent.height
     anchors.fill: parent
 
+    property string fbStatusText: ""
     property string appRate: "Not rated";
     property string accessToken;
     property var postRequestBody;
@@ -97,7 +99,6 @@ Rectangle {
                 Row {
                     id: imageRect
                     width: 0.9 * parent.width
-                    height: childrenRect.height
                     spacing: 20 * scaleFactor
                     anchors.top: descText.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -229,6 +230,7 @@ Rectangle {
                         }
 
                         onClicked: {
+                            fbStatusWindow.visible = true
                             function tokenReq(signature) {
                                 var xhr = new XMLHttpRequest();
 
@@ -241,13 +243,16 @@ Rectangle {
 
                                     if (xhr.readyState === 4) {
                                         if (xhr.status === 200) {
+                                            fbStatusText = "Obtained token"
                                             accessToken = JSON.parse(xhr.responseText)["access_token"];
                                             postReq(postRequestBody, accessToken);
                                         } else {
-                                            console.log(xhr.status);
+                                            fbStatusText = "Failed to get token";
+                                            fbStatusWindow.hideWindow(3000);
                                         }
                                     } else {
-                                        console.log(xhr.status);
+                                        fbStatusText = "Obtaining token";
+                                        fbStatusWindow.hideWindow(3000);
                                     };
                                 };
 
@@ -266,12 +271,15 @@ Rectangle {
 
                                     if (xhr.readyState === 4) {
                                         if (xhr.status === 200) {
-                                            console.log(xhr.responseText, "$$$$$$$$$$$$$$");
+                                            fbStatusText = "Feedback sent";
+                                            fbStatusWindow.hideWindow(3000);
                                         } else {
-                                            console.log(xhr.status, xhr.responseText, "((((((((((()))))))))))");
+                                            fbStatusText = "Failed to send";
+                                            fbStatusWindow.hideWindow(3000);
                                         }
                                     } else {
-                                        console.log(xhr.status, ' && ');
+                                        fbStatusText = "Sending feedback";
+                                        fbStatusWindow.hideWindow(3000);
                                     };
                                 };
                                 xhr.send(JSON.stringify(request));
@@ -334,13 +342,11 @@ Rectangle {
 
                     Column {
                         width: parent.width
-                        height: childrenRect.height
                         spacing: 20 * scaleFactor
 
                         Row {
                             id: ratingRow
                             width: parent.width
-                            height: childrenRect.height
                             spacing: 20 * scaleFactor
 
                             clip: true
@@ -355,7 +361,6 @@ Rectangle {
                                 horizontalAlignment: Text.AlignLeft
                                 verticalAlignment: Text.AlignVCenter
                                 wrapMode: Text.WordWrap
-                                elide: Text.ElideRight
 
                                 font.pixelSize: 14 * scaleFactor
                                 font.bold: true
@@ -550,7 +555,6 @@ Rectangle {
                         Row {
                             id: professionRow
                             width: parent.width
-                            height: childrenRect.height
                             spacing: 20 * scaleFactor
 
                             Text {
@@ -609,7 +613,6 @@ Rectangle {
                         Row {
                             id: commentTypeRow
                             width: parent.width
-                            height: childrenRect.height
                             spacing: 20 * scaleFactor
 
                             Text {
@@ -692,10 +695,7 @@ Rectangle {
                         Row {
                             id: contactInfoRow
                             width: parent.width
-                            height: childrenRect.height
                             spacing: 10 * scaleFactor
-
-                            clip: true
 
                             Text {
                                 anchors.verticalCenter: parent.verticalCenter
@@ -746,7 +746,7 @@ Rectangle {
 
                             Rectangle {
                                 id: emailFBRect
-                                width: 0.45 * parent.width
+                                width: 0.4 * parent.width
                                 height: 50 * scaleFactor
                                 radius: 6 * scaleFactor
                                 border.color: "darkgrey"
@@ -754,7 +754,7 @@ Rectangle {
                                 TextInput {
                                     id: emailFB
                                     text: "Email"
-                                    validator: RegExpValidator { regExp: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/ }
+                                    validator: RegExpValidator { regExp: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/ }
                                     color: "black"
                                     width: 25 * scaleFactor
                                     height: 40 * scaleFactor
@@ -773,11 +773,86 @@ Rectangle {
                                             emailFB.text = ""
                                         }
                                     }
+
+                                    onTextChanged: {
+                                        if (!["", "Email"].includes(emailFB.text)) {
+                                            if (!emailFB.acceptableInput) {
+                                                emailFB.color = "red"
+                                            } else {
+                                                emailFB.color = "black"
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
 
                     }
+                }
+            }
+
+            Rectangle {
+                id: fbStatusWindow
+                anchors.fill: parent
+                color: "transparent"
+                visible: false
+                clip: true
+
+                RadialGradient {
+                    anchors.fill: parent
+                    opacity: 0.7
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "lightgrey" }
+                        GradientStop { position: 0.7; color: "black" }
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: mouse.accepted = true
+                    onWheel: wheel.accepted = true
+                }
+
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: 200 * scaleFactor
+                    height: 120 * scaleFactor
+                    color: "lightgrey"
+                    opacity: 0.8
+                    radius: 5* scaleFactor
+                    border {
+                        color: "#4D4D4D"
+                        width: 1
+                    }
+
+                    Column {
+                        anchors {
+                            fill: parent
+                            margins: 10 * scaleFactor
+                        }
+                        spacing: 10
+
+                        BusyIndicator {
+                            Material.accent:"#00693e"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                        }
+
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: fbStatusText
+                            font.pixelSize: 16 * scaleFactor
+                        }
+                    }
+                }
+
+                Timer {
+                    id: hideWindowTimer
+                    onTriggered: fbStatusWindow.visible = false;
+                }
+
+                function hideWindow(time) {
+                    hideWindowTimer.interval = time;
+                    hideWindowTimer.restart();
                 }
             }
         }
