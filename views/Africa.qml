@@ -136,4 +136,9 @@ Page {
         id: descLyrPage
         visible: false
     }
+
+    Controls.PopScaleMessage {
+        id: popScaleM
+        visible: false
+    }
 }

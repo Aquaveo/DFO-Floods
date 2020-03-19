@@ -44,7 +44,7 @@ SceneView {
             if(sceneView.scene !== null && sceneView.scene.loadStatus === Enums.LoadStatusLoaded && isInitial) {
                 isInitial = false;
 
-                if (app.settings.value("zoom", false) !== false) {
+                if (app.settings.value("zoom", false) !== false && initLoad) {
                     positionSource.update();
                     var savedLocation = JSON.parse(app.settings.value("zoom"));
                     var savedPoint = ArcGISRuntimeEnvironment.createObject("Point", {

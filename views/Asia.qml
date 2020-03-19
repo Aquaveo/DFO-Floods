@@ -113,8 +113,17 @@ Page {
         id: saveStateBtn
     }
 
+    Controls.OfflineBtn {
+        id: offlineBtn
+    }
+
     Controls.SaveStatePage {
         id: saveStagePg
+        visible: false
+    }
+
+    Controls.OfflinePage {
+        id: offlinePg
         visible: false
     }
 
@@ -125,6 +134,11 @@ Page {
 
     Controls.DescriptionLayer {
         id: descLyrPage
+        visible: false
+    }
+
+    Controls.PopScaleMessage {
+        id: popScaleM
         visible: false
     }
 }

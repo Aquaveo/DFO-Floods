@@ -850,13 +850,22 @@ Drawer {
                                 legendModel.append({name: "Annual Flood Frequency", symbolUrl: "http://floodobservatory.colorado.edu/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=MOD_an_frequency_af:Annualfrequency_water_af&TRANSPARENT=true&legend_options=fontColor:ffffff", visible: true});
                                 pageItem.descriptionLyr = subLayerFFSL.description;
                             } else if (/World population/.test(suggestedLabel.text)) {
-                                layerInfos = servicePop.serviceInfo.layerInfos;
-                                subLayerWPSL = layerInfos[0].sublayerInfos[0];
-                                wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
-                                                                                            layerInfos: [subLayerWPSL]
-                                                                                        });
-                                legendModel.append({name: "World Population", symbolUrl: "http://floodobservatory.colorado.edu/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=AF_population:ago_ppp_2015&height=8&WIDTH=10&TRANSPARENT=true&legend_options=fontSize:8;fontColor:ffffff", visible: true});
-                                pageItem.descriptionLyr = subLayerWPSL.description;
+                                app.currentScale = parseInt(sceneView.currentViewpointCenter.json.scale, 10);
+                                if (app.currentScale <= 3000000) {
+                                    layerInfos = servicePop.serviceInfo.layerInfos;
+                                    subLayerWPSL = layerInfos[0].sublayerInfos[0];
+
+                                    wmsSuggestedLyr = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
+                                                                                                layerInfos: [subLayerWPSL]
+                                                                                            });
+                                    legendModel.append({name: "World Population", symbolUrl: "http://floodobservatory.colorado.edu/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=AF_population:ago_ppp_2015&height=8&WIDTH=10&TRANSPARENT=true&legend_options=fontSize:8;fontColor:ffffff", visible: true});
+                                    pageItem.descriptionLyr = subLayerWPSL.description;
+                                } else {
+                                    stackListRect.color = "lightgray";
+                                    popScaleM.label.text = "This layer can only be viewed when zoomed in at a scale lower than <b>1:3000000</b>. The current scale is <b>1:%1</b>".arg(app.currentScale);
+                                    popScaleM.visible = true;
+                                    popScaleM.hideWindow(8000);
+                                }
                             } else if (/River Discharge Stations/.test(suggestedLabel.text)) {
                                 layerInfos = serviceStations.serviceInfo.layerInfos;
                                 subLayerStationsSL = layerInfos[0].sublayerInfos[0];

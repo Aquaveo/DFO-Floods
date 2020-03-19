@@ -151,7 +151,7 @@ function addWmsLayers() {
     if (app.isOnline) {
         scene.basemap = ArcGISRuntimeEnvironment.createObject(defaultBasemap);
 
-        if (app.settings.value("layer_list", false) !== false) {
+        if (app.settings.value("layer_list", false) !== false && initLoad) {
             var dataModel = JSON.parse(app.settings.value("layer_list"));
             for (var i = 0; i < dataModel.length; i++) {
                 var savedLayer = ArcGISRuntimeEnvironment.createObject("WmsLayer", {
@@ -168,7 +168,7 @@ function addWmsLayers() {
             serviceHistW.load();
         }
     } else {
-        if (app.settings.value("offline_maps", false) !== false) {
+        if (app.settings.value("offline_maps", false) !== false && initLoad) {
             var xTileCache = ArcGISRuntimeEnvironment.createObject("TileCache", { path: "../../../../ArcGIS/AppStudio/Data/BasemapTileCache_%1.tpk".arg(JSON.parse(app.settings.value("offline_maps"))[0]["name"]) } );
 
             var xTiledLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: xTileCache } );

@@ -20,12 +20,14 @@ App {
         return AppFramework.displayScaleFactor * value
     }
 
+    property int currentScale: 0
+
     property real scaleFactor: AppFramework.displayScaleFactor
     property int  baseFontSize : app.info.propertyValue("baseFontSize", 15 * scaleFactor) + (isSmallScreen ? 0 : 3)
     property bool isSmallScreen: (width || height) < units(400)
 
     property bool disclaimerAccepted: app.settings.value("disclaimerAccepted");
-    property bool initLoad: app.settings.value("region", false) ? false : true;
+    property bool initLoad: app.settings.value("region", false) ? true : false;
     property bool isOnline: Networking.isOnline
     property string dataPath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data")
     property StorageInfo storageInfo: StorageInfo {path: AppFramework.userHomePath}
