@@ -7,7 +7,7 @@ import QtQuick.Controls.Material 2.1
 import ArcGIS.AppFramework 1.0
 
 Rectangle {
-    id: declinedTandC
+    id: clearSingleOffMRect
     anchors.fill: parent
     color: "#80000000"
 
@@ -18,7 +18,7 @@ Rectangle {
     }
 
     Rectangle {
-        id: popUpDecline
+        id: popUpClearSOFFM
         height: 180 * scaleFactor
         width: 280 * scaleFactor
         anchors.centerIn: parent
@@ -27,12 +27,11 @@ Rectangle {
         Material.elevation: 24
 
         Text {
-            id: titleText
             width: parent.width
-            text: qsTr("The T&C must be accepted to use the app.")
-            font{
-                pixelSize:app.baseFontSize
-                bold:true
+            text: qsTr("This offline map will be removed permanently.")
+            font {
+                pixelSize: app.baseFontSize
+                bold: true
             }
             padding: 24 * scaleFactor
             anchors.top: parent.top
@@ -40,7 +39,7 @@ Rectangle {
         }
 
         Button {
-            id: closeAppBtn
+            id: clearSingleOMBtn
             width: 0.8 * parent.width
             height: 50 * scaleFactor
             anchors {
@@ -51,7 +50,7 @@ Rectangle {
 
             Material.background: "#00693e"
 
-            text: "CLOSE APP"
+            text: "CONFIRM"
             background: Rectangle {
                 width: parent.width
                 height: parent.height
@@ -60,7 +59,7 @@ Rectangle {
             }
 
             contentItem: Text {
-                text: closeAppBtn.text
+                text: clearSingleOMBtn.text
                 font.pixelSize: 14 * scaleFactor
                 font.bold: true
                 color: "white"
@@ -70,17 +69,21 @@ Rectangle {
             }
 
             onClicked: {
-                Qt.quit();
+                var offlineMapsJson = JSON.parse(app.settings.value("offline_maps"));
+                offlineMapsJson.splice(offMRemIx - 1, 1); // remove one to account for header
+                oMLyrsModel.remove(offMRemIx, 1);
+                app.settings.setValue("offline_maps", JSON.stringify(offlineMapsJson));
+                clearSingleOffM.visible = false;
             }
         }
 
         Text {
-            id:cancelText
+            id: cancelClearAllOffM
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.bottomMargin: 13 * scaleFactor
             anchors.rightMargin: 16 * scaleFactor
-            text: qsTr("BACK TO T&C")
+            text: qsTr("CANCEL")
             color: "#00693e"
             font {
                 pixelSize: 14 * scaleFactor
@@ -90,10 +93,21 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    declinedTandC.visible = 0;
-                    disclaimer.visible = 1;
+                    clearSingleOffM.visible = false;
                 }
             }
         }
+    }
+
+    DropShadow {
+        source: clearSingleOffMRect
+        anchors.fill: clearSingleOffMRect
+        width: source.width
+        height: source.height
+        cached: true
+        radius: 8 * scaleFactor
+        samples: 17
+        color: "#80000000"
+        smooth: true
     }
 }

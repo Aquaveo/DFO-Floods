@@ -438,6 +438,24 @@ Drawer {
                         case "2019":
                             filteredEventServiceUrl = wmsEventServiceUrl.toString().replace("/Events_", "/Events_2019_");
                             break;
+                        case "2020":
+                            filteredEventServiceUrl = wmsEventServiceUrl.toString().replace("/Events_", "/Events_2020_");
+                            break;
+                        case "2021":
+                            filteredEventServiceUrl = wmsEventServiceUrl.toString().replace("/Events_", "/Events_2021_");
+                            break;
+                        case "2022":
+                            filteredEventServiceUrl = wmsEventServiceUrl.toString().replace("/Events_", "/Events_2022_");
+                            break;
+                        case "2023":
+                            filteredEventServiceUrl = wmsEventServiceUrl.toString().replace("/Events_", "/Events_2023_");
+                            break;
+                        case "2024":
+                            filteredEventServiceUrl = wmsEventServiceUrl.toString().replace("/Events_", "/Events_2024_");
+                            break;
+                        case "2025":
+                            filteredEventServiceUrl = wmsEventServiceUrl.toString().replace("/Events_", "/Events_2025_");
+                            break;
                         default:
                             filteredEventServiceUrl = wmsEventServiceUrl;
                             break;

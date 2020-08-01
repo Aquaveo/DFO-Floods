@@ -28,5 +28,10 @@ RoundButton {
 
     onClicked: {
         offlinePg.visible = true
+        if (!app.isOnline) {
+            offlinePg.addOffMap.visible = false;
+        } else {
+            offlinePg.addOffMap.visible = true;
+        }
     }
 }

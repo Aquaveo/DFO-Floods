@@ -29,7 +29,7 @@ App {
     property bool disclaimerAccepted: app.settings.value("disclaimerAccepted");
     property bool initLoad: app.settings.value("region", false) ? true : false;
     property bool isOnline: Networking.isOnline
-    property string dataPath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data")
+    property string dataPath: AppFramework.urlInfo(AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data")).path
     property StorageInfo storageInfo: StorageInfo {path: AppFramework.userHomePath}
     property url qmlfile: app.settings.value("region", false) ? app.settings.value("region") : "./views/StartPage.qml";
     property string viewName: app.settings.value("region", false) !== false ? app.settings.value("region").split("views/")[1].replace("America", " America").split(".")[0] : ""
@@ -66,6 +66,7 @@ App {
             id: loader
             anchors.top: parent.top
             Loader {
+                id: regionLoader
                 height: app.height
                 width: app.width
                 source: qmlfile

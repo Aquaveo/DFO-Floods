@@ -122,7 +122,7 @@ Rectangle {
                 newOMMapForm.visible = false;
                 exportWindow.visible = true;
                 offlinePg.fileName = fileName;
-                offlinePg.outputTileCache = AppFramework.userHomeFolder.fileUrl("ArcGIS/AppStudio/Data/BasemapTileCache_%1.tpk".arg(fileName))
+                offlinePg.outputTileCache = AppFramework.userHomeFolder.fileUrl("ArcGIS/AppStudio/Data/%1_BasemapTileCache_%2.tpk".arg(viewName).arg(fileName))
 
                 // export the cache with the parameters
                 offlinePg.exportTask.executeExportTileCacheTask(offlinePg.params);
@@ -154,7 +154,6 @@ Rectangle {
     }
 
     DropShadow {
-        id: headerbarShadow
         source: popUpOMForm
         anchors.fill: popUpOMForm
         width: source.width

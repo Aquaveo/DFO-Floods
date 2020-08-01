@@ -8,14 +8,19 @@ import QtQuick.Layouts 1.3
 import ArcGIS.AppFramework 1.0
 import Esri.ArcGISRuntime 100.5
 
+import "../controls" as Controls
+
 Rectangle {
     id: offlineMapRect
     anchors.fill: parent
-    color: "#80000000"
+    color: "black"
 
     property string fileName: ""
     property alias exportTask: exportTask
     property alias networkRequest: networkRequest
+    property alias addOffMap: addOffMap
+    property alias offLineMaptabBar: offLineMaptabBar
+    property alias oMLyrsModel: oMLyrsModel
     property string statusText: ""
     property url outputTileCache
     property var basemapUrls: {
@@ -29,6 +34,19 @@ Rectangle {
     property ExportTileCacheParameters params
 
     property var generateLayerOptions: []
+    property var offMRemIx
+
+//    Rectangle {
+//        id: extentRectangle
+//        anchors.centerIn: parent
+//        width: 512
+//        height: 512
+//        color: "transparent"
+//        border {
+//            color: "#00693e"
+//            width: 3 * scaleFactor
+//        }
+//    }
 
     MouseArea {
         anchors.fill: parent
@@ -71,16 +89,24 @@ Rectangle {
                 // show the export window
                 exportWindow.visible = true;
 
-//                var corner1 = sceneView.screenToLocation(offlineMapRect.x, offlineMapRect.y);
-//                var corner2 = sceneView.screenToLocation((offlineMapRect.x + offlineMapRect.width), (offlineMapRect.y + offlineMapRect.height));
+//                var corner1 = sceneView.screenToLocation(extentRectangle.x, extentRectangle.y);
+//                var corner2 = sceneView.screenToLocation((extentRectangle.x + extentRectangle.width), (extentRectangle.y + extentRectangle.height));
 //                var envBuilder = ArcGISRuntimeEnvironment.createObject("EnvelopeBuilder");
 //                envBuilder.setCorners(corner1, corner2);
-//                tileCacheExtent = GeometryEngine.project(envBuilder.geometry, SpatialReference.createWebMercator());
+
+//                console.log(corner1.x, corner1.y, corner2.x, corner2.y,'$$$$$');
+
+//                for (var p in envBuilder.geometry) {
+//                    console.log(p, envBuilder[p], '####');
+//                }
+
+//                var tileCacheExtent_tmp = GeometryEngine.project(envBuilder.geometry, SpatialReference.createWebMercator());
 
                 var maxScale = sceneView.currentViewpointCenter.targetScale;
                 var minScale = maxScale / 20;
-                tileCacheExtent = sceneView.currentViewpointExtent.extent
-                console.log(sceneView.width, sceneView.height, JSON.stringify(tileCacheExtent.extent.json), '################');
+                tileCacheExtent = sceneView.currentViewpointExtent.extent;
+                var tileCacheExtent2 = GeometryEngine.project(tileCacheExtent, SpatialReference.createWebMercator());
+
                 exportTask.createDefaultExportTileCacheParameters(tileCacheExtent, maxScale, minScale);
             }
 
@@ -101,6 +127,14 @@ Rectangle {
             Material.accent:"#00693e"
             background:  Rectangle {
                 color: "#249567"
+            }
+
+            onCurrentIndexChanged: {
+                if (offLineMaptabBar.currentIndex === 1) {
+                    clearAllOffMTrigger.visible = true;
+                } else {
+                    clearAllOffMTrigger.visible = false;
+                }
             }
 
             TabButton {
@@ -171,7 +205,17 @@ Rectangle {
 
                 model: ListModel {
                     id: oMLyrsModel
-                    ListElement {name: "NAME"; date_created: "DATE CREATED"; layer_list: []}
+                    ListElement {name: "NAME"; date_created: "CREATED"; layer_list: []}
+
+                    Component.onCompleted: {
+                        if (app.settings.value("offline_maps") && viewName) {
+                            for (var p in JSON.parse(app.settings.value("offline_maps"))) {
+                                if (JSON.parse(app.settings.value("offline_maps"))[p].name.includes(viewName)) {
+                                    oMLyrsModel.append(JSON.parse(app.settings.value("offline_maps"))[p]);
+                                }
+                            }
+                        }
+                    }
                 }
 
                 ScrollBar.vertical: ScrollBar {
@@ -186,41 +230,122 @@ Rectangle {
 
                     Row {
                         id: oMRow
-                        spacing: 0
+                        height: 40 * scaleFactor
+                        spacing: 2 * scaleFactor
+                        anchors.verticalCenter: parent.verticalCenter
+                        leftPadding: 4 * scaleFactor
+                        rightPadding: 4 * scaleFactor
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            width: 0.55 * oMDelegate.width
-                            text: name
-                            wrapMode: Text.WordWrap
+                            width: 0.3 * oMDelegate.width
+                            text: name === "NAME" ? name : name.split(/_(.+)/)[1]
+                            wrapMode: Text.WrapAnywhere
                             font.pixelSize: 14 * scaleFactor
                         }
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            width: 0.55 * oMDelegate.width
-                            text: date_created
+                            width: 0.45 * oMDelegate.width
+                            text: date_created === "CREATED" ? date_created : new Date(Number(date_created)).toString()
                             wrapMode: Text.WordWrap
                             font.pixelSize: 14 * scaleFactor
                         }
 
                         Button {
-                            id: infoLayer
+                            id: loadOffMBtn
 
-                            width: 0.10 * oMDelegate.width
-                            height: 35 * scaleFactor
+                            width: 0.1 * oMDelegate.width
+                            height: 40 * scaleFactor
+                            visible: false
 
-                            Material.background: "transparent"
+                            Material.background: "#00693e"
 
                             onClicked: {
+                                if (name !== "NAME") {
+                                    var basemapPath = "%1/%2_BasemapTileCache_%3.tpk".arg(dataPath).arg(viewName).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
+                                    var xTileCache = ArcGISRuntimeEnvironment.createObject("TileCache", {path: basemapPath});
+                                    var xTiledLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: xTileCache } );
 
+                                    //create a new basemap with the tiled layer
+                                    var basemap = ArcGISRuntimeEnvironment.createObject("Basemap");
+                                    basemap.baseLayers.append(xTiledLayer);
+
+                                    // set the new basemap on the map
+                                    sceneView.scene.basemap = basemap;
+                                    offlinePg.visible = false;
+
+//                                    if (app.settings.value("offline_maps", false) !== false && initLoad) {
+//                                        var offDataModel = JSON.parse(app.settings.value("offline_maps"))[0]["layer_list"];
+//                                        for (var j = 0; j < offDataModel.length; j++) {
+//                                            var raster = ArcGISRuntimeEnvironment.createObject("TileCache", {
+//                                                                                                   path: "../../../../ArcGIS/AppStudio/Data/layer_test2.tpkx",
+//                                                                                               });
+//                                            var offLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", {
+//                                                                                                     tileCache: raster,
+//                                                                                                     visible: true
+//                                                                                                 });
+//                            //                var offLayer = ArcGISRuntimeEnvironment.createObject("RasterLayer", {
+//                            //                                                                         raster: raster,
+//                            //                                                                         visible: offDataModel[j].visible
+//                            //                                                                     });
+
+//                                            offLayer.loadStatusChanged.connect(function () {
+//                                                if (offLayer.loadStatus !== Enums.LoadStatusLoaded) {
+//                                                    console.log(offLayer.loadError.code, offLayer.loadError.message, 'noooooooooooooooooooooo')
+//                                                    return;
+//                                                } else {
+//                                                    console.log('yessssssssssssssssssssssssss0')
+//                                                }
+//                                            })
+
+//                                            for (var q in offLayer) {
+//                                                console.log(q, offLayer[q], ' ###########');
+//                                            }
+
+//                                            scene.operationalLayers.append(offLayer);
+//                                            scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(offLayer), "name", offDataModel[j].name);
+//                                            scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(offLayer), "description", offDataModel[j].description);
+//                                            console.log(scene.operationalLayers.get(0).visible, '###')
+//                                        }
+//                                    }
+                                }
                             }
 
                             Image {
-                                source: "../assets/layerInfo.png"
+                                source: "../assets/load.png"
                                 height: 24 * scaleFactor
                                 width: 24 * scaleFactor
                                 anchors.centerIn: parent
+                            }
+                        }
+
+                        Button {
+                            id: removeOffMBtn
+
+                            width: 0.1 * oMDelegate.width
+                            height: 40 * scaleFactor
+                            visible: false
+
+                            Material.background: "#00693e"
+
+                            onClicked: {
+                                offMRemIx = index;
+                                clearSingleOffM.visible = true;
+                            }
+
+                            Image {
+                                source: "../assets/clear.png"
+                                height: 24 * scaleFactor
+                                width: 24 * scaleFactor
+                                anchors.centerIn: parent
+                            }
+                        }
+
+                        Component.onCompleted: {
+                            if (name !== "NAME") {
+                                removeOffMBtn.visible = true;
+                                loadOffMBtn.visible = true;
                             }
                         }
                     }
@@ -230,7 +355,29 @@ Rectangle {
         }
 
         Text {
-            id: closeSaveStateRect
+            id: clearAllOffMTrigger
+            visible: false
+            anchors.bottom: parent.bottom
+            anchors.right: closeOfflinePg.left
+            anchors.bottomMargin: 13 * scaleFactor
+            anchors.rightMargin: 30 * scaleFactor
+            text: qsTr("CLEAR ALL")
+            color: "#00693e"
+            font {
+                pixelSize: 14 * scaleFactor
+                bold: true
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    clearAllOffM.visible = true;
+                }
+            }
+        }
+
+        Text {
+            id: closeOfflinePg
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.bottomMargin: 13 * scaleFactor
@@ -381,13 +528,14 @@ Rectangle {
                 if (tiledLayer.loadStatus === Enums.LoadStatusLoaded) {
                     extentRectangle.visible = false;
                     downloadButton.visible = false;
-                    mapView.setViewpointScale(mapView.mapScale * .5);
                 }
             });
         }
 
         Component.onDestruction: {
-            exportJob.jobStatusChanged.disconnect(updateJobStatus);
+            if (exportJob && exportJob.jobStatusChanged) {
+                exportJob.jobStatusChanged.disconnect(updateJobStatus);
+            }
         }
     }
     //! [ExportTiles ExportTileCacheTask]
@@ -395,7 +543,7 @@ Rectangle {
     NetworkRequest {
         id: networkRequest
         url: "http://floodobservatory.colorado.edu/geoserver/AF_2wk_rs/wms?service=WMS&version=1.1.0&request=GetMap&layers=AF_2wk_rs:DFO_2wk_current_AF&styles%20%20=&bbox=1.4257904248024005,-6.706102997621768,17.17814185740383,19.39562033629621&width=414&height=686&srs=EPSG:4326&format=image%2Ftiff"
-        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/layer_test1.tiff"
+        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2.tif".arg(viewName).arg(fileName)
 
         onReadyStateChanged: {
             if (readyState === NetworkRequest.DONE) {
@@ -411,27 +559,24 @@ Rectangle {
                             "symbolUrl": sceneView.legendListView.model.get(i)["symbolUrl"],
                             "legendVisible": sceneView.legendListView.model.get(i)["visible"]
                         });
-                    } else {
-                        console.log(sceneView.scene.operationalLayers.get(i)["name"], sceneView.scene.operationalLayers.get(i)["visible"], 'nooooooooooooooo2')
                     }
                 }
 
                 if (app.settings.value("offline_maps", false) === false) {
-                    var offLineMaps = []
-                    offLineMaps.push({"name": fileName, "date_created": new Date().getTime().toString(), "layer_list": visLayers})
-
-
-                    app.settings.setValue("offline_maps", JSON.stringify(offLineMaps));
+                    var offLineMaps = [];
+                } else {
+                    offLineMaps = JSON.parse(app.settings.value("offline_maps"));
                 }
 
-                for (var p in JSON.parse(app.settings.value("offline_maps"))) {
-                    oMLyrsModel.append(JSON.parse(app.settings.value("offline_maps"))[p]);
-                }
+                var newOffMElm = {
+                    "name": "%1_%2".arg(viewName).arg(fileName),
+                    "date_created": new Date().getTime().toString(),
+                    "layer_list": visLayers
+                };
 
-                console.log(JSON.parse(app.settings.value("offline_maps"))[0].name,
-                            JSON.parse(app.settings.value("offline_maps"))[0].date_created,
-                            JSON.parse(app.settings.value("offline_maps"))[0].layer_list,
-                            '$$$$$$$$$$$$$$$')
+                offLineMaps.push(newOffMElm);
+                app.settings.setValue("offline_maps", JSON.stringify(offLineMaps));
+                oMLyrsModel.append(newOffMElm);
 
                 offLineMaptabBar.currentIndex = 1;
                 exportWindow.hideWindow(1500);
@@ -521,4 +666,15 @@ Rectangle {
 
         visible: false
     }
+
+    Controls.ClearAllOffMaps {
+        id: clearAllOffM
+        visible: false
+    }
+
+    Controls.ClearSingleOffMap {
+        id: clearSingleOffM
+        visible: false
+    }
 }
+

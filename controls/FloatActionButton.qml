@@ -16,7 +16,9 @@ RoundButton {
         topMargin: 10 * scaleFactor
     }
     onClicked: {
-        popUp.visible = 1
+        popUp.cancelText.visible = true;
+        popUp.tandCBtn.visible = false;
+        popUp.visible = true;
     }
     
     Image {

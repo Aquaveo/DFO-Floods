@@ -23,7 +23,7 @@ Page {
     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_SA/wms?service=wms&request=getCapabilities";
     property url wmsWorldPopServiceUrl: "http://floodobservatory.colorado.edu/geoserver/SA_population/wms?service=wms&request=getCapabilities";
     property url filteredEventServiceUrl: wmsEventServiceUrl;
-    property var availableEventYears: ["All","2017"];
+    property var availableEventYears: ["All","2017","2018","2019","2020","2021","2022","2023","2024","2025"];
 
     property ListModel legendModel: ListModel {
         id: legendModel

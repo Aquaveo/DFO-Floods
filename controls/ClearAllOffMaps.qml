@@ -7,7 +7,7 @@ import QtQuick.Controls.Material 2.1
 import ArcGIS.AppFramework 1.0
 
 Rectangle {
-    id: declinedTandC
+    id: clearAllOffMRect
     anchors.fill: parent
     color: "#80000000"
 
@@ -18,7 +18,7 @@ Rectangle {
     }
 
     Rectangle {
-        id: popUpDecline
+        id: popUpClearOFFM
         height: 180 * scaleFactor
         width: 280 * scaleFactor
         anchors.centerIn: parent
@@ -27,12 +27,11 @@ Rectangle {
         Material.elevation: 24
 
         Text {
-            id: titleText
             width: parent.width
-            text: qsTr("The T&C must be accepted to use the app.")
-            font{
-                pixelSize:app.baseFontSize
-                bold:true
+            text: qsTr("This action will clear all the saved offline maps.")
+            font {
+                pixelSize: app.baseFontSize
+                bold: true
             }
             padding: 24 * scaleFactor
             anchors.top: parent.top
@@ -40,7 +39,7 @@ Rectangle {
         }
 
         Button {
-            id: closeAppBtn
+            id: clearAllOMBtn
             width: 0.8 * parent.width
             height: 50 * scaleFactor
             anchors {
@@ -51,7 +50,7 @@ Rectangle {
 
             Material.background: "#00693e"
 
-            text: "CLOSE APP"
+            text: "CONFIRM"
             background: Rectangle {
                 width: parent.width
                 height: parent.height
@@ -60,7 +59,7 @@ Rectangle {
             }
 
             contentItem: Text {
-                text: closeAppBtn.text
+                text: clearAllOMBtn.text
                 font.pixelSize: 14 * scaleFactor
                 font.bold: true
                 color: "white"
@@ -70,17 +69,18 @@ Rectangle {
             }
 
             onClicked: {
-                Qt.quit();
+                app.settings.setValue("offline_maps", false);
+                clearAllOffM.visible = false;
             }
         }
 
         Text {
-            id:cancelText
+            id: cancelClearAllOffM
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.bottomMargin: 13 * scaleFactor
             anchors.rightMargin: 16 * scaleFactor
-            text: qsTr("BACK TO T&C")
+            text: qsTr("CANCEL")
             color: "#00693e"
             font {
                 pixelSize: 14 * scaleFactor
@@ -90,10 +90,21 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    declinedTandC.visible = 0;
-                    disclaimer.visible = 1;
+                    clearAllOffM.visible = false;
                 }
             }
         }
+    }
+
+    DropShadow {
+        source: clearAllOffM
+        anchors.fill: clearAllOffM
+        width: source.width
+        height: source.height
+        cached: true
+        radius: 8 * scaleFactor
+        samples: 17
+        color: "#80000000"
+        smooth: true
     }
 }

@@ -12,6 +12,7 @@ Page {
     property bool regionInitLoad: true
 
     property alias saveState: saveStagePg
+    property alias offlinePg: offlinePg
     property Point currentPositionPoint: Point {x: 19.675945; y: -5.579062; spatialReference: SpatialReference.createWgs84()}
 
     property real scaleFactor: AppFramework.displayScaleFactor
@@ -23,7 +24,7 @@ Page {
     property url wmsEventServiceUrl: "http://floodobservatory.colorado.edu/geoserver/Events_AF/wms?service=wms&request=getCapabilities";
     property url wmsWorldPopServiceUrl: "http://floodobservatory.colorado.edu/geoserver/AF_population/wms?service=wms&request=getCapabilities";
     property url filteredEventServiceUrl: wmsEventServiceUrl;
-    property var availableEventYears: ["All","2017","2018","2019"];
+    property var availableEventYears: ["All","2017","2018","2019","2020","2021","2022","2023","2024","2025"];
 
     property ListModel legendModel: ListModel {
         id: legendModel
@@ -45,7 +46,7 @@ Page {
     }
 
     property var defaultLayersArr: ["Regular Water Extent", "Current Daily Flooded Area / Clouds", "Two Week Flooded Area", "January till Current Flooded Area", "Historical Water Extent", "All Extreme Events", "Nearest Extreme Event"];
-    property var defaultLayersLongArr: ["Regular water Africa", "Current daily water extent Africa", "2-week accummulated flooded area Africa", "January till current flooded area Africa", "Historical flood extent AF"];
+    property var defaultLayersLongArr: ["Regular water Africa", "Current daily water extent Africa", "2-week accumulated flooded area Africa", "January till current flooded area Africa", "Historical flood extent AF"];
     property WmsService service2wk;
     property WmsLayer wmsLayer2wk;
 

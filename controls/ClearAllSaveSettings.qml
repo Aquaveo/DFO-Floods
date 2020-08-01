@@ -78,6 +78,8 @@ Rectangle {
                 app.settings.setValue("zoom", false);
                 pageItem.saveState.zoomcheck = false;
 
+                popUp.cancelText.visible = false;
+                popUp.tandCBtn.visible = true;
                 clearAllSS.visible = false;
                 app.initLoad = true
                 app.qmlfile = "../views/StartPage.qml";
@@ -100,17 +102,16 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    clearAllSS.visible = 0;
-                    saveStagePg.visible = 1;
+                    clearAllSS.visible = false;
+                    saveStagePg.visible = true;
                 }
             }
         }
     }
 
     DropShadow {
-        id: headerbarShadow
-        source: popUpClearSS
-        anchors.fill: popUpClearSS
+        source: clearAllSSRect
+        anchors.fill: clearAllSSRect
         width: source.width
         height: source.height
         cached: true

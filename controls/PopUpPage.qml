@@ -10,6 +10,7 @@ import "../controls" as Controls
 
 Rectangle {
     property alias listViewCurrentIndex: popUpListView.currentIndex
+    property alias cancelText: cancelText
     property alias tandCBtn: tandCBtn
 
     anchors.fill: parent
@@ -83,12 +84,24 @@ Rectangle {
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
-                        popUp.visible = 0;
+                        popUp.visible = false;
                         initLoad = false;
-                        popUpListView.currentIndex = index
-                        qmlfile = viewItems.get(index).url
-                        viewName = viewItems.get(index).name
-                        descriptionText = viewItems.get(index).description
+                        popUpListView.currentIndex = index;
+                        qmlfile = viewItems.get(index).url;
+                        viewName = viewItems.get(index).name;
+                        descriptionText = viewItems.get(index).description;
+
+                        if (!app.isOnline) {
+                            regionLoader.item.offlinePg.addOffMap.visible = false;
+                            regionLoader.item.offlinePg.offLineMaptabBar.currentIndex = 1;
+                            regionLoader.item.offlinePg.visible = true;
+
+                            for (var p in JSON.parse(app.settings.value("offline_maps"))) {
+                                if (JSON.parse(app.settings.value("offline_maps"))[p].name.includes(viewName)) {
+                                    regionLoader.item.offlinePg.oMLyrsModel.append(JSON.parse(app.settings.value("offline_maps"))[p]);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -96,6 +109,7 @@ Rectangle {
 
         Text {
             id: cancelText
+            visible: false
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.bottomMargin: 13 * scaleFactor
@@ -110,14 +124,13 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    popUp.visible = 0
+                    popUp.visible = false;
                 }
             }
         }
     }
 
     DropShadow {
-        id: headerbarShadow
         source: popUpWindow
         anchors.fill: popUpWindow
         width: source.width
@@ -134,12 +147,12 @@ Rectangle {
         visible: true
     }
 
-    onVisibleChanged: {
-        if (initLoad) {
-            cancelText.visible = false;
-        } else {
-            cancelText.visible = true;
-            tandCBtn.visible = false;
-        }
-    }
+//    onVisibleChanged: {
+//        if (initLoad) {
+//            cancelText.visible = false;
+//        } else {
+//            cancelText.visible = true;
+//            tandCBtn.visible = false;
+//        }
+//    }
 }
