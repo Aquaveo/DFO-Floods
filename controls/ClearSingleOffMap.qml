@@ -17,6 +17,11 @@ Rectangle {
         onWheel: wheel.accepted = true
     }
 
+    FileFolder {
+        id: rmFileFolder
+        path: app.dataPath
+    }
+
     Rectangle {
         id: popUpClearSOFFM
         height: 180 * scaleFactor
@@ -70,6 +75,13 @@ Rectangle {
 
             onClicked: {
                 var offlineMapsJson = JSON.parse(app.settings.value("offline_maps"));
+                var rmFileQuery = oMLyrsModel.get(offMRemIx).name.replace("_", "_*") + "*";
+                var rmFileList = rmFileFolder.fileNames(rmFileQuery);
+
+                rmFileList.forEach(fileName => {
+                    rmFileFolder.removeFile(fileName);
+                })
+
                 offlineMapsJson.splice(offMRemIx - 1, 1); // remove one to account for header
                 oMLyrsModel.remove(offMRemIx, 1);
                 app.settings.setValue("offline_maps", JSON.stringify(offlineMapsJson));

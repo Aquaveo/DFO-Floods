@@ -32,6 +32,7 @@ Rectangle {
     property ArcGISTiledLayer xTiledLayer
     property Geometry tileCacheExtent: null
     property ExportTileCacheParameters params
+    property string layerDownloadUrl
 
     property var generateLayerOptions: []
     property var offMRemIx
@@ -103,11 +104,12 @@ Rectangle {
 //                var tileCacheExtent_tmp = GeometryEngine.project(envBuilder.geometry, SpatialReference.createWebMercator());
 
                 var maxScale = sceneView.currentViewpointCenter.targetScale;
-                var minScale = maxScale / 20;
+                var minScale = 1155581.108577 //maxScale / 20;
                 tileCacheExtent = sceneView.currentViewpointExtent.extent;
-                var tileCacheExtent2 = GeometryEngine.project(tileCacheExtent, SpatialReference.createWebMercator());
+//                var tileCacheExtent2 = GeometryEngine.project(tileCacheExtent, SpatialReference.createWebMercator());
 
                 exportTask.createDefaultExportTileCacheParameters(tileCacheExtent, maxScale, minScale);
+                console.log(tileCacheExtent.xMin, tileCacheExtent.xMax, tileCacheExtent.yMin, tileCacheExtent.yMax, '$$$$$$$$$');
             }
 
             Image {
@@ -275,6 +277,14 @@ Rectangle {
                                     sceneView.scene.basemap = basemap;
                                     offlinePg.visible = false;
 
+                                    var twoWkPath = "%1/%2_%3.tpk".arg(dataPath).arg(viewName).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
+                                    var twoWkTileCache = ArcGISRuntimeEnvironment.createObject("TileCache", {path: twoWkPath});
+
+                                    var twoWkLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: twoWkTileCache } );
+
+                                    sceneView.scene.operationalLayers.clear();
+                                    sceneView.scene.operationalLayers.append(twoWkLayer);
+
 //                                    if (app.settings.value("offline_maps", false) !== false && initLoad) {
 //                                        var offDataModel = JSON.parse(app.settings.value("offline_maps"))[0]["layer_list"];
 //                                        for (var j = 0; j < offDataModel.length; j++) {
@@ -400,6 +410,11 @@ Rectangle {
 
     // Create ExportTileCacheTask
     ExportTileCacheTask {
+        id: exportLayersTask
+        url: 'https://diluvium.colorado.edu/arcgisonline/rest/services/dfo_layers/two_week_flooded_area_africa/MapServer'
+    }
+
+    ExportTileCacheTask {
         id: exportTask
 
         credential: Credential {
@@ -408,10 +423,12 @@ Rectangle {
             password: 'Q8o4RKrn!6aNf'
         }
 
-        url: basemapUrls[menu.comboBoxBasemap.displayText]
+        url:  basemapUrls[menu.comboBoxBasemap.displayText]
 
         property var exportJob
+        property var exportLayersJob
         property var estimateJobSize
+        property url layerPathtoUrl
 
         onCreateDefaultExportTileCacheParametersStatusChanged: {
             if (createDefaultExportTileCacheParametersStatus === Enums.TaskStatusCompleted) {
@@ -455,6 +472,18 @@ Rectangle {
                 statusText = "Export failed";
                 exportWindow.hideWindow(5000);
             }
+
+            convertPathtoUrl.url = networkRequest.responsePath;
+            layerPathtoUrl = convertPathtoUrl.url;
+            exportLayersJob = exportLayersTask.exportTileCache(params, layerPathtoUrl);
+            if (exportLayersJob) {
+                // show the export window
+                exportWindow.visible = true;
+
+                // connect to the job's status changed signal to know once it is done
+                exportLayersJob.jobStatusChanged.connect(updateLayersJobStatus);
+                exportLayersJob.start();
+            }
         }
 
         function updateJobEstimateStatus() {
@@ -489,7 +518,6 @@ Rectangle {
             switch(exportJob.jobStatus) {
             case Enums.JobStatusFailed:
                 statusText = "Export failed";
-                console.log(outputTileCache)
                 exportWindow.hideWindow(5000);
                 break;
             case Enums.JobStatusNotStarted:
@@ -503,33 +531,43 @@ Rectangle {
                 break;
             case Enums.JobStatusSucceeded:
                 statusText = "Adding map...";
-                offlinePg.networkRequest.send();
-//                displayOutputTileCache(exportJob.result);
                 break;
             default:
-                console.log("default");
                 break;
             }
         }
 
-        function displayOutputTileCache(tileCache) {
-            // create a new tiled layer from the output tile cache
-            xTiledLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: tileCache } );
-
-            // create a new basemap with the tiled layer
-            var basemap = ArcGISRuntimeEnvironment.createObject("Basemap");
-            basemap.baseLayers.append(xTiledLayer);
-
-            // set the new basemap on the map
-            map.basemap = basemap;
-
-            // zoom to the new layer and hide window once loaded
-            xtiledLayer.loadStatusChanged.connect(function() {
-                if (tiledLayer.loadStatus === Enums.LoadStatusLoaded) {
-                    extentRectangle.visible = false;
-                    downloadButton.visible = false;
+        function updateLayersJobStatus() {
+            switch(exportLayersJob.jobStatus) {
+            case Enums.JobStatusFailed:
+                var jobMessages = JSON.stringify(exportLayersJob.json);
+                console.log(jobMessages, '#########');
+                if (jobMessages.includes("Tile cache download URL retrieved: https://diluvium.colorado.edu/arcgis/rest/directories/arcgisoutput/dfo_layers/")) {
+                    layerDownloadUrl = "https://diluvium.colorado.edu/arcgisonline/rest/directories/arcgisoutput/dfo_layers" + jobMessages.split("Tile cache download URL retrieved: https://diluvium.colorado.edu/arcgis/rest/directories/arcgisoutput/dfo_layers")[1].split("\",")[0];
+                    statusText = "Adding layers...";
+                    offlinePg.networkRequest.send();
+                } else {
+                    statusText = "Export failed";
+                    exportWindow.hideWindow(5000);
+                    break;
                 }
-            });
+                break;
+            case Enums.JobStatusNotStarted:
+                statusText = "Job not started";
+                break;
+            case Enums.JobStatusPaused:
+                statusText = "Job paused";
+                break;
+            case Enums.JobStatusStarted:
+                statusText = "In progress...";
+                break;
+            case Enums.JobStatusSucceeded:
+                statusText = "Adding layers...";
+                exportWindow.hideWindow(1500);
+                break;
+            default:
+                break;
+            }
         }
 
         Component.onDestruction: {
@@ -538,12 +576,11 @@ Rectangle {
             }
         }
     }
-    //! [ExportTiles ExportTileCacheTask]
 
     NetworkRequest {
         id: networkRequest
-        url: "http://floodobservatory.colorado.edu/geoserver/AF_2wk_rs/wms?service=WMS&version=1.1.0&request=GetMap&layers=AF_2wk_rs:DFO_2wk_current_AF&styles%20%20=&bbox=1.4257904248024005,-6.706102997621768,17.17814185740383,19.39562033629621&width=414&height=686&srs=EPSG:4326&format=image%2Ftiff"
-        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2.tif".arg(viewName).arg(fileName)
+        url: layerDownloadUrl //"http://floodobservatory.colorado.edu/geoserver/AF_2wk_rs/wms?service=WMS&version=1.1.0&request=GetMap&layers=AF_2wk_rs:DFO_2wk_current_AF&styles%20%20=&bbox=1.4257904248024005,-6.706102997621768,17.17814185740383,19.39562033629621&width=414&height=686&srs=EPSG:4326&format=image%2Ftiff"
+        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2.tpk".arg(viewName).arg(fileName)
 
         onReadyStateChanged: {
             if (readyState === NetworkRequest.DONE) {
@@ -613,7 +650,7 @@ Rectangle {
 
         Rectangle {
             anchors.centerIn: parent
-            width: 125 * scaleFactor
+            width: 200 * scaleFactor
             height: 100 * scaleFactor
             color: "lightgrey"
             opacity: 0.8
@@ -665,6 +702,10 @@ Rectangle {
         }
 
         visible: false
+    }
+
+    FileFolder {
+        id: convertPathtoUrl
     }
 
     Controls.ClearAllOffMaps {
