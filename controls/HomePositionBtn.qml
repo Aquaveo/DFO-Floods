@@ -27,7 +27,7 @@ RoundButton {
         anchors.centerIn: parent
     }
 
-    onClicked: zoomToRegionLocation();
+    onClicked: app.isOnline ? zoomToRegionLocation() : zoomToOffLineMapExtent();
 
     function zoomToRegionLocation() {
         var x, y;
@@ -57,5 +57,23 @@ RoundButton {
 
         var viewPointCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter",{center: centerPoint, targetScale: 90000000});
         sceneView.setViewpoint(viewPointCenter);
+    }
+
+    function zoomToOffLineMapExtent() {
+        var savedOffMLocation = sceneView.lockCenterPt;
+        var savedOffMPoint = ArcGISRuntimeEnvironment.createObject("Point", {
+                                                                   x: savedOffMLocation.targetGeometry.x,
+                                                                   y: savedOffMLocation.targetGeometry.y,
+                                                                   z: savedOffMLocation.targetGeometry.z,
+                                                                   spatialReference: savedOffMLocation.targetGeometry.spatialReference
+                                                               });
+
+        var centerOffMPoint = GeometryEngine.project(savedOffMPoint, sceneView.spatialReference);
+        var viewPointOffMCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter", {
+                                                                        center: centerOffMPoint,
+                                                                        rotation: savedOffMLocation.rotation,
+                                                                        targetScale: savedOffMLocation.scale
+                                                                    });
+        sceneView.setViewpointAndSeconds(viewPointOffMCenter, 0);
     }
 }

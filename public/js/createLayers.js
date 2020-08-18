@@ -173,53 +173,6 @@ function addWmsLayers() {
             offlinePg.offLineMaptabBar.currentIndex = 1;
             offlinePg.visible = true;
         }
-//        if (app.settings.value("offline_maps", false) !== false && initLoad) {
-//            var xTileCache = ArcGISRuntimeEnvironment.createObject("TileCache", { path: "../../../../ArcGIS/AppStudio/Data/BasemapTileCache_test1.tpk" } );
-
-//            console.log(xTileCache.tileInfo, "$$$$$$");
-
-//            var xTiledLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: xTileCache } );
-
-//            // create a new basemap with the tiled layer
-//            var basemap = ArcGISRuntimeEnvironment.createObject("Basemap");
-//            basemap.baseLayers.append(xTiledLayer);
-
-//            // set the new basemap on the map
-//            scene.basemap = basemap;
-
-//            var offDataModel = JSON.parse(app.settings.value("offline_maps"))[0]["layer_list"];
-//            for (var j = 0; j < offDataModel.length; j++) {
-//                var raster = ArcGISRuntimeEnvironment.createObject("TileCache", {
-//                                                                       path: "../../../../ArcGIS/AppStudio/Data/layer_test2.tpkx",
-//                                                                   });
-//                var offLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", {
-//                                                                         tileCache: raster,
-//                                                                         visible: true
-//                                                                     });
-////                var offLayer = ArcGISRuntimeEnvironment.createObject("RasterLayer", {
-////                                                                         raster: raster,
-////                                                                         visible: offDataModel[j].visible
-////                                                                     });
-
-//                offLayer.loadStatusChanged.connect(function () {
-//                    if (offLayer.loadStatus !== Enums.LoadStatusLoaded) {
-//                        console.log(offLayer.loadError.code, offLayer.loadError.message, 'noooooooooooooooooooooo')
-//                        return;
-//                    } else {
-//                        console.log('yessssssssssssssssssssssssss0')
-//                    }
-//                })
-
-//                for (var q in offLayer) {
-//                    console.log(q, offLayer[q], ' ###########');
-//                }
-
-//                scene.operationalLayers.append(offLayer);
-//                scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(offLayer), "name", offDataModel[j].name);
-//                scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(offLayer), "description", offDataModel[j].description);
-//                console.log(scene.operationalLayers.get(0).visible, '###')
-//            }
-//        }
     }
 
     serviceGlo.loadStatusChanged.connect(function() {

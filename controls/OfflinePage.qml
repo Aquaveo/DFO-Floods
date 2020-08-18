@@ -18,6 +18,7 @@ Rectangle {
     property string fileName: ""
     property alias exportTask: exportTask
     property alias networkRequest: networkRequest
+    property alias networkRequest2: networkRequest2
     property alias addOffMap: addOffMap
     property alias offLineMaptabBar: offLineMaptabBar
     property alias oMLyrsModel: oMLyrsModel
@@ -32,7 +33,8 @@ Rectangle {
     property ArcGISTiledLayer xTiledLayer
     property Geometry tileCacheExtent: null
     property ExportTileCacheParameters params
-    property string layerDownloadUrl
+    property string layer2WkDownloadUrl
+    property string layer3DayDownloadUrl
 
     property var generateLayerOptions: []
     property var offMRemIx
@@ -103,13 +105,19 @@ Rectangle {
 
 //                var tileCacheExtent_tmp = GeometryEngine.project(envBuilder.geometry, SpatialReference.createWebMercator());
 
-                var maxScale = sceneView.currentViewpointCenter.targetScale;
-                var minScale = 1155581.108577 //maxScale / 20;
-                tileCacheExtent = sceneView.currentViewpointExtent.extent;
-//                var tileCacheExtent2 = GeometryEngine.project(tileCacheExtent, SpatialReference.createWebMercator());
+                if (sceneView.currentViewpointCenter.targetScale > 18489298) {
+                    statusText = "Please zoom in to or below the country level";
+                    exportWindow.hideWindow(2000);
+                } else {
+                    statusText = "";
+                    var maxScale = sceneView.currentViewpointCenter.targetScale;
+                    var minScale = 1155581.108577 //maxScale / 20;
+                    tileCacheExtent = sceneView.currentViewpointExtent.extent;
+    //                var tileCacheExtent2 = GeometryEngine.project(tileCacheExtent, SpatialReference.createWebMercator());
 
-                exportTask.createDefaultExportTileCacheParameters(tileCacheExtent, maxScale, minScale);
-                console.log(tileCacheExtent.xMin, tileCacheExtent.xMax, tileCacheExtent.yMin, tileCacheExtent.yMax, '$$$$$$$$$');
+                    exportTask.createDefaultExportTileCacheParameters(tileCacheExtent, maxScale, minScale);
+    //                console.log(tileCacheExtent.xMin, tileCacheExtent.xMax, tileCacheExtent.yMin, tileCacheExtent.yMax, '$$$$$$$$$');
+                }
             }
 
             Image {
@@ -190,7 +198,7 @@ Rectangle {
                 Text {
                     id: howToOMText
                     width: parent.width
-                    text: "1. Click on the <b>ADD (+)</b> button on the top right corner.<br /><br />2. A confirmation screen to download the current extent along with visible layers will appear.<br /><br />3. You will be prompted to enter a name for the downloaded offline area. <i>Only alphanumeric characters, dashes (-) and underscores (_) are accepted.</i><br /><br />4. Downloaded maps can be managed from the <b>MAP LIST</b> tab.<br /><br />5. Only the default DFO layers can be added to offline maps. Any other layer will be ignored, even if it is turned on on the menu's layers List<br />"
+                    text: app.isOnline ? "1. Click on the <b>ADD (+)</b> button on the top right corner. Make sure your map extent is zoomed in to or below the average country level (This is about 1:18500000).<br /><br />2. A confirmation screen to download the current extent along with the current and two-week layers will appear.<br /><br />3. You will be prompted to enter a name for the downloaded offline area. <i>Only alphanumeric characters, dashes (-) and underscores (_) are accepted.</i><br /><br />4. Downloaded maps can be managed from the <b>MAP LIST</b> tab.<br /><br />5. Only the default DFO layers can be added to offline maps. Any other layer will be ignored, even if it is turned on on the menu's layers List<br />" : "You are currently offline. Offline maps can only be downloaded ahead of time with an Internet connection.<br /><br />Go to the <b>MAP LIST</b> tab for a list of previously downloaded offline maps."
                     font {
                         pixelSize: app.baseFontSize
                     }
@@ -207,7 +215,7 @@ Rectangle {
 
                 model: ListModel {
                     id: oMLyrsModel
-                    ListElement {name: "NAME"; date_created: "CREATED"; layer_list: []}
+                    ListElement {name: "NAME"; date_created: "CREATED"; layer_list: []; zoom: ""; extent: ""}
 
                     Component.onCompleted: {
                         if (app.settings.value("offline_maps") && viewName) {
@@ -277,48 +285,42 @@ Rectangle {
                                     sceneView.scene.basemap = basemap;
                                     offlinePg.visible = false;
 
-                                    var twoWkPath = "%1/%2_%3.tpk".arg(dataPath).arg(viewName).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
+                                    sceneView.scene.operationalLayers.clear();
+                                    var savedOffMLocation = JSON.parse(oMLyrsModel.get(index).zoom);
+                                    var savedOffMPoint = ArcGISRuntimeEnvironment.createObject("Point", {
+                                                                                               x: savedOffMLocation.targetGeometry.x,
+                                                                                               y: savedOffMLocation.targetGeometry.y,
+                                                                                               z: savedOffMLocation.targetGeometry.z,
+                                                                                               spatialReference: savedOffMLocation.targetGeometry.spatialReference
+                                                                                           });
+
+                                    var centerOffMPoint = GeometryEngine.project(savedOffMPoint, sceneView.spatialReference);
+                                    var viewPointOffMCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter", {
+                                                                                                    center: centerOffMPoint,
+                                                                                                    rotation: savedOffMLocation.rotation,
+                                                                                                    targetScale: savedOffMLocation.scale
+                                                                                                });
+                                    sceneView.setViewpointAndSeconds(viewPointOffMCenter, 0);
+                                    sceneView.lockExtent = JSON.parse(oMLyrsModel.get(index).extent);
+                                    sceneView.lockCenterPt = JSON.parse(oMLyrsModel.get(index).zoom);
+
+                                    var twoWkPath = "%1/%2_%3_Two_Week.tpk".arg(dataPath).arg(viewName).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
                                     var twoWkTileCache = ArcGISRuntimeEnvironment.createObject("TileCache", {path: twoWkPath});
 
                                     var twoWkLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: twoWkTileCache } );
 
-                                    sceneView.scene.operationalLayers.clear();
                                     sceneView.scene.operationalLayers.append(twoWkLayer);
+                                    sceneView.scene.operationalLayers.setProperty(0, "name", "2-week accumulated flooded area %1".arg(app.viewName));
+                                    sceneView.scene.operationalLayers.setProperty(0, "description",  "This is an offline version of the 2-week accumulated flooded area %1 layer. This layer was saved on %2".arg(app.viewName).arg(new Date(Number(oMLyrsModel.get(index)["date_created"])).toString()));
 
-//                                    if (app.settings.value("offline_maps", false) !== false && initLoad) {
-//                                        var offDataModel = JSON.parse(app.settings.value("offline_maps"))[0]["layer_list"];
-//                                        for (var j = 0; j < offDataModel.length; j++) {
-//                                            var raster = ArcGISRuntimeEnvironment.createObject("TileCache", {
-//                                                                                                   path: "../../../../ArcGIS/AppStudio/Data/layer_test2.tpkx",
-//                                                                                               });
-//                                            var offLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", {
-//                                                                                                     tileCache: raster,
-//                                                                                                     visible: true
-//                                                                                                 });
-//                            //                var offLayer = ArcGISRuntimeEnvironment.createObject("RasterLayer", {
-//                            //                                                                         raster: raster,
-//                            //                                                                         visible: offDataModel[j].visible
-//                            //                                                                     });
+                                    var threeDayPath = "%1/%2_%3_Current.tpk".arg(dataPath).arg(viewName).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
+                                    var threeDayTileCache = ArcGISRuntimeEnvironment.createObject("TileCache", {path: threeDayPath});
 
-//                                            offLayer.loadStatusChanged.connect(function () {
-//                                                if (offLayer.loadStatus !== Enums.LoadStatusLoaded) {
-//                                                    console.log(offLayer.loadError.code, offLayer.loadError.message, 'noooooooooooooooooooooo')
-//                                                    return;
-//                                                } else {
-//                                                    console.log('yessssssssssssssssssssssssss0')
-//                                                }
-//                                            })
+                                    var threeDayLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: threeDayTileCache } );
 
-//                                            for (var q in offLayer) {
-//                                                console.log(q, offLayer[q], ' ###########');
-//                                            }
-
-//                                            scene.operationalLayers.append(offLayer);
-//                                            scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(offLayer), "name", offDataModel[j].name);
-//                                            scene.operationalLayers.setProperty(scene.operationalLayers.indexOf(offLayer), "description", offDataModel[j].description);
-//                                            console.log(scene.operationalLayers.get(0).visible, '###')
-//                                        }
-//                                    }
+                                    sceneView.scene.operationalLayers.append(threeDayLayer);
+                                    sceneView.scene.operationalLayers.setProperty(1, "name", "Current daily flooded area %1".arg(app.viewName));
+                                    sceneView.scene.operationalLayers.setProperty(1, "description", "This is an offline version of the current daily flooded area %1 layer. This layer was saved on %2".arg(app.viewName).arg(new Date(Number(oMLyrsModel.get(index)["date_created"])).toString()));
                                 }
                             }
 
@@ -355,7 +357,9 @@ Rectangle {
                         Component.onCompleted: {
                             if (name !== "NAME") {
                                 removeOffMBtn.visible = true;
-                                loadOffMBtn.visible = true;
+                                if (!app.isOnline) {
+                                    loadOffMBtn.visible = true;
+                                }
                             }
                         }
                     }
@@ -410,8 +414,13 @@ Rectangle {
 
     // Create ExportTileCacheTask
     ExportTileCacheTask {
-        id: exportLayersTask
+        id: export2WkTask
         url: 'https://diluvium.colorado.edu/arcgisonline/rest/services/dfo_layers/two_week_flooded_area_africa/MapServer'
+    }
+
+    ExportTileCacheTask {
+        id: export3DayTask
+        url: 'https://diluvium.colorado.edu/arcgisonline/rest/services/dfo_layers/three_day_water_extent_africa/MapServer'
     }
 
     ExportTileCacheTask {
@@ -426,7 +435,8 @@ Rectangle {
         url:  basemapUrls[menu.comboBoxBasemap.displayText]
 
         property var exportJob
-        property var exportLayersJob
+        property var export2WkJob
+        property var export3DayJob
         property var estimateJobSize
         property url layerPathtoUrl
 
@@ -458,7 +468,6 @@ Rectangle {
         function executeExportTileCacheTask(params) {
             // execute the asynchronous task and obtain the job
             exportJob = exportTask.exportTileCache(params, outputTileCache);
-            // check if job is valid
             if (exportJob) {
                 // show the export window
                 exportWindow.visible = true;
@@ -475,14 +484,26 @@ Rectangle {
 
             convertPathtoUrl.url = networkRequest.responsePath;
             layerPathtoUrl = convertPathtoUrl.url;
-            exportLayersJob = exportLayersTask.exportTileCache(params, layerPathtoUrl);
-            if (exportLayersJob) {
+            export2WkJob = export2WkTask.exportTileCache(params, layerPathtoUrl);
+            if (export2WkJob) {
                 // show the export window
                 exportWindow.visible = true;
 
                 // connect to the job's status changed signal to know once it is done
-                exportLayersJob.jobStatusChanged.connect(updateLayersJobStatus);
-                exportLayersJob.start();
+                export2WkJob.jobStatusChanged.connect(update2WkJobStatus);
+                export2WkJob.start();
+            }
+
+            convertPathtoUrl.url = networkRequest2.responsePath;
+            layerPathtoUrl = convertPathtoUrl.url;
+            export3DayJob = export3DayTask.exportTileCache(params, layerPathtoUrl);
+            if (export3DayJob) {
+                // show the export window
+                exportWindow.visible = true;
+
+                // connect to the job's status changed signal to know once it is done
+                export3DayJob.jobStatusChanged.connect(update3DayJobStatus);
+                export3DayJob.start();
             }
         }
 
@@ -537,14 +558,13 @@ Rectangle {
             }
         }
 
-        function updateLayersJobStatus() {
-            switch(exportLayersJob.jobStatus) {
+        function update2WkJobStatus() {
+            switch(export2WkJob.jobStatus) {
             case Enums.JobStatusFailed:
-                var jobMessages = JSON.stringify(exportLayersJob.json);
-                console.log(jobMessages, '#########');
+                var jobMessages = JSON.stringify(export2WkJob.json);
                 if (jobMessages.includes("Tile cache download URL retrieved: https://diluvium.colorado.edu/arcgis/rest/directories/arcgisoutput/dfo_layers/")) {
-                    layerDownloadUrl = "https://diluvium.colorado.edu/arcgisonline/rest/directories/arcgisoutput/dfo_layers" + jobMessages.split("Tile cache download URL retrieved: https://diluvium.colorado.edu/arcgis/rest/directories/arcgisoutput/dfo_layers")[1].split("\",")[0];
-                    statusText = "Adding layers...";
+                    layer2WkDownloadUrl = "https://diluvium.colorado.edu/arcgisonline/rest/directories/arcgisoutput/dfo_layers" + jobMessages.split("Tile cache download URL retrieved: https://diluvium.colorado.edu/arcgis/rest/directories/arcgisoutput/dfo_layers")[1].split("\",")[0];
+                    statusText = "Adding two week layer...";
                     offlinePg.networkRequest.send();
                 } else {
                     statusText = "Export failed";
@@ -562,7 +582,39 @@ Rectangle {
                 statusText = "In progress...";
                 break;
             case Enums.JobStatusSucceeded:
-                statusText = "Adding layers...";
+                statusText = "Adding two week layer...";
+                exportWindow.hideWindow(1500);
+                break;
+            default:
+                break;
+            }
+        }
+
+        function update3DayJobStatus() {
+            switch(export3DayJob.jobStatus) {
+            case Enums.JobStatusFailed:
+                var jobMessages = JSON.stringify(export3DayJob.json);
+                if (jobMessages.includes("Tile cache download URL retrieved: https://diluvium.colorado.edu/arcgis/rest/directories/arcgisoutput/dfo_layers/")) {
+                    layer3DayDownloadUrl = "https://diluvium.colorado.edu/arcgisonline/rest/directories/arcgisoutput/dfo_layers" + jobMessages.split("Tile cache download URL retrieved: https://diluvium.colorado.edu/arcgis/rest/directories/arcgisoutput/dfo_layers")[1].split("\",")[0];
+                    statusText = "Adding current layer...";
+                    offlinePg.networkRequest2.send();
+                } else {
+                    statusText = "Export failed";
+                    exportWindow.hideWindow(5000);
+                    break;
+                }
+                break;
+            case Enums.JobStatusNotStarted:
+                statusText = "Job not started";
+                break;
+            case Enums.JobStatusPaused:
+                statusText = "Job paused";
+                break;
+            case Enums.JobStatusStarted:
+                statusText = "In progress...";
+                break;
+            case Enums.JobStatusSucceeded:
+                statusText = "Adding current layer...";
                 exportWindow.hideWindow(1500);
                 break;
             default:
@@ -574,30 +626,49 @@ Rectangle {
             if (exportJob && exportJob.jobStatusChanged) {
                 exportJob.jobStatusChanged.disconnect(updateJobStatus);
             }
+
+            if (export2WkJob && export2WkJob.jobStatusChanged) {
+                export2WkJob.jobStatusChanged.disconnect(update2WkJobStatus);
+            }
+
+            if (export3DayJob && export3DayJob.jobStatusChanged) {
+                export3DayJob.jobStatusChanged.disconnect(update3DayJobStatus);
+            }
         }
     }
 
     NetworkRequest {
         id: networkRequest
-        url: layerDownloadUrl //"http://floodobservatory.colorado.edu/geoserver/AF_2wk_rs/wms?service=WMS&version=1.1.0&request=GetMap&layers=AF_2wk_rs:DFO_2wk_current_AF&styles%20%20=&bbox=1.4257904248024005,-6.706102997621768,17.17814185740383,19.39562033629621&width=414&height=686&srs=EPSG:4326&format=image%2Ftiff"
-        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2.tpk".arg(viewName).arg(fileName)
+        url: layer2WkDownloadUrl
+        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2_Two_Week.tpk".arg(viewName).arg(fileName)
+
+        onError: {
+            statusText = "Two week layer download failed";
+            exportWindow.hideWindow(1500);
+        }
+    }
+
+    NetworkRequest {
+        id: networkRequest2
+        url: layer3DayDownloadUrl
+        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2_Current.tpk".arg(viewName).arg(fileName)
 
         onReadyStateChanged: {
             if (readyState === NetworkRequest.DONE) {
                 var visLayers = [];
-                for (var i = 0; i < sceneView.scene.operationalLayers.count; i++) {
-                    if (pageItem.defaultLayersLongArr.includes(sceneView.scene.operationalLayers.get(i)["name"]) && sceneView.scene.operationalLayers.get(i)["visible"]) {
-                        visLayers.push({
-                            "name": sceneView.scene.operationalLayers.get(i)["name"],
-                            "description": sceneView.scene.operationalLayers.get(i)["description"],
-                            "visible": sceneView.scene.operationalLayers.get(i)["visible"],
-                            "layerNames": sceneView.scene.operationalLayers.get(i)["layerNames"],
-                            "legendName": sceneView.legendListView.model.get(i)["name"],
-                            "symbolUrl": sceneView.legendListView.model.get(i)["symbolUrl"],
-                            "legendVisible": sceneView.legendListView.model.get(i)["visible"]
-                        });
-                    }
-                }
+                visLayers.push({
+                    "name": "2-week accumulated flooded area %1".arg(viewName),
+                    "legendName": "Two Week Flooded Area",
+                    "symbolUrl": "../assets/legend_icons/2wk_blue.png",
+                    "legendVisible": true
+                });
+
+                visLayers.push({
+                    "name": "Current daily water extent %1".arg(viewName),
+                    "legendName": "Current Daily Flooded Area / Clouds",
+                    "symbolUrl": "../assets/legend_icons/3day_red.png",
+                    "legendVisible": true
+                });
 
                 if (app.settings.value("offline_maps", false) === false) {
                     var offLineMaps = [];
@@ -608,7 +679,9 @@ Rectangle {
                 var newOffMElm = {
                     "name": "%1_%2".arg(viewName).arg(fileName),
                     "date_created": new Date().getTime().toString(),
-                    "layer_list": visLayers
+                    "layer_list": visLayers,
+                    "zoom": JSON.stringify(sceneView.currentViewpointCenter.json),
+                    "extent": JSON.stringify(sceneView.currentViewpointExtent.json)
                 };
 
                 offLineMaps.push(newOffMElm);
@@ -619,10 +692,12 @@ Rectangle {
                 exportWindow.hideWindow(1500);
             }
         }
-        onProgressChanged: console.log("progress:", progress)
+
+//        onProgressChanged: console.log("progress:", progress)
         onError: {
 //            console.log(errorText + ", " + errorCode)
-            statusText = "Download failed";
+            statusText = "Current layer download failed";
+            exportWindow.hideWindow(1500);
         }
     }
 
@@ -651,7 +726,7 @@ Rectangle {
         Rectangle {
             anchors.centerIn: parent
             width: 200 * scaleFactor
-            height: 100 * scaleFactor
+            height: 120 * scaleFactor
             color: "lightgrey"
             opacity: 0.8
             radius: 5* scaleFactor
@@ -675,6 +750,9 @@ Rectangle {
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: statusText
+                    width: parent.width
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
                     font.pixelSize: 16 * scaleFactor
                 }
             }

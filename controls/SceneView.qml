@@ -15,6 +15,8 @@ SceneView {
 
     property alias positionSource: positionSource
     property alias legendListView: legend.legendListView
+    property var lockExtent: false
+    property var lockCenterPt
 
     ViewpointCenter {
         id: initView
@@ -97,6 +99,32 @@ SceneView {
 
     onMouseClicked: {
         CustomGeoFunctions.getNearestEvent(mouse);
+    }
+
+    onCurrentViewpointExtentChanged: {
+        if (!app.isOnline && lockExtent ) {
+            if (currentViewpointExtent.extent.json["xmax"] > lockExtent.targetGeometry.xmax
+                    || currentViewpointExtent.extent.json["ymax"] > lockExtent.targetGeometry.ymax
+                    || currentViewpointExtent.extent.json["xmin"] < lockExtent.targetGeometry.xmin
+                    || currentViewpointExtent.extent.json["ymin"] < lockExtent.targetGeometry.ymin) {
+
+                var savedOffMLocation = lockCenterPt;
+                var savedOffMPoint = ArcGISRuntimeEnvironment.createObject("Point", {
+                                                                           x: savedOffMLocation.targetGeometry.x,
+                                                                           y: savedOffMLocation.targetGeometry.y,
+                                                                           z: savedOffMLocation.targetGeometry.z,
+                                                                           spatialReference: savedOffMLocation.targetGeometry.spatialReference
+                                                                       });
+
+                var centerOffMPoint = GeometryEngine.project(savedOffMPoint, sceneView.spatialReference);
+                var viewPointOffMCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter", {
+                                                                                center: centerOffMPoint,
+                                                                                rotation: savedOffMLocation.rotation,
+                                                                                targetScale: savedOffMLocation.scale
+                                                                            });
+                setViewpointAndSeconds(viewPointOffMCenter, 0);
+            }
+        }
     }
 
     Component.onCompleted: {

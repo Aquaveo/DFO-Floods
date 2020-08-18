@@ -73,10 +73,10 @@ Drawer {
             }
 
             font.pixelSize: 14 * scaleFactor
-            model: ["Imagery","Streets","Terrain","Topographic"]
+            model: app.isOnline ? ["Imagery","Streets","Terrain","Topographic"] : []
 
             currentIndex: app.settings.value("basemap", false) !== false ? find(app.settings.value("basemap")) : 0
-            displayText: app.settings.value("basemap", false) !== false ? app.settings.value("basemap") : "Imagery"
+            displayText: app.isOnline ? app.settings.value("basemap", false) !== false ? app.settings.value("basemap") : "Imagery" : ""
             delegate: ItemDelegate {
                 Material.accent:"#00693e"
                 width: parent.width
@@ -764,7 +764,7 @@ Drawer {
                 height: parent.height
                 clip: true
 
-                model: suggestedListM
+                model: app.isOnline ? suggestedListM : []
 
                 ScrollBar.vertical: ScrollBar {
                     active: true
