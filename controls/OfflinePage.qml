@@ -88,6 +88,8 @@ Rectangle {
 
             Material.background: "transparent"
 
+            visible: app.isOnline ? true : false
+
             onClicked: {
                 // show the export window
                 exportWindow.visible = true;
@@ -141,6 +143,7 @@ Rectangle {
             background:  Rectangle {
                 color: "#249567"
             }
+            currentIndex: app.isOnline ? 0 : 1
 
             onCurrentIndexChanged: {
                 if (offLineMaptabBar.currentIndex === 1) {
@@ -435,13 +438,14 @@ Rectangle {
             password: 'Q8o4RKrn!6aNf'
         }
 
-        url:  basemapUrls[menu.comboBoxBasemap.displayText]
+        url: app.isOnline ? basemapUrls[menu.comboBoxBasemap.displayText] : ""
 
         property var exportJob
         property var export2WkJob
         property var export3DayJob
         property var estimateJobSize
-        property url layerPathtoUrl
+        property url layer2WkUrl: AppFramework.userHomeFolder.fileUrl("ArcGIS/AppStudio/Data/%1_%2_Two_Week.tpk".arg(viewName.replace(" ", "")).arg(fileName))
+        property url layer3DayUrl: AppFramework.userHomeFolder.fileUrl("ArcGIS/AppStudio/Data/%1_%2_Current.tpk".arg(viewName.replace(" ", "")).arg(fileName))
 
         onCreateDefaultExportTileCacheParametersStatusChanged: {
             if (createDefaultExportTileCacheParametersStatus === Enums.TaskStatusCompleted) {
@@ -452,8 +456,8 @@ Rectangle {
         }
 
         function executeEstimateTileCacheSize(params) {
+            cancelOffMJobs.visible = false;
             // execute the asynchronous task and obtain the job
-
             estimateJobSize = exportTask.estimateTileCacheSize(params);
             // check if job is valid
             if (estimateJobSize) {
@@ -471,6 +475,10 @@ Rectangle {
         function executeExportTileCacheTask(params) {
             // execute the asynchronous task and obtain the job
             exportJob = exportTask.exportTileCache(params, outputTileCache);
+            export2WkJob = export2WkTask.exportTileCache(params, layer2WkUrl);
+            export3DayJob = export3DayTask.exportTileCache(params, layer3DayUrl);
+
+            cancelOffMJobs.visible = true;
             if (exportJob) {
                 // show the export window
                 exportWindow.visible = true;
@@ -481,13 +489,10 @@ Rectangle {
                 exportJob.start();
             } else {
                 exportWindow.visible = true;
-                statusText = "Export failed";
+                statusText = "Basemap job failed";
                 exportWindow.hideWindow(5000);
             }
 
-            convertPathtoUrl.url = networkRequest.responsePath;
-            layerPathtoUrl = convertPathtoUrl.url;
-            export2WkJob = export2WkTask.exportTileCache(params, layerPathtoUrl);
             if (export2WkJob) {
                 // show the export window
                 exportWindow.visible = true;
@@ -495,11 +500,12 @@ Rectangle {
                 // connect to the job's status changed signal to know once it is done
                 export2WkJob.jobStatusChanged.connect(update2WkJobStatus);
                 export2WkJob.start();
+            } else {
+                exportWindow.visible = true;
+                statusText = "Two week layer job failed";
+                exportWindow.hideWindow(5000);
             }
 
-            convertPathtoUrl.url = networkRequest2.responsePath;
-            layerPathtoUrl = convertPathtoUrl.url;
-            export3DayJob = export3DayTask.exportTileCache(params, layerPathtoUrl);
             if (export3DayJob) {
                 // show the export window
                 exportWindow.visible = true;
@@ -507,6 +513,10 @@ Rectangle {
                 // connect to the job's status changed signal to know once it is done
                 export3DayJob.jobStatusChanged.connect(update3DayJobStatus);
                 export3DayJob.start();
+            } else {
+                exportWindow.visible = true;
+                statusText = "Current layer job failed";
+                exportWindow.hideWindow(5000);
             }
         }
 
@@ -541,7 +551,7 @@ Rectangle {
         function updateJobStatus() {
             switch(exportJob.jobStatus) {
             case Enums.JobStatusFailed:
-                statusText = "Export failed";
+                statusText = "Basemap download failed";
                 exportWindow.hideWindow(5000);
                 break;
             case Enums.JobStatusNotStarted:
@@ -570,7 +580,7 @@ Rectangle {
                     statusText = "Adding two week layer...";
                     offlinePg.networkRequest.send();
                 } else {
-                    statusText = "Export failed";
+                    statusText = "Two week layer download failed";
                     exportWindow.hideWindow(5000);
                     break;
                 }
@@ -602,7 +612,7 @@ Rectangle {
                     statusText = "Adding current layer...";
                     offlinePg.networkRequest2.send();
                 } else {
-                    statusText = "Export failed";
+                    statusText = "Current layer download failed";
                     exportWindow.hideWindow(5000);
                     break;
                 }
@@ -746,6 +756,8 @@ Rectangle {
                 spacing: 10
 
                 BusyIndicator {
+                    height: 48 * scaleFactor
+                    width: height
                     Material.accent:"#00693e"
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
@@ -758,6 +770,47 @@ Rectangle {
                     wrapMode: Text.WordWrap
                     font.pixelSize: 16 * scaleFactor
                 }
+            }
+        }
+
+        Button {
+            id: cancelOffMJobs
+            visible: false
+            width: 150 * scaleFactor
+            height: 50 * scaleFactor
+            Material.elevation: 6
+            Material.background: "#00693e"
+            anchors {
+                right: parent.right
+                bottom: parent.bottom
+                rightMargin: 10 * scaleFactor
+                bottomMargin: 10 * scaleFactor
+            }
+
+            text: "CANCEL JOB"
+            background: Rectangle {
+                width: parent.width
+                height: parent.height
+                color: "#00693e"
+                radius: 6 * scaleFactor
+            }
+
+            contentItem: Text {
+                text: cancelOffMJobs.text
+                font.pixelSize: 14 * scaleFactor
+                font.bold: true
+                color: "white"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+
+            onClicked: {
+                exportTask.exportJob.cancel();
+                exportTask.export2WkJob.cancel();
+                exportTask.export3DayJob.cancel();
+
+                exportWindow.visible = false;
             }
         }
 
@@ -783,10 +836,6 @@ Rectangle {
         }
 
         visible: false
-    }
-
-    FileFolder {
-        id: convertPathtoUrl
     }
 
     Controls.ClearAllOffMaps {

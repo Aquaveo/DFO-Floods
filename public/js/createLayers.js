@@ -167,8 +167,6 @@ function addWmsLayers() {
         } else {
             serviceHistW.load();
         }
-    } else {
-        offlinePg.addOffMap.visible = false;
     }
 
     serviceGlo.loadStatusChanged.connect(function() {

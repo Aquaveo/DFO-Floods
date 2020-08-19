@@ -41,50 +41,69 @@ Rectangle {
             wrapMode: Text.WordWrap
         }
 
-        TextInput {
+        TextField {
             id: oMNameInput
-            text: "Enter Offline Map Name..."
+            placeholderText: "Enter Offline Map Name..."
+            text: ""
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: storageInfoText.bottom
                 topMargin: 20 * scaleFactor
             }
+
+            implicitWidth: 100 * app.scaleFactor
+            implicitHeight: 40 * app.scaleFactor
+
             maximumLength: 50
             validator: RegExpValidator { regExp: /[A-Za-z0-9\-\_]+/ }
+
+            background: Rectangle {
+                radius: 5
+                color: "transparent"
+                implicitWidth: 100 * app.scaleFactor
+                implicitHeight: 40 * app.scaleFactor
+                border.color: "transparent"
+                border.width: 1
+            }
+
+            cursorDelegate: Rectangle {
+                id: cursorRect
+                visible: oMNameInput.cursorVisible
+                color: "#00693e"
+                width: oMNameInput.cursorRectangle.width
+
+                OpacityAnimator {
+                    target: cursorRect
+                    from: 0
+                    to: 1
+                    duration: 1000
+                    running: true
+                    loops: 60
+                }
+            }
 
             color: "#00693e"
             width: parent.width
             height: 40 * scaleFactor
             font.pixelSize: app.baseFontSize
             anchors.fill: parent
-            horizontalAlignment: TextInput.AlignHCenter
-            verticalAlignment: TextInput.AlignVCenter
+            horizontalAlignment: TextField.AlignHCenter
+            verticalAlignment: TextField.AlignVCenter
             selectByMouse: true
             selectedTextColor: "white"
             selectionColor: "#249567"
             clip: true
-            wrapMode: TextInput.WrapAnywhere
-
-            onFocusChanged: {
-                if (oMNameInput.text === "Enter Offline Map Name...") {
-                    oMNameInput.text = ""
-                }
-            }
-
-            onAcceptableInputChanged: {
-                if (acceptableInput === false) {
-                    confirmOMdownload.visible = false;
-                    if (text !== "Enter Offline Map Name...") {
-                        color = "red";
-                    }
-                } else {
-                    color = "#00693e";
-                    confirmOMdownload.visible = true;
-                }
-            }
+            wrapMode: TextField.WrapAnywhere
 
             onAccepted: {
                 focus = false;
+                newOMMapForm.visible = false;
+                exportWindow.visible = true;
+                offlinePg.fileName = fileName;
+                offlinePg.outputTileCache = AppFramework.userHomeFolder.fileUrl("ArcGIS/AppStudio/Data/%1_BasemapTileCache_%2.tpk".arg(viewName.replace(" ", "")).arg(fileName))
+
+                // export the cache with the parameters
+                offlinePg.exportTask.executeExportTileCacheTask(offlinePg.params);
             }
         }
 
@@ -119,16 +138,18 @@ Rectangle {
             }
 
             onClicked: {
-                newOMMapForm.visible = false;
-                exportWindow.visible = true;
-                offlinePg.fileName = fileName;
-                offlinePg.outputTileCache = AppFramework.userHomeFolder.fileUrl("ArcGIS/AppStudio/Data/%1_BasemapTileCache_%2.tpk".arg(viewName.replace(" ", "")).arg(fileName))
+                if (oMNameInput.text !== "") {
+                    newOMMapForm.visible = false;
+                    exportWindow.visible = true;
+                    offlinePg.fileName = fileName;
+                    offlinePg.outputTileCache = AppFramework.userHomeFolder.fileUrl("ArcGIS/AppStudio/Data/%1_BasemapTileCache_%2.tpk".arg(viewName.replace(" ", "")).arg(fileName))
 
-                // export the cache with the parameters
-                offlinePg.exportTask.executeExportTileCacheTask(offlinePg.params);
+                    // export the cache with the parameters
+                    offlinePg.exportTask.executeExportTileCacheTask(offlinePg.params);
+                } else {
+                    oMNameInput.focus = true;
+                }
             }
-
-            visible: false;
         }
 
         Text {

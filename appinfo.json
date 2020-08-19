@@ -104,8 +104,8 @@
     "type": "app",
     "urlScheme": "",
     "version": {
-        "major": 1,
-        "micro": 28,
+        "major": 2,
+        "micro": 1,
         "minor": 1
     }
 }

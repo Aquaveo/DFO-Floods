@@ -129,7 +129,7 @@ Page {
 
     Controls.OfflinePage {
         id: offlinePg
-        visible: false
+        visible: app.isOnline ? false : true
     }
 
     Controls.ClearAllSaveSettings {

@@ -18,6 +18,7 @@ Rectangle {
     property string appRate: "Not rated";
     property string accessToken;
     property var postRequestBody;
+    property alias feedbackTextArea: feedbackTextArea
 
     MouseArea {
         anchors.fill: parent
