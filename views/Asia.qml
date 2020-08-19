@@ -12,6 +12,7 @@ Page {
     property bool regionInitLoad: true
 
     property alias saveState: saveStagePg
+    property alias offlinePg: offlinePg
     property Point currentPositionPoint: Point {x: 90.943869; y: 24.890659; spatialReference: SpatialReference.createWgs84()}
 
     property real scaleFactor: AppFramework.displayScaleFactor
@@ -36,9 +37,13 @@ Page {
                 legendModel.append({"name": "January till Current Flooded Area", "symbolUrl": "../assets/legend_icons/jant_cyan.png", visible: false});
                 legendModel.append({"name": "Historical Water Extent", "symbolUrl": "../assets/legend_icons/histW_gray.png", "visible": false})
             } else {
-                var dataModel = JSON.parse(app.settings.value("layer_list"));
-                for (var i = 0; i < dataModel.length; i++) {
-                    legendModel.append({"name": dataModel[i].legendName, "symbolUrl": dataModel[i].symbolUrl, "visible": dataModel[i].legendVisible});
+                var dataModel = JSON.parse(app.settings.value("offline_maps"));
+                for (var p in dataModel) {
+                    if (dataModel[p].name.includes(viewName.replace(" ", ""))) {
+                        legendModel.append({"name": "Current Daily Flooded Area / Clouds", "symbolUrl": "../assets/legend_icons/3day_red.png", visible: true});
+                        legendModel.append({"name": "Two Week Flooded Area", "symbolUrl": "../assets/legend_icons/2wk_blue.png", "visible": true});
+                        break;
+                    }
                 }
             }
         }

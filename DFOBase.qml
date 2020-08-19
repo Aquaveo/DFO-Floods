@@ -31,7 +31,7 @@ App {
     property bool isOnline: Networking.isOnline
     property string dataPath: AppFramework.urlInfo(AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data")).path
     property StorageInfo storageInfo: StorageInfo {path: AppFramework.userHomePath}
-    property url qmlfile: app.settings.value("region", false) ? app.settings.value("region") : "./views/StartPage.qml";
+    property url qmlfile: app.isOnline ? app.settings.value("region", false) ? app.settings.value("region") : "./views/StartPage.qml" : "./views/StartPage.qml";
     property string viewName: app.settings.value("region", false) !== false ? app.settings.value("region").split("views/")[1].replace("America", " America").split(".")[0] : ""
     property string descriptionText: app.settings.value("region", false) !== false ? "<p> This app was developed by the DFO and Remote Sensing Solutions, Inc, with support from NASA SBIR. The displayed layer group contains different flood products for " + viewName + ".<br></p>" : "";
     property ListView layerVisibilityListView;

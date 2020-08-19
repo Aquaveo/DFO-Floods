@@ -82,7 +82,13 @@ Rectangle {
                     rmFileFolder.removeFile(fileName);
                 })
 
-                offlineMapsJson.splice(offMRemIx - 1, 1); // remove one to account for header
+                for (var p in offlineMapsJson) {
+                    if (offlineMapsJson[p]["name"] === oMLyrsModel.get(offMRemIx).name) {
+                        offlineMapsJson.splice(p, 1);
+                        break;
+                    }
+                }
+
                 oMLyrsModel.remove(offMRemIx, 1);
                 app.settings.setValue("offline_maps", JSON.stringify(offlineMapsJson));
                 clearSingleOffM.visible = false;

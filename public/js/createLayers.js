@@ -168,11 +168,7 @@ function addWmsLayers() {
             serviceHistW.load();
         }
     } else {
-        if (app.viewName) {
-            offlinePg.addOffMap.visible = false;
-            offlinePg.offLineMaptabBar.currentIndex = 1;
-            offlinePg.visible = true;
-        }
+        offlinePg.addOffMap.visible = false;
     }
 
     serviceGlo.loadStatusChanged.connect(function() {

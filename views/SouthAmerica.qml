@@ -39,7 +39,7 @@ Page {
             } else {
                 var dataModel = JSON.parse(app.settings.value("offline_maps"));
                 for (var p in dataModel) {
-                    if (dataModel[p].name.includes(viewName)) {
+                    if (dataModel[p].name.includes(viewName.replace(" ", ""))) {
                         legendModel.append({"name": "Current Daily Flooded Area / Clouds", "symbolUrl": "../assets/legend_icons/3day_red.png", visible: true});
                         legendModel.append({"name": "Two Week Flooded Area", "symbolUrl": "../assets/legend_icons/2wk_blue.png", "visible": true});
                         break;

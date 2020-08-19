@@ -91,16 +91,20 @@ Rectangle {
                         viewName = viewItems.get(index).name;
                         descriptionText = viewItems.get(index).description;
 
+                        if (regionLoader.item.offlinePg.oMLyrsModel.count > 1) {
+                            regionLoader.item.offlinePg.oMLyrsModel.remove(1, regionLoader.item.offlinePg.oMLyrsModel.count - 1); // clear all except the first entry (header)
+                        }
+
+                        for (var p in JSON.parse(app.settings.value("offline_maps"))) {
+                            if (JSON.parse(app.settings.value("offline_maps"))[p].name.includes(viewName.replace(" ", ""))) {
+                                regionLoader.item.offlinePg.oMLyrsModel.append(JSON.parse(app.settings.value("offline_maps"))[p]);
+                            }
+                        }
+
                         if (!app.isOnline) {
                             regionLoader.item.offlinePg.addOffMap.visible = false;
                             regionLoader.item.offlinePg.offLineMaptabBar.currentIndex = 1;
                             regionLoader.item.offlinePg.visible = true;
-
-                            for (var p in JSON.parse(app.settings.value("offline_maps"))) {
-                                if (JSON.parse(app.settings.value("offline_maps"))[p].name.includes(viewName)) {
-                                    regionLoader.item.offlinePg.oMLyrsModel.append(JSON.parse(app.settings.value("offline_maps"))[p]);
-                                }
-                            }
                         }
                     }
                 }

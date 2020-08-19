@@ -17,6 +17,11 @@ Rectangle {
         onWheel: wheel.accepted = true
     }
 
+    FileFolder {
+        id: rmFileFolder2
+        path: app.dataPath
+    }
+
     Rectangle {
         id: popUpClearOFFM
         height: 180 * scaleFactor
@@ -69,7 +74,28 @@ Rectangle {
             }
 
             onClicked: {
-                app.settings.setValue("offline_maps", false);
+                var dataModel = JSON.parse(app.settings.value("offline_maps"));
+                var newDataModel = [];
+                for (var p in dataModel) {
+                    if (!dataModel[p]["name"].includes(app.viewName.replace(" ", ""))) {
+                        newDataModel.push(dataModel[p]);
+                    }
+                }
+
+                app.settings.setValue("offline_maps", JSON.stringify(newDataModel));
+
+                var rmFileQuery;
+                var rmFileList;
+                for (var i=0; i<oMLyrsModel.count; i++) {
+                    rmFileQuery = oMLyrsModel.get(i).name.replace("_", "_*") + "*";
+                    rmFileList = rmFileFolder2.fileNames(rmFileQuery);
+
+                    rmFileList.forEach(fileName => {
+                        rmFileFolder2.removeFile(fileName);
+                    })
+                }
+
+                oMLyrsModel.remove(1, regionLoader.item.offlinePg.oMLyrsModel.count - 1);
                 clearAllOffM.visible = false;
             }
         }

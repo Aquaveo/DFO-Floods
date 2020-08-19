@@ -108,10 +108,13 @@ Rectangle {
                 if (sceneView.currentViewpointCenter.targetScale > 18489298) {
                     statusText = "Please zoom in to or below the country level";
                     exportWindow.hideWindow(2000);
+                } else if (sceneView.currentViewpointCenter.targetScale < 577790) {
+                    statusText = "Please zoom out to or above the county level";
+                    exportWindow.hideWindow(2000);
                 } else {
                     statusText = "";
                     var maxScale = sceneView.currentViewpointCenter.targetScale;
-                    var minScale = 1155581.108577 //maxScale / 20;
+                    var minScale = 577790.554289 // maxScale / 20;
                     tileCacheExtent = sceneView.currentViewpointExtent.extent;
     //                var tileCacheExtent2 = GeometryEngine.project(tileCacheExtent, SpatialReference.createWebMercator());
 
@@ -198,7 +201,7 @@ Rectangle {
                 Text {
                     id: howToOMText
                     width: parent.width
-                    text: app.isOnline ? "1. Click on the <b>ADD (+)</b> button on the top right corner. Make sure your map extent is zoomed in to or below the average country level (This is about 1:18500000).<br /><br />2. A confirmation screen to download the current extent along with the current and two-week layers will appear.<br /><br />3. You will be prompted to enter a name for the downloaded offline area. <i>Only alphanumeric characters, dashes (-) and underscores (_) are accepted.</i><br /><br />4. Downloaded maps can be managed from the <b>MAP LIST</b> tab.<br /><br />5. Only the default DFO layers can be added to offline maps. Any other layer will be ignored, even if it is turned on on the menu's layers List<br />" : "You are currently offline. Offline maps can only be downloaded ahead of time with an Internet connection.<br /><br />Go to the <b>MAP LIST</b> tab for a list of previously downloaded offline maps."
+                    text: app.isOnline ? "Make sure the map extent is between the country and county/province levels.<i>This is roughly between 1:18500000 and 1:580000</i>. Your current zoom level is <b>1:%1</b>.<br /><br />1. Click on the <b>ADD (+)</b> button on the top right corner.<br /><br />2. A confirmation screen to download the current extent along with the current and two-week layers will appear.<br /><br />3. You will be prompted to enter a name for the downloaded offline area. <i>Only alphanumeric characters, dashes (-) and underscores (_) are accepted.</i><br /><br />4. Downloaded maps can be managed from the <b>MAP LIST</b> tab.<br />".arg(Number(sceneView.currentViewpointCenter.targetScale).toFixed(0)) : "You are currently offline. Offline maps can only be downloaded ahead of time with an Internet connection.<br /><br />Go to the <b>MAP LIST</b> tab for a list of previously downloaded offline maps."
                     font {
                         pixelSize: app.baseFontSize
                     }
@@ -220,7 +223,7 @@ Rectangle {
                     Component.onCompleted: {
                         if (app.settings.value("offline_maps") && viewName) {
                             for (var p in JSON.parse(app.settings.value("offline_maps"))) {
-                                if (JSON.parse(app.settings.value("offline_maps"))[p].name.includes(viewName)) {
+                                if (JSON.parse(app.settings.value("offline_maps"))[p].name.includes(viewName.replace(" ", ""))) {
                                     oMLyrsModel.append(JSON.parse(app.settings.value("offline_maps"))[p]);
                                 }
                             }
@@ -273,7 +276,7 @@ Rectangle {
 
                             onClicked: {
                                 if (name !== "NAME") {
-                                    var basemapPath = "%1/%2_BasemapTileCache_%3.tpk".arg(dataPath).arg(viewName).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
+                                    var basemapPath = "%1/%2_BasemapTileCache_%3.tpk".arg(dataPath).arg(viewName.replace(" ", "")).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
                                     var xTileCache = ArcGISRuntimeEnvironment.createObject("TileCache", {path: basemapPath});
                                     var xTiledLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: xTileCache } );
 
@@ -298,13 +301,13 @@ Rectangle {
                                     var viewPointOffMCenter = ArcGISRuntimeEnvironment.createObject("ViewpointCenter", {
                                                                                                     center: centerOffMPoint,
                                                                                                     rotation: savedOffMLocation.rotation,
-                                                                                                    targetScale: savedOffMLocation.scale
+                                                                                                    targetScale: savedOffMLocation.scale - (savedOffMLocation.scale / 4)
                                                                                                 });
                                     sceneView.setViewpointAndSeconds(viewPointOffMCenter, 0);
                                     sceneView.lockExtent = JSON.parse(oMLyrsModel.get(index).extent);
                                     sceneView.lockCenterPt = JSON.parse(oMLyrsModel.get(index).zoom);
 
-                                    var twoWkPath = "%1/%2_%3_Two_Week.tpk".arg(dataPath).arg(viewName).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
+                                    var twoWkPath = "%1/%2_%3_Two_Week.tpk".arg(dataPath).arg(viewName.replace(" ", "")).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
                                     var twoWkTileCache = ArcGISRuntimeEnvironment.createObject("TileCache", {path: twoWkPath});
 
                                     var twoWkLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: twoWkTileCache } );
@@ -313,7 +316,7 @@ Rectangle {
                                     sceneView.scene.operationalLayers.setProperty(0, "name", "2-week accumulated flooded area %1".arg(app.viewName));
                                     sceneView.scene.operationalLayers.setProperty(0, "description",  "This is an offline version of the 2-week accumulated flooded area %1 layer. This layer was saved on %2".arg(app.viewName).arg(new Date(Number(oMLyrsModel.get(index)["date_created"])).toString()));
 
-                                    var threeDayPath = "%1/%2_%3_Current.tpk".arg(dataPath).arg(viewName).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
+                                    var threeDayPath = "%1/%2_%3_Current.tpk".arg(dataPath).arg(viewName.replace(" ", "")).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
                                     var threeDayTileCache = ArcGISRuntimeEnvironment.createObject("TileCache", {path: threeDayPath});
 
                                     var threeDayLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: threeDayTileCache } );
@@ -415,12 +418,12 @@ Rectangle {
     // Create ExportTileCacheTask
     ExportTileCacheTask {
         id: export2WkTask
-        url: 'https://diluvium.colorado.edu/arcgisonline/rest/services/dfo_layers/two_week_flooded_area_africa/MapServer'
+        url: 'https://diluvium.colorado.edu/arcgisonline/rest/services/dfo_layers/two_week_flooded_area_%1/MapServer'.arg(viewName.toLowerCase().replace(" ", ""))
     }
 
     ExportTileCacheTask {
         id: export3DayTask
-        url: 'https://diluvium.colorado.edu/arcgisonline/rest/services/dfo_layers/three_day_water_extent_africa/MapServer'
+        url: 'https://diluvium.colorado.edu/arcgisonline/rest/services/dfo_layers/three_day_water_extent_%1/MapServer'.arg(viewName.toLowerCase().replace(" ", ""))
     }
 
     ExportTileCacheTask {
@@ -640,7 +643,7 @@ Rectangle {
     NetworkRequest {
         id: networkRequest
         url: layer2WkDownloadUrl
-        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2_Two_Week.tpk".arg(viewName).arg(fileName)
+        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2_Two_Week.tpk".arg(viewName.replace(" ", "")).arg(fileName)
 
         onError: {
             statusText = "Two week layer download failed";
@@ -651,7 +654,7 @@ Rectangle {
     NetworkRequest {
         id: networkRequest2
         url: layer3DayDownloadUrl
-        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2_Current.tpk".arg(viewName).arg(fileName)
+        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2_Current.tpk".arg(viewName.replace(" ", "")).arg(fileName)
 
         onReadyStateChanged: {
             if (readyState === NetworkRequest.DONE) {
@@ -677,7 +680,7 @@ Rectangle {
                 }
 
                 var newOffMElm = {
-                    "name": "%1_%2".arg(viewName).arg(fileName),
+                    "name": "%1_%2".arg(viewName.replace(" ", "")).arg(fileName),
                     "date_created": new Date().getTime().toString(),
                     "layer_list": visLayers,
                     "zoom": JSON.stringify(sceneView.currentViewpointCenter.json),
