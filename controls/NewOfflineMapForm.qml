@@ -32,7 +32,7 @@ Rectangle {
         Text {
             id: storageInfoText
             width: parent.width
-            text: "The current extent would occupy <b>" + ((offlinePg.exportTask.estimateJobSize.result.fileSizeAsInt + 10000000)/1000000).toFixed(2) + "MB</b> of storage. Your device currently has <b> " + (app.storageInfo.bytesFree/1000000000).toFixed(2) + "GB</b> available storage.";
+            text: "The current extent would occupy <b>" + ((offlinePg.exportTask.estimateJobSize.result.fileSizeAsInt + 20000000)/1000000).toFixed(2) + "MB</b> of storage. Your device currently has <b> " + (app.storageInfo.bytesFree/1000000000).toFixed(2) + "GB</b> available storage.";
             font {
                 pixelSize: app.baseFontSize
             }

@@ -38,13 +38,13 @@
     },
     "deployment": {
         "android": {
-            "packageName": "edu.colorado.floodobservatory"
+            "packageName": "edu.colorado.dfo"
         },
         "arcgisRuntimeExtensionsLicense": "",
         "arcgisRuntimeLicense": "runtimelite,1000,rud2249368337,none,TRB3LNBHPDJ0J9HSX224",
         "clientId": "",
         "ios": {
-            "bundleId": "edu.colorado.floodobservatory",
+            "bundleId": "edu.colorado.dfo",
             "codeSignIdentity": ""
         },
         "macos": {
@@ -105,7 +105,7 @@
     "urlScheme": "",
     "version": {
         "major": 2,
-        "micro": 1,
+        "micro": 5,
         "minor": 1
     }
 }

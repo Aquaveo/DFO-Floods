@@ -87,8 +87,8 @@ Rectangle {
                         popUp.visible = false;
                         initLoad = false;
                         popUpListView.currentIndex = index;
-                        qmlfile = viewItems.get(index).url;
                         viewName = viewItems.get(index).name;
+                        qmlfile = viewItems.get(index).url;
                         descriptionText = viewItems.get(index).description;
 
                         if (regionLoader.item.offlinePg.oMLyrsModel.count > 1) {

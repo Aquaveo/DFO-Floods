@@ -1,7 +1,7 @@
 [IOS]
-distributionMethod=development
-certificate=C:/OpenSSL-Win64/bin/ios_development.p12
-provisioningProfile=C:/Users/msouffront/Downloads/DFO_App_Test_RSS.mobileprovision
+distributionMethod=app-store
+certificate=C:/Users/msouffront/Downloads/Certificates.p12
+provisioningProfile=C:/Users/msouffront/Downloads/DFO_floods.mobileprovision
 
 [MacOS]
 signApp=false
@@ -15,4 +15,9 @@ targetAndroid=true
 targetAndroidx86=false
 targetiOS=false
 targetMacOS=false
-targetAndroidArm64=false
+targetAndroidArm64=true
+
+[Android]
+signApk=true
+keyStorePath=C:/Users/msouffront/Downloads/keystore.keystore
+keyAlias=upload

@@ -19,6 +19,7 @@ Rectangle {
     property alias exportTask: exportTask
     property alias networkRequest: networkRequest
     property alias networkRequest2: networkRequest2
+    property alias networkRequest3: networkRequest3
     property alias addOffMap: addOffMap
     property alias offLineMaptabBar: offLineMaptabBar
     property alias oMLyrsModel: oMLyrsModel
@@ -35,7 +36,7 @@ Rectangle {
     property ExportTileCacheParameters params
     property string layer2WkDownloadUrl
     property string layer3DayDownloadUrl
-
+    property string layerRWDownloadUrl
     property var generateLayerOptions: []
     property var offMRemIx
 
@@ -94,19 +95,6 @@ Rectangle {
                 // show the export window
                 exportWindow.visible = true;
 
-//                var corner1 = sceneView.screenToLocation(extentRectangle.x, extentRectangle.y);
-//                var corner2 = sceneView.screenToLocation((extentRectangle.x + extentRectangle.width), (extentRectangle.y + extentRectangle.height));
-//                var envBuilder = ArcGISRuntimeEnvironment.createObject("EnvelopeBuilder");
-//                envBuilder.setCorners(corner1, corner2);
-
-//                console.log(corner1.x, corner1.y, corner2.x, corner2.y,'$$$$$');
-
-//                for (var p in envBuilder.geometry) {
-//                    console.log(p, envBuilder[p], '####');
-//                }
-
-//                var tileCacheExtent_tmp = GeometryEngine.project(envBuilder.geometry, SpatialReference.createWebMercator());
-
                 if (sceneView.currentViewpointCenter.targetScale > 18489298) {
                     statusText = "Please zoom in to or below the country level";
                     exportWindow.hideWindow(2000);
@@ -118,10 +106,8 @@ Rectangle {
                     var maxScale = sceneView.currentViewpointCenter.targetScale;
                     var minScale = 577790.554289 // maxScale / 20;
                     tileCacheExtent = sceneView.currentViewpointExtent.extent;
-    //                var tileCacheExtent2 = GeometryEngine.project(tileCacheExtent, SpatialReference.createWebMercator());
 
                     exportTask.createDefaultExportTileCacheParameters(tileCacheExtent, maxScale, minScale);
-    //                console.log(tileCacheExtent.xMin, tileCacheExtent.xMax, tileCacheExtent.yMin, tileCacheExtent.yMax, '$$$$$$$$$');
                 }
             }
 
@@ -197,6 +183,14 @@ Rectangle {
             currentIndex: offLineMaptabBar.currentIndex
             clip: true
 
+            function numberWithCommas(x) {
+                if (app.isOnline && offlinePg.visible === true && offLineMaptabBar.currentIndex === 0) {
+                    return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/,+/g,',');
+                } else {
+                    return x;
+                }
+            }
+
             Flickable {
                 contentHeight: howToOMText.height
                 clip: true
@@ -204,7 +198,7 @@ Rectangle {
                 Text {
                     id: howToOMText
                     width: parent.width
-                    text: app.isOnline ? "Make sure the map extent is between the country and county/province levels.<i>This is roughly between 1:18500000 and 1:580000</i>. Your current zoom level is <b>1:%1</b>.<br /><br />1. Click on the <b>ADD (+)</b> button on the top right corner.<br /><br />2. A confirmation screen to download the current extent along with the current and two-week layers will appear.<br /><br />3. You will be prompted to enter a name for the downloaded offline area. <i>Only alphanumeric characters, dashes (-) and underscores (_) are accepted.</i><br /><br />4. Downloaded maps can be managed from the <b>MAP LIST</b> tab.<br />".arg(Number(sceneView.currentViewpointCenter.targetScale).toFixed(0)) : "You are currently offline. Offline maps can only be downloaded ahead of time with an Internet connection.<br /><br />Go to the <b>MAP LIST</b> tab for a list of previously downloaded offline maps."
+                    text: app.isOnline ? "Make sure the map extent is between the country and county/province levels.<i>This is roughly between 1:18,500,000 and 1:580,000</i>. Your current zoom level is <b>1:%1</b>.<br /><br />1. Click on the <b>ADD (+)</b> button on the top right corner.<br /><br />2. A confirmation screen to download the current extent along with the regular water, current, and two-week layers will appear.<br /><br />3. You will be prompted to enter a name for the downloaded offline area. <i>Only alphanumeric characters, dashes (-) and underscores (_) are accepted.</i><br /><br />4. Downloaded maps can be managed from the <b>MAP LIST</b> tab.<br />".arg(stackLayoutOffM.numberWithCommas(Number(sceneView.currentViewpointCenter.targetScale).toFixed(0))) : "You are currently offline. Offline maps can only be downloaded ahead of time with an Internet connection.<br /><br />Go to the <b>MAP LIST</b> tab for a list of previously downloaded offline maps."
                     font {
                         pixelSize: app.baseFontSize
                     }
@@ -327,6 +321,16 @@ Rectangle {
                                     sceneView.scene.operationalLayers.append(threeDayLayer);
                                     sceneView.scene.operationalLayers.setProperty(1, "name", "Current daily flooded area %1".arg(app.viewName));
                                     sceneView.scene.operationalLayers.setProperty(1, "description", "This is an offline version of the current daily flooded area %1 layer. This layer was saved on %2".arg(app.viewName).arg(new Date(Number(oMLyrsModel.get(index)["date_created"])).toString()));
+
+                                    var rWPath = "%1/%2_%3_RW.tpk".arg(dataPath).arg(viewName.replace(" ", "")).arg(oMLyrsModel.get(index).name.split(/_(.+)/)[1]);
+                                    var rWTileCache = ArcGISRuntimeEnvironment.createObject("TileCache", {path: rWPath});
+
+                                    var rWLayer = ArcGISRuntimeEnvironment.createObject("ArcGISTiledLayer", { tileCache: rWTileCache } );
+
+                                    sceneView.scene.operationalLayers.append(rWLayer);
+                                    sceneView.scene.operationalLayers.setProperty(2, "name", "Regular water %1".arg(app.viewName));
+                                    sceneView.scene.operationalLayers.setProperty(2, "description",  "This is an offline version of the regular/permanent water layer for %1. This layer was saved on %2".arg(app.viewName).arg(new Date(Number(oMLyrsModel.get(index)["date_created"])).toString()));
+
                                 }
                             }
 
@@ -430,6 +434,11 @@ Rectangle {
     }
 
     ExportTileCacheTask {
+        id: exportRWTask
+        url: 'https://diluvium.colorado.edu/arcgisonline/rest/services/dfo_layers/regular_water_%1/MapServer'.arg(viewName.toLowerCase().replace(" ", ""))
+    }
+
+    ExportTileCacheTask {
         id: exportTask
 
         credential: Credential {
@@ -443,9 +452,11 @@ Rectangle {
         property var exportJob
         property var export2WkJob
         property var export3DayJob
+        property var exportRWJob
         property var estimateJobSize
         property url layer2WkUrl: AppFramework.userHomeFolder.fileUrl("ArcGIS/AppStudio/Data/%1_%2_Two_Week.tpk".arg(viewName.replace(" ", "")).arg(fileName))
         property url layer3DayUrl: AppFramework.userHomeFolder.fileUrl("ArcGIS/AppStudio/Data/%1_%2_Current.tpk".arg(viewName.replace(" ", "")).arg(fileName))
+        property url layerRWUrl: AppFramework.userHomeFolder.fileUrl("ArcGIS/AppStudio/Data/%1_%2_RW.tpk".arg(viewName.replace(" ", "")).arg(fileName))
 
         onCreateDefaultExportTileCacheParametersStatusChanged: {
             if (createDefaultExportTileCacheParametersStatus === Enums.TaskStatusCompleted) {
@@ -477,6 +488,7 @@ Rectangle {
             exportJob = exportTask.exportTileCache(params, outputTileCache);
             export2WkJob = export2WkTask.exportTileCache(params, layer2WkUrl);
             export3DayJob = export3DayTask.exportTileCache(params, layer3DayUrl);
+            exportRWJob = exportRWTask.exportTileCache(params, layerRWUrl);
 
             cancelOffMJobs.visible = true;
             if (exportJob) {
@@ -513,6 +525,19 @@ Rectangle {
                 // connect to the job's status changed signal to know once it is done
                 export3DayJob.jobStatusChanged.connect(update3DayJobStatus);
                 export3DayJob.start();
+            } else {
+                exportWindow.visible = true;
+                statusText = "Current layer job failed";
+                exportWindow.hideWindow(5000);
+            }
+
+            if (exportRWJob) {
+                // show the export window
+                exportWindow.visible = true;
+
+                // connect to the job's status changed signal to know once it is done
+                exportRWJob.jobStatusChanged.connect(updateRWJobStatus);
+                exportRWJob.start();
             } else {
                 exportWindow.visible = true;
                 statusText = "Current layer job failed";
@@ -635,6 +660,40 @@ Rectangle {
             }
         }
 
+        function updateRWJobStatus() {
+            switch(exportRWJob.jobStatus) {
+            case Enums.JobStatusFailed:
+                var jobMessages = JSON.stringify(exportRWJob.json);
+                console.log(jobMessages, '#####')
+                if (jobMessages.includes("Tile cache download URL retrieved: https://diluvium.colorado.edu/arcgis/rest/directories/arcgisoutput/dfo_layers/")) {
+                    layerRWDownloadUrl = "https://diluvium.colorado.edu/arcgisonline/rest/directories/arcgisoutput/dfo_layers" + jobMessages.split("Tile cache download URL retrieved: https://diluvium.colorado.edu/arcgis/rest/directories/arcgisoutput/dfo_layers")[1].split("\",")[0];
+                    statusText = "Adding regular water layer...";
+                    offlinePg.networkRequest3.send();
+                } else {
+                    statusText = "Regular water layer download failed";
+                    exportWindow.hideWindow(5000);
+                    break;
+                }
+                break;
+            case Enums.JobStatusNotStarted:
+                statusText = "Job not started";
+                break;
+            case Enums.JobStatusPaused:
+                statusText = "Job paused";
+                break;
+            case Enums.JobStatusStarted:
+                statusText = "In progress...";
+                break;
+            case Enums.JobStatusSucceeded:
+                statusText = "Adding regular water layer...";
+                exportWindow.hideWindow(1500);
+                break;
+            default:
+                break;
+            }
+        }
+
+
         Component.onDestruction: {
             if (exportJob && exportJob.jobStatusChanged) {
                 exportJob.jobStatusChanged.disconnect(updateJobStatus);
@@ -646,6 +705,10 @@ Rectangle {
 
             if (export3DayJob && export3DayJob.jobStatusChanged) {
                 export3DayJob.jobStatusChanged.disconnect(update3DayJobStatus);
+            }
+
+            if (exportRWJob && exportRWJob.jobStatusChanged) {
+                exportRWJob.jobStatusChanged.disconnect(updateRWJobStatus);
             }
         }
     }
@@ -666,6 +729,17 @@ Rectangle {
         url: layer3DayDownloadUrl
         responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2_Current.tpk".arg(viewName.replace(" ", "")).arg(fileName)
 
+        onError: {
+            statusText = "Current layer download failed";
+            exportWindow.hideWindow(1500);
+        }
+    }
+
+    NetworkRequest {
+        id: networkRequest3
+        url: layerRWDownloadUrl
+        responsePath: AppFramework.userHomeFolder.filePath("ArcGIS/AppStudio/Data") + "/%1_%2_RW.tpk".arg(viewName.replace(" ", "")).arg(fileName)
+
         onReadyStateChanged: {
             if (readyState === NetworkRequest.DONE) {
                 var visLayers = [];
@@ -680,6 +754,13 @@ Rectangle {
                     "name": "Current daily water extent %1".arg(viewName),
                     "legendName": "Current Daily Flooded Area / Clouds",
                     "symbolUrl": "../assets/legend_icons/3day_red.png",
+                    "legendVisible": true
+                });
+
+                visLayers.push({
+                    "name": "Regular water %1".arg(viewName),
+                    "legendName": "Regular Water Extent",
+                    "symbolUrl": "../assets/legend_icons/regW_white.png",
                     "legendVisible": true
                 });
 
@@ -737,6 +818,7 @@ Rectangle {
         }
 
         Rectangle {
+            id: messageRect
             anchors.centerIn: parent
             width: 200 * scaleFactor
             height: 120 * scaleFactor
@@ -781,10 +863,9 @@ Rectangle {
             Material.elevation: 6
             Material.background: "#00693e"
             anchors {
-                right: parent.right
-                bottom: parent.bottom
-                rightMargin: 10 * scaleFactor
-                bottomMargin: 10 * scaleFactor
+                horizontalCenter: parent.horizontalCenter
+                top: messageRect.bottom
+                topMargin: 10 * scaleFactor
             }
 
             text: "CANCEL JOB"
@@ -809,6 +890,7 @@ Rectangle {
                 exportTask.exportJob.cancel();
                 exportTask.export2WkJob.cancel();
                 exportTask.export3DayJob.cancel();
+                exportTask.exportRWJob.cancel();
 
                 exportWindow.visible = false;
             }
